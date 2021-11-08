@@ -14,7 +14,12 @@ code {
 
 #board 
 {
-  background-image: url('../src/zamma.png');
-  width : 775;
-  height: 775;
+  background-image: url('../src/assets/zamma.png');
+  width : 775px;
+  height: 775px;
+  display:inline-block;
+  flex-wrap: wrap;
+  flex-direction : horizontal;
+  flex-flow : space-between;
 }
+

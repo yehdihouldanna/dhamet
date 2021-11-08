@@ -1,0 +1,26 @@
+.Piece
+{
+  width : 69px;
+  height : 69px;
+  display : inline-block;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+.Black_regular
+{
+  background-image: url('../assets/Black_regular.png');
+}
+.White_regular
+{
+  background-image: url('../assets/White_regular.png');
+}
+.Black_dhaimat
+{
+  background-image: url('../assets/Black_Dhaimat.png');
+}
+.White_dhaimat
+{
+  background-image: url('../assets/White_Dhaimat.png');
+}
