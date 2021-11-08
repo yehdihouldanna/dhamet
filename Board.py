@@ -1,3 +1,9 @@
+#------------------------------------------------
+# Copyrigh (c) SMART Solutions SM SA® 2021.
+# All rights reserved.
+# Code made by : Yehdhih ANNA (TheLuckyMagician).
+#------------------------------------------------
+
 import numpy as np
 from termcolor import cprint
 from Players import *

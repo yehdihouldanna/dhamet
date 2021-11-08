@@ -1,3 +1,9 @@
+#------------------------------------------------
+# Copyrigh (c) SMART Solutions SM SA® 2021.
+# All rights reserved.
+# Code made by : Yehdhih ANNA (TheLuckyMagician).
+#------------------------------------------------
+
 from Board import State
 import unittest
 import numpy as np
@@ -62,7 +68,7 @@ class TestBoard(unittest.TestCase):
             [ 0,  0,  0,  0, -1, -1, -1, -1, -1],
             [ 0,  0,  0, -1, -1,  0, -1, -1, -1],
             [ 0, -1, -1, -1, -1, -1, -1, -1, -1],
-            [ 2, -1, -1, -1, -1, -1, -1, -1, -1]])
+            [ 3, -1, -1, -1, -1, -1, -1, -1, -1]])
         game.set_board(A)
         possible_moves_80= [(7, 0), (6, 0), (5, 0), (4, 0), (3, 0), (2, 0), (6, 2), (5, 3), (4, 4), (3, 5)]
         scores_80 = [0, 0, 0, 0, 0, 0, 1, 1, 1, 1]

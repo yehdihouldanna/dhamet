@@ -1,11 +1,16 @@
-import sys
+#------------------------------------------------
+# Copyrigh (c) SMART Solutions SM SA® 2021.
+# All rights reserved.
+# Code made by : Yehdhih ANNA (TheLuckyMagician).
+#------------------------------------------------
+
 import numpy as np
 import random
 
 class Player():
     def __init__(self,name,player):
         self.name = name
-        self.player =player # which color the player is playing with (0 for white and 1 for black)
+        self.player= player # which color is the player's(0 for white and 1 for black)
 
     def move(self,state):
         pass
