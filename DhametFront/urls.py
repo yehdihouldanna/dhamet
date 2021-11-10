@@ -24,6 +24,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('__debug__/', include(debug_toolbar.urls)),
 
-    path('DhametCode/',include('DhametCode.urls')) # this basicly means that every url that start with the 
+    path('DhametCode/',include('DhametCode.urls')), # this basicly means that every url that start with the 
                                   # app name 'DhametCode' will be routed to the included path.
+
+    path('',include('React_UI.urls'))
 ] +static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)
