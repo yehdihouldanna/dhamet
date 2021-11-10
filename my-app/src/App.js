@@ -39,8 +39,6 @@ class App extends Component {
 
     this.handleMove= this.handleMove.bind(this);
   }
-  
-
   handleMove(from,to) 
   {
     // console.log("handleMove got invoked",from,to);

@@ -191,8 +191,9 @@ class State():
     def available_moves(self,x,y):
         """
         This function return all the available moves of the given piece.
-        params : x,y : pice coordinates on th board
-                kills_only : make the function return only moves that result in taking a piece out.
+        params : x,y : piece coordinates on the board
+        returns : possible moves - list containing tuples of coordinates of possible moves
+                  scores  - list the scores of the moves (aka the number of pieces that move killed)
         """
         possible_moves = []
         scores = []
@@ -204,7 +205,7 @@ class State():
         vectors_side = [(0,-1),(0,1)]
 
         valid_index = lambda i,j : i>=0 and i<self.n and j>=0 and j<self.n
-        if self.board[x,y]>=1: # regular white piece
+        if self.board[x,y]>=1: #  White piece
             if x%2 == y%2: # case of '*' nodes 
                 for vec in vectors_up_star + vectors_down_star + vectors_side:
                     x_ = lambda k : x+k*vec[0] # returns the next abscisse
@@ -219,19 +220,19 @@ class State():
 
                     else : # White Dhaimat piece:
                         valid = False
-                        k=1 
+                        k=1 # cell incrementer.
                         p=0 # number of pieces already jumped
                         if valid_index(x_(k),y_(k)):
                             valid = True
                         while(valid):
                             if  np.sign(self.board[x_(k),y_(k)])==1: # if users piece blocking the line
                                 break
-                            elif valid_index(x_(k+1),y_(k+1)) and self.board[x_(k+1),y_(k+1)]!=0 and self.board[x_(k),y_(k)]!=0:
+                            elif valid_index(x_(k+1),y_(k+1)) and self.board[x_(k+1),y_(k+1)]!=0 and self.board[x_(k),y_(k)]!=0: # two adjacent pieces blocking the line.
                                 break
                             elif self.board[x_(k),y_(k)]==0: # a killing move
                                 possible_moves.append((x_(k),y_(k)))
                                 scores.append(p)
-                            elif np.sign(self.board[x_(k),y_(k)])==-1:
+                            elif np.sign(self.board[x_(k),y_(k)])==-1: # a piece is present in the cell but we still need to check the next cell case.
                                 p+=1
                             k+=1
                             valid = valid_index(x_(k),y_(k))
@@ -303,7 +304,7 @@ class State():
                         if valid_index(x_(k),y_(k)):
                             valid = True
                         while(valid):
-                            if  np.sign(self.board[x_(k),y_(k)])==-1: # if users piece blocking the line
+                            if  np.sign(self.board[x_(k),y_(k)])==-1: # if user's piece blocking the line
                                 break
                             elif valid_index(x_(k+1),y_(k+1)) and self.board[x_(k+1),y_(k+1)]!=0 and self.board[x_(k),y_(k)]!=0: # if two successif piecse are blocking the line
                                 break
@@ -355,12 +356,13 @@ class State():
         self.board = board
 
     def set_player(self,player):
+        """this method sets the player manually , used for unit testing."""
         if player.lower() in ["b","black"] or player ==1:
                 self.player = 1
         elif player.lower() in ["w" , "white"] or player==0:
                 self.player = 0
         else:
-            print("Trying to set an Invalid Player! type 0 for White or 1 for Black")
+            print("Trying to set an Invalid Player! : type '0' for 'White' or '1' for 'Black'")
 
 
 class Game():
@@ -396,8 +398,8 @@ class Game():
 
 if __name__=="__main__":
     # Player1 = Human("Saadna",0)
-    Player1 = Human("Aleyen",0)
-    # Player1 = Random("Agent 1",0)
+    # Player1 = Human("Aleyen",0)
+    Player1 = Random("Agent 1",0)
     Player2 = Random("Agent 2",1)
     print("The game started :" )
     print(f"{Player1.name} is playing White.")
