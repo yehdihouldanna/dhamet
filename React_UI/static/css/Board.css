@@ -1,0 +1,10 @@
+#board 
+{
+  background-image: url('../images/zamma.png');
+  width : 775px;
+  height: 775px;
+  display:inline-block;
+  flex-wrap: wrap;
+  flex-direction : horizontal;
+  flex-flow : space-between;
+}
