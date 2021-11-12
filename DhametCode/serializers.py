@@ -26,7 +26,6 @@ class CreateGameSerializer(serializers.ModelSerializer):
             return ret
 
 class GameMoveSerializer(serializers.ModelSerializer):
-    Player = serializers.IntegerField(write_only=True)
     class Meta:
         model = Game
-        fields = ('Code','State','Player','last_move')
+        fields = ('Code','State','last_move','Current_Player')

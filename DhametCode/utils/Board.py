@@ -15,11 +15,11 @@ class State():
     This class contains the state of the game at a give turn,
     the main content of this class is the baord vairable which contains 
     """
-    def __init__(self,n=9,board=None,length=0):
+    def __init__(self,n=9,board=None,player =0,length=0):
         self.n = n
         self.player = 0 # who's turn : 0 for white 1 for black.
         self.length = length
-        self.player = self.length%2  # since white always start,we can get player from length.
+        self.player = player  # since white always start,we can get player from length.
         self.pieces = self.n**2 //2  # number of pieces of each player.
         self.white_score = 40
         self.black_score = 40
@@ -32,7 +32,7 @@ class State():
 
         self.auto_souvle=True  # if a pices have a killing move and it does non killing move it get's killed it self
         # initialising the board matrix
-        if board:
+        if board is None:
             self.board = np.zeros((n,n),dtype=int)
             count = 0
             for i in range(self.n):
@@ -46,6 +46,7 @@ class State():
                     count+=1
         else:
             self.board = board
+
 
     def check_end_condition(self):
         if self.player_has_no_moves_condition():
@@ -122,7 +123,7 @@ class State():
     def move(self,piece,destination):
         """moves a piece, given its position coordinates and it's destination coordinates"""
         possible_moves,scores = self.available_moves(piece[0],piece[1])
-        # print(piece,"->",possible_moves,"\n",scores)
+        print(piece,"->",possible_moves,"\n",scores)
         if destination not in possible_moves:
             print("Move is invalid !, Try again")
             return False

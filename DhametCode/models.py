@@ -1,5 +1,4 @@
 from django.db import models
-from jsonfield import JSONField
 import random
 import string
 
@@ -9,7 +8,7 @@ def generate_game_code():
         Code = ''.join(random.choices(string.ascii_uppercase,k=length))
         if Game.objects.filter(Code=Code).count()==0:
             return Code
-def get_initial_game_state():
+def get_initial_state_json():
     initial_game_state = {
       'board' : 
       [[ 1,  1,  1,  1,  1,  1,  1,  1,  1],
@@ -21,7 +20,7 @@ def get_initial_game_state():
       [-1, -1, -1, -1, -1, -1, -1, -1, -1],
       [-1, -1, -1, -1, -1, -1, -1, -1, -1],
       [-1, -1, -1, -1, -1, -1, -1, -1, -1,]]}
-
+    
     return initial_game_state
 # Create your models here.
 class Player(models.Model):
@@ -34,18 +33,19 @@ class Player(models.Model):
         return f'{self.Name}'
 
 class Game(models.Model):
-
-    Code = models.CharField(max_length=10,default=generate_game_code,blank=True,null=True)
+    init_txt="wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww_bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+    Code = models.CharField(max_length=100,default=generate_game_code,blank=True,null=True)
     DateTime = models.DateTimeField(auto_now_add=True)
     # Players = models.ManyToManyField(Player,null=False)
-    State = JSONField(default = get_initial_game_state) # the game state.
+    State = models.CharField(max_length=81,default=init_txt,blank=False,null=False)
     player1 = models.CharField(max_length=200)
     player2 = models.CharField(max_length=200)
     Current = models.IntegerField(default=0) #who's Turn Right Now
     Length = models.IntegerField(default=0)
     Moves = models.TextField(max_length=10000,default="") # contain the moves of the game
-    last_move = models.TextField(default="",null=True)
+    last_move = models.CharField(max_length=100,default="",null=True)
     Ongoing = models.BooleanField(default=False)
+    Current_Player = models.IntegerField(default=0)
     Winner = models.IntegerField(blank=True,null=True)
    
     def __str__(self):
