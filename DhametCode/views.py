@@ -7,9 +7,10 @@ from rest_framework.response import Response
 from .serializers import GameSerializer , CreateGameSerializer , GameMoveSerializer
 from .utils.Board import State
 import numpy as np
+import sys
 # from .utils.Players import Human, Agent
-# Create your views here.
 
+# Create your views here.
 class GameView(generics.ListAPIView):
     queryset = Game.objects.all()
     serializer_class = GameSerializer
@@ -23,17 +24,12 @@ class CreateGameView(generics.ListAPIView):
             self.request.session.create()
         serializer = self.serializer_class(data=request.data)
         Code_ = self.request.session.session_key
-        # print("-------------------------------------------------")
-        # print(serializer.is_valid())
-        # print("-------------------------------------------------")
-        # print(Code_,serializer.is_valid())
         if serializer.is_valid():
             player1 = serializer.data.get('player1')
             player2 = serializer.data.get('player2')
             game = Game(player1=player1,player2=player2)
             game.save()
             return Response(CreateGameSerializer(game).data,status = status.HTTP_201_CREATED)
-
         return Response({'Bad Request': 'Invalid data...'}, status=status.HTTP_400_BAD_REQUEST)
     
 class GameMoveView(generics.ListAPIView):
@@ -43,9 +39,9 @@ class GameMoveView(generics.ListAPIView):
     def get_game_update(self,game,Player,Move):
         length = game.Length
         board = self.deserialize(game.State)
-       
         game_instance = State(n=9,board=board,player = Player, length=length)
-
+        print('the move received is : ',Move)
+        game_instance.show_board(file=sys.stderr)
         moves = Move.split(" ")
         moved = False
         for k in range(len(moves)-1):
@@ -53,10 +49,10 @@ class GameMoveView(generics.ListAPIView):
             destination = moves[k+1]
             xs,ys = [int(i) for i in source]
             xd,yd = [int(i) for i in destination]
+            print(f"Moving form {xs}{ys} to {xd}{yd}")
             moved = game_instance.move((xs,ys),(xd,yd))
             if not moved:
                 break
-        
         if moved:
             ended  = game_instance.check_end_condition()
             game_instance.player = not game_instance.player
@@ -103,25 +99,21 @@ class GameMoveView(generics.ListAPIView):
                 k+=1
         return board
 
-
     def post(self,request,format=None):
         if not self.request.session.exists(self.request.session.session_key): # check if the session exists
             self.request.session.create()
         serializer = self.serializer_class(data= request.data)
-        print("-------------------------------------------------")
-        print(serializer.is_valid())
-        print("-------------------------------------------------")
         if serializer.is_valid():
             # Code = self.request.session.session_key
             Code = serializer.data.get('Code')
-            
-            print(Code,serializer.is_valid())
+            # print(Code,serializer.is_valid())
             if Code!="":
                 queryset = Game.objects.filter(Code=Code)
                 if queryset.exists():
                     Current_Player  = serializer.data.get('Current_Player')
                     board_txt =serializer.data.get('State')
                     Move = serializer.data.get('last_move')
+                    print(f"in the post method move:{Move}")
                     game = queryset.filter(Code=Code)[0]
                     moved,board,ended,player,length,winner = self.get_game_update(game,Current_Player,Move)
                     if moved :
@@ -130,6 +122,7 @@ class GameMoveView(generics.ListAPIView):
                         game.Length = length
                         Moves = game.Moves+"\n"+Move
                         game.Moves = Moves
+                        game.last_move=Move
                         game.Ongoing=not ended
                         if ended:
                             game.Winner= winner
@@ -137,7 +130,6 @@ class GameMoveView(generics.ListAPIView):
                         return Response(GameMoveSerializer(game).data,status = status.HTTP_202_ACCEPTED)
                 
         return Response({'Bad Request': 'Invalid data...'}, status=status.HTTP_400_BAD_REQUEST)
-
 
 def say_hello(request):
     try :

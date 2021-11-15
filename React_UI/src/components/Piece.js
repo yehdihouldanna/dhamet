@@ -9,7 +9,6 @@ import { DragSource } from 'react-dnd';
 const Types = {
   Piece: 'Piece'
 }
-
 /**
  * Specifies the drag source contract.
  * Only `beginDrag` function is required.
@@ -36,6 +35,9 @@ const PieceSource = {
 
   beginDrag(props, monitor, component) {
     // Return the data describing the dragged item
+    // console.log("Begginind drag ! ",component);
+    let piece_key = component.props.i.toString()+component.props.j.toString();
+    component.props.onStartMove(piece_key);
     return props
   },
 
@@ -43,9 +45,9 @@ const PieceSource = {
     if (!monitor.didDrop()) {
       // You can check whether the drop was successful
       // or if the drag ended but nobody handled the drop
-      return
+      
+      return 
     }
-
     // When dropped on a compatible target, do something.
     // Read the original dragged item from getItem():
     // const item = monitor.getItem()
@@ -55,11 +57,16 @@ const PieceSource = {
     // its drop() method.
     // const dropResult = monitor.getDropResult()
 
+    let item = monitor.getItem();
+    const dropCell = monitor.getDropResult();
+    // console.log("item :" , item);
+    // console.log("Drop result : ",dropCell);
+
+    item.onMove([item.i,item.j],[dropCell.i,dropCell.j]);
     // This is a good place to call some Flux action
     // CardActions.moveCardToList(item.id, dropResult.listId)
   }
 }
-
 /**
  * Specifies which props to inject into your component.
  */
@@ -74,7 +81,18 @@ function collect(connect, monitor) {
 }
 
 class Piece extends Component {
-    
+  constructor()
+  {
+    super();
+    this.onClick_ = this.onClick_.bind(this);
+  }
+  onClick_(e,key)
+  {
+    if ((this.props.player ===0 && this.props.color==="White") || (this.props.player ===1 && this.props.color==="Black"))
+    {
+      this.props.onClick(e,key);
+    }
+  }
   render() {
     // console.log("the props of the piece are ",this.props);
     let  class_ = "Piece "+this.props.color +"_"+ this.props.type;
@@ -83,15 +101,13 @@ class Piece extends Component {
 
     // These props are injected by React DnD,
     // as defined by your `collect` function above:
-    const { isDragging, connectDragSource } = this.props
+    const { isDragging, connectDragSource} = this.props
 
     return connectDragSource(
-        <div className = {class_} 
-            style={{
+        <div className = {class_} onClick = {(e)=>this.onClick_(e,this.props.i.toString()+this.props.j.toString())}
+            style={{ // this is not working as intended yet:
                 textShadow: isDragging ? "20px" : "0px",
             }}>
-            
-            {/* {isDragging && '😱'} */}
         </div>
 
     )

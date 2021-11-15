@@ -15,8 +15,8 @@ class Board extends Component {
   {
     super();
     this.state = {
-      board : 
-      [[ 1,  1,  1,  1,  1,  1,  1,  1,  1],
+      board : [
+      [ 1,  1,  1,  1,  1,  1,  1,  1,  1],
       [ 1,  1,  1,  1,  1,  1,  1,  1,  1],
       [ 1,  1,  1,  1,  1,  1,  1,  1,  1],
       [ 1,  1,  1,  1,  1,  1,  1,  1,  1],
@@ -24,17 +24,39 @@ class Board extends Component {
       [-1, -1, -1, -1, -1, -1, -1, -1, -1],
       [-1, -1, -1, -1, -1, -1, -1, -1, -1],
       [-1, -1, -1, -1, -1, -1, -1, -1, -1],
-      [-1, -1, -1, -1, -1, -1, -1, -1, -1,]],
+      [-1, -1, -1, -1, -1, -1, -1, -1, -1]],
       player:0,
       Code : "",
       board_txt:"wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww_bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-    };
-    this.handleMove= this.handleMove.bind(this);
-    this.Create_game= this.Create_game.bind(this);
+      move : "",
+      timer : 0,
+      delay : 200,
+      prevent : false,
+      MouseOnBoard:true,
+    }; 
+    // Biding Events handlers : 
+    this.handleMove  = this.handleMove.bind(this);
+    this.handleHover = this.handleHover.bind(this);
+    this.handleStartMove = this.handleStartMove.bind(this);
+    
+    this.handleClick = this.handleClick.bind(this);
+    this.handleMouseLeave = this.handleMouseLeave.bind(this);
+
+
+    this.doClickAction = this.doClickAction.bind(this);
+    this.doDoubleClickAction = this.doDoubleClickAction.bind(this);
+    // Binding request handlers : 
+    this.CreateGameRequest= this.CreateGameRequest.bind(this);
+    this.MoveRequest = this.MoveRequest.bind(this);
+
+    // Binding extra util methods
     this.serialize= this.serialize.bind(this);
     this.deserialize= this.deserialize.bind(this);
-  }
+  };
 
+  //------------------------------------------
+  //Utils Methods : 
+  //------------------------------------------
   serialize()
   {
     let str = ""
@@ -65,8 +87,7 @@ class Board extends Component {
       }
     }
     return str
-  }
-
+  };
   deserialize(text)
   {
     let game_state=this.state
@@ -84,25 +105,61 @@ class Board extends Component {
       }
     }
     this.setState(game_state)
-  }
+  };
 
-  handleMove(from,to) 
-  {
-    // console.log("handleMove got invoked",from,to);
-    if (typeof from != "undefined" && typeof to != "undefined")
-    {
-      this.MoveRequest(from,to);
-      
-    }
+  //---------------------------------------------------------------------------------------
+  // "Click Vs DoubleClick"  Handling :
+  //---------------------------------------------------------------------------------------
+  doClickAction(key) {
+    if (!this.state.move.slice(-5).includes(key) && !this.state.move!=="")
+      {this.state.move +=" "+key;}
+    console.log("current move : ",this.state.move);
+  };
+  doDoubleClickAction(key) {
+    if (!this.state.move.slice(-5).includes(key) && !this.state.move!=="")
+      {this.state.move +=" "+key;}
+    this.handleMove() ;
+  };
+  handleClick(e,key) {
+      if (e.detail>1)
+      {
+        this.doDoubleClickAction(key);
+      }
+      else
+      {
+        this.doClickAction(key);
+      }  
+    };
+  
+  //-------------------------------------------------
+  // Main Handler methods :
+  //--------------------------------------------------
+  handleStartMove(piece_key)
+  {this.state.move=piece_key;
+    // console.log("handleStartMove got called ! the move now is : ",this.state.move);
   }
-  MoveRequest(from,to)
+  handleHover(cell_key)
   {
+    if (!this.state.move.slice(-5).includes(cell_key) && !this.state.move!=="")
+      {this.state.move +=" "+cell_key[0].toString()+cell_key[1].toString();}
+    // console.log("handleHover got called the move now is : ",this.state.move);
+  }
+  handleMove() 
+  {if (this.state.move.length){this.MoveRequest(this.state.move);}};
+
+  //-----------------------------------------------------------------------
+  // Handling Request and getting the reponses from the back end methods :
+  //-----------------------------------------------------------------------
+  MoveRequest(move_str)
+  { 
+    /*This function communicate with the makeGameMove view in the 
+      back end to update the board appopriatly after a move*/
+
     console.log("Code:",this.state.Code);
     if (this.state.Code==="")
-    {this.Create_game();}
-    else
+    {this.CreateGameRequest();}
+    else if(move_str.length>=5)
     {
-      let move_str = from[0].toString()+from[1].toString()+" "+to[0].toString()+to[1].toString();
       console.log("Trying the move : ",move_str);
       const requestOptions=
       {
@@ -120,44 +177,25 @@ class Board extends Component {
         then((data)=> 
               { 
                 if (typeof data["Bad Request"] != "undefined")
-                {
-                  console.log("Invalid Move : Ignored!")
+                {console.log("Invalid Move : Ignored!");
+                this.state.move = "";
                 }
-                else
+                else // to solve the problem of the fetch getting called twice.
                 {
-                  console.log("Receiving data after the move request:")
-                  console.log("-----------------------")
                   console.log(data);
                   let game_state = this.state;
-                  
                   game_state.player=game_state.player===0? 1 :0;
+                  console.log("The player now is : ",game_state.player);
                   game_state.board_txt = data.State;
                   this.setState(game_state);
                   this.deserialize(data.State);
-                  console.log("-----------------------")
+                  this.state.move = "";
                 }
-                
-
-                
-                // game_state.board[to[0]][to[1]]  = game_state.board[from[0]][from[1]] ;
-                // game_state.board[from[0]][from[1]] =0;
-                // game_state.player = game_state.player===0? 1 :0;
-                // this.setState(game_state);
-
-                // let game_state = this.state;
-                // console.log(game_state);
-                // game_state.board[to[0]][to[1]]  = game_state.board[from[0]][from[1]] ;
-                // game_state.board[from[0]][from[1]] =0;
-                // game_state.player = game_state.player===0? 1 :0;
-                // this.setState(game_state);
               }
-      
       );
-
     }
-    
   };
-  Create_game()
+  CreateGameRequest()
   {
     const requestOptions=
     {
@@ -172,15 +210,22 @@ class Board extends Component {
     fetch('/DhametCode/create-game',requestOptions).
       then((response)=> response.json()).
       then((data)=> {
-          console.log("The returned data is :: :",data)
           let game_state = this.state;
           game_state.Code = data.Code;
           this.setState(game_state);
           console.log("Create successfully a game who's code is :",data.Code)
-        })
+        }).then(()=>this.handleMove())
   };
-
-  render(){
+  handleMouseLeave()
+  {
+    console.log("On Mouse Leave got called")
+    this.state.move="";
+  }
+  // --------------------------------------------------------------------------------
+  // Rendering React native method :
+  //------------------------------------------------------------------------------
+  render()
+  {
     let Cells = [];
     let {board} = this.state;
     let len = board.length;
@@ -188,18 +233,33 @@ class Board extends Component {
     {
       for(let j = 0 ; j <len; j++)
       {
+        let key = i.toString() +j.toString();
         Cells.push(
-          <Cell key = {i.toString() +j.toString()} i={i} j={j} value = {board[i][j]} player={this.state.player} onMove={this.handleMove}></Cell>
+          <Cell 
+            key={key} 
+            i={i} 
+            j={j} 
+            value = {board[i][j]} 
+            player={this.state.player} 
+            move = {this.state.move} 
+            onMove={this.handleMove} 
+            onHover={this.handleHover}
+            onStartMove ={this.handleStartMove}
+            onClick={this.handleClick} 
+          >
+          </Cell>
         );
       }
     }
   return (
       <DndProvider backend={HTML5Backend}>
-        <div id="board">
+        <div id="board" onMouseLeave={this.handleMouseLeave}>
           {Cells}
       </div>
+      < div>The current player is {this.state.player}</div>
     </DndProvider>
     );
-  }
+  };
 }
+
 export default Board;

@@ -30,7 +30,7 @@ class State():
         self.dhaimat_value = 3 
         self.winner = None  # -1 for black , 0 for draw and 1 for white
 
-        self.auto_souvle=True  # if a pices have a killing move and it does non killing move it get's killed it self
+        self.auto_souvle=False  # if a pices have a killing move and it does non killing move it get's killed it self
         # initialising the board matrix
         if board is None:
             self.board = np.zeros((n,n),dtype=int)
@@ -80,25 +80,25 @@ class State():
                 return False
         return True
 
-    def show_board(self):
+    def show_board(self,file=None):
         """Shows the board in a colorful manner"""
         for i in range(self.n -1,-1,-1):
-            cprint('{0:>3}'.format(f"[{i}]"),color = "yellow",end =" ")
+            cprint('{0:>3}'.format(f"[{i}]"),color = "yellow",end =" ",file=file)
             print("[",end="")
             for j in range(0,self.n):
                 a = self.board[i,j]
                 if np.sign(a)==-1:
-                # print('{0:>3}'.format(self.board[i,j]),end =" ")
-                    cprint('{0:>3}'.format(a),color = "red",end =" ")
+                # print('{0:>3}'.format(self.board[i,j]),end =" ",file=file)
+                    cprint('{0:>3}'.format(a),color = "red",end =" ",file=file)
                 elif np.sign(a)==1:
-                    cprint('{0:>3}'.format(a),color = "green",end =" ")
+                    cprint('{0:>3}'.format(a),color = "green",end =" ",file=file)
                 else:
-                    print('{0:>3}'.format(a),end =" ")
-            print("]")
-        print("     ",end=" ")
+                    print('{0:>3}'.format(a),end =" ",file=file)
+            print("]",file=file)
+        print("     ",end=" ",file=file)
         for j in range(0,self.n):
-            cprint('{0:>3}'.format(f"[{j}]"),color = "yellow",end=" ")
-        print()
+            cprint('{0:>3}'.format(f"[{j}]"),color = "yellow",end=" ",file=file)
+        print(file=file,flush=True)
            
     def show_score(self):
         cprint('Scores : ',color="yellow",end=" ")
@@ -128,44 +128,44 @@ class State():
             print("Move is invalid !, Try again")
             return False
         else:
-            if np.sign(self.board[piece[0],piece[1]])==[1,-1][self.player]: # check if the current piece belongs to the current player,
-                idx = possible_moves.index(destination)
-                if np.abs(destination[0]-piece[0])>=2 or np.abs(destination[1]-piece[1])>=2:
-                    vec_x = np.sign(destination[0]-piece[0])
-                    vec_y = np.sign(destination[1]-piece[1])
-                    a= np.abs(destination[0]-piece[0])
-                    b= np.abs(destination[1]-piece[1])
-                    k_max = max(a,b)
-                    x_ = lambda k : piece[0]+k*vec_x # returns the next abscisse
-                    y_ = lambda k : piece[1]+k*vec_y # returns the next ordinate
-                    for k in range(1,k_max):
-                        if self.board[x_(k),y_(k)]!=0:
-                            self.board[x_(k),y_(k)]=0
+            # if np.sign(self.board[piece[0],piece[1]])==[1,-1][self.player]: # check if the current piece belongs to the current player,
+            idx = possible_moves.index(destination)
+            if np.abs(destination[0]-piece[0])>=2 or np.abs(destination[1]-piece[1])>=2:
+                vec_x = np.sign(destination[0]-piece[0])
+                vec_y = np.sign(destination[1]-piece[1])
+                a= np.abs(destination[0]-piece[0])
+                b= np.abs(destination[1]-piece[1])
+                k_max = max(a,b)
+                x_ = lambda k : piece[0]+k*vec_x # returns the next abscisse
+                y_ = lambda k : piece[1]+k*vec_y # returns the next ordinate
+                for k in range(1,k_max):
+                    if self.board[x_(k),y_(k)]!=0:
+                        self.board[x_(k),y_(k)]=0
 
-                self.board[destination[0],destination[1]] = self.board[piece[0],piece[1]]
-                self.board[piece[0],piece[1]] = 0
+            self.board[destination[0],destination[1]] = self.board[piece[0],piece[1]]
+            self.board[piece[0],piece[1]] = 0
 
-                # replace with the Dhamet condition
-                if self.player and destination[0]==0:
-                    self.board[destination[0],destination[1]]=-1*self.dhaimat_value
-                elif not self.player and destination[0]==self.n-1 :
-                    self.board[destination[0],destination[1]]=self.dhaimat_value
-                
-                if self.auto_souvle and scores[idx] == 0 and 1 in scores: # souvle kills itself
-                    self.board[destination[0],destination[1]]=0
-                # updating the repeating end_condition.
-                current_white_score = self.white_score
-                current_black_score = self.black_score
-                self.update_scores()
-                if current_white_score==self.white_score and current_black_score==self.black_score:
-                    self.no_kill_counter+=1
-                else:
-                    self.no_kill_counter=0
-
-                return True
+            # replace with the Dhamet condition
+            if self.player and destination[0]==0:
+                self.board[destination[0],destination[1]]=-1*self.dhaimat_value
+            elif not self.player and destination[0]==self.n-1 :
+                self.board[destination[0],destination[1]]=self.dhaimat_value
+            
+            if self.auto_souvle and scores[idx] == 0 and 1 in scores: # souvle kills itself
+                self.board[destination[0],destination[1]]=0
+            # updating the repeating end_condition.
+            current_white_score = self.white_score
+            current_black_score = self.black_score
+            self.update_scores()
+            if current_white_score==self.white_score and current_black_score==self.black_score:
+                self.no_kill_counter+=1
             else:
-                print("This piece is not yours!,Try again!")
-                return False
+                self.no_kill_counter=0
+
+            return True
+            # else:
+            #     print("This piece is not yours!,Try again!")
+            #     return False
 
     # def get_chained_kills(self,x,y):
     #     """this function returns moves and a relative score to each move

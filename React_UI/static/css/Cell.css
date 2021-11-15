@@ -1,7 +1,24 @@
 .cell
 {
-  width : 86px;
-  height : 86px;
+  width : 83px;
+  height : 83px;
   display : inline-block;
   position:relative;
+  border:solid 1px olive;
+  border-radius:5px;
+  color :white;
+  font-weight: bold;
+}
+
+.cell {
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: -moz-none;
+  -o-user-select: none;
+  user-select: none;
+}
+.cell:hover
+{
+  background-color: rgba(245, 212, 130, 0.61);
+  
 }
