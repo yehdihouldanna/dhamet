@@ -15,18 +15,29 @@ class Board extends Component {
   {
     super();
     this.state = {
-      board : [
-      [ 1,  1,  1,  1,  1,  1,  1,  1,  1],
-      [ 1,  1,  1,  1,  1,  1,  1,  1,  1],
-      [ 1,  1,  1,  1,  1,  1,  1,  1,  1],
-      [ 1,  1,  1,  1,  1,  1,  1,  1,  1],
-      [ 1,  1,  1,  1,  0, -1, -1, -1, -1],
-      [-1, -1, -1, -1, -1, -1, -1, -1, -1],
-      [-1, -1, -1, -1, -1, -1, -1, -1, -1],
-      [-1, -1, -1, -1, -1, -1, -1, -1, -1],
-      [-1, -1, -1, -1, -1, -1, -1, -1, -1]],
+      // board : [
+      // [ 1,  1,  1,  1,  1,  1,  1,  1,  1],
+      // [ 1,  1,  1,  1,  1,  1,  1,  1,  1],
+      // [ 1,  1,  1,  1,  1,  1,  1,  1,  1],
+      // [ 1,  1,  1,  1,  1,  1,  1,  1,  1],
+      // [ 1,  1,  1,  1,  0, -1, -1, -1, -1],
+      // [-1, -1, -1, -1, -1, -1, -1, -1, -1],
+      // [-1, -1, -1, -1, -1, -1, -1, -1, -1],
+      // [-1, -1, -1, -1, -1, -1, -1, -1, -1],
+      // [-1, -1, -1, -1, -1, -1, -1, -1, -1]],
+      board :
+      [[1,   1,   1,   1,   1,   1,   0,   1,   1 ],
+        [ 0,   0,   0,   0,   0,   0,   0,   0,   1 ],
+        [ 0,   0,   0,   0,   0,   0,   0,   0,   0 ],
+        [ 0,   0,   0,   0,   0,   0,   0,   0,   0 ],
+        [ 1,   0,   0,   0,   0,   0,   0,   0,   0 ],
+        [ 0,   0,   0,   0,   0,   0,   0,   0,   1 ],
+        [ 0,   0,   0,   0,   0,   0,   0,   0,  -1 ],
+        [ 0,   0,   0,   0,   0,   0,   0,   0,   0 ],
+        [ 0,   0,   0,   0,   0,   0,   0,   0,   0 ]],
       player:0,
       Code : "",
+      // board_txt:"wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww_bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
       board_txt:"wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww_bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
       move : "",
       timer : 0,
@@ -42,18 +53,15 @@ class Board extends Component {
     this.handleClick = this.handleClick.bind(this);
     this.handleMouseLeave = this.handleMouseLeave.bind(this);
 
-
     this.doClickAction = this.doClickAction.bind(this);
     this.doDoubleClickAction = this.doDoubleClickAction.bind(this);
     // Binding request handlers : 
     this.CreateGameRequest= this.CreateGameRequest.bind(this);
     this.MoveRequest = this.MoveRequest.bind(this);
-
     // Binding extra util methods
     this.serialize= this.serialize.bind(this);
     this.deserialize= this.deserialize.bind(this);
   };
-
   //------------------------------------------
   //Utils Methods : 
   //------------------------------------------
@@ -106,7 +114,6 @@ class Board extends Component {
     }
     this.setState(game_state)
   };
-
   //---------------------------------------------------------------------------------------
   // "Click Vs DoubleClick"  Handling :
   //---------------------------------------------------------------------------------------
@@ -130,7 +137,6 @@ class Board extends Component {
         this.doClickAction(key);
       }  
     };
-  
   //-------------------------------------------------
   // Main Handler methods :
   //--------------------------------------------------
@@ -146,7 +152,6 @@ class Board extends Component {
   }
   handleMove() 
   {if (this.state.move.length){this.MoveRequest(this.state.move);}};
-
   //-----------------------------------------------------------------------
   // Handling Request and getting the reponses from the back end methods :
   //-----------------------------------------------------------------------
@@ -218,7 +223,7 @@ class Board extends Component {
   };
   handleMouseLeave()
   {
-    console.log("On Mouse Leave got called")
+    console.log("On Mouse Leave got called");
     this.state.move="";
   }
   // --------------------------------------------------------------------------------
