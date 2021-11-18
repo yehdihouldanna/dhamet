@@ -15,29 +15,28 @@ class Board extends Component {
   {
     super();
     this.state = {
-      // board : [
-      // [ 1,  1,  1,  1,  1,  1,  1,  1,  1],
-      // [ 1,  1,  1,  1,  1,  1,  1,  1,  1],
-      // [ 1,  1,  1,  1,  1,  1,  1,  1,  1],
-      // [ 1,  1,  1,  1,  1,  1,  1,  1,  1],
-      // [ 1,  1,  1,  1,  0, -1, -1, -1, -1],
-      // [-1, -1, -1, -1, -1, -1, -1, -1, -1],
-      // [-1, -1, -1, -1, -1, -1, -1, -1, -1],
-      // [-1, -1, -1, -1, -1, -1, -1, -1, -1],
-      // [-1, -1, -1, -1, -1, -1, -1, -1, -1]],
-      board :
-      [[1,   1,   1,   1,   1,   1,   0,   1,   1 ],
-        [ 0,   0,   0,   0,   0,   0,   0,   0,   1 ],
-        [ 0,   0,   0,   0,   0,   0,   0,   0,   0 ],
-        [ 0,   0,   0,   0,   0,   0,   0,   0,   0 ],
-        [ 1,   0,   0,   0,   0,   0,   0,   0,   0 ],
-        [ 0,   0,   0,   0,   0,   0,   0,   0,   1 ],
-        [ 0,   0,   0,   0,   0,   0,   0,   0,  -1 ],
-        [ 0,   0,   0,   0,   0,   0,   0,   0,   0 ],
-        [ 0,   0,   0,   0,   0,   0,   0,   0,   0 ]],
+      board : [
+      [ 1,  1,  1,  1,  1,  1,  1,  1,  1],
+      [ 1,  1,  1,  1,  1,  1,  1,  1,  1],
+      [ 1,  1,  1,  1,  1,  1,  1,  1,  1],
+      [ 1,  1,  1,  1,  1,  1,  1,  1,  1],
+      [ 1,  1,  1,  1,  0, -1, -1, -1, -1],
+      [-1, -1, -1, -1, -1, -1, -1, -1, -1],
+      [-1, -1, -1, -1, -1, -1, -1, -1, -1],
+      [-1, -1, -1, -1, -1, -1, -1, -1, -1],
+      [-1, -1, -1, -1, -1, -1, -1, -1, -1]],
+      // board : // to test for the final stages of the game.
+      // [[1,   1,   1,   1,   1,   1,   0,   1,   1 ],
+      //   [ 0,   0,   0,   0,   0,   0,   0,   0,   1 ],
+      //   [ 0,   0,   0,   0,   0,   0,   0,   0,   0 ],
+      //   [ 0,   0,   0,   0,   0,   0,   0,   0,   0 ],
+      //   [ 1,   0,   0,   0,   0,   0,   0,   0,   0 ],
+      //   [ 0,   0,   0,   0,   0,   0,   0,   0,   1 ],
+      //   [ 0,   0,   0,   0,   0,   0,   0,   0,  -1 ],
+      //   [ 0,   0,   0,   0,   0,   0,   0,   0,   0 ],
+      //   [ 0,   0,   0,   0,   0,   0,   0,   0,   0 ]],
       player:0,
       Code : "",
-      // board_txt:"wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww_bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
       board_txt:"wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww_bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
       move : "",
       timer : 0,
@@ -151,7 +150,9 @@ class Board extends Component {
     // console.log("handleHover got called the move now is : ",this.state.move);
   }
   handleMove() 
-  {if (this.state.move.length){this.MoveRequest(this.state.move);}};
+  {if (this.state.move.length)
+    {this.MoveRequest(this.state.move);}
+  };
   //-----------------------------------------------------------------------
   // Handling Request and getting the reponses from the back end methods :
   //-----------------------------------------------------------------------
@@ -200,18 +201,36 @@ class Board extends Component {
       );
     }
   };
-  CreateGameRequest()
+  CreateGameRequest(name)
   {
-    const requestOptions=
-    {
-      method : 'POST',
-      headers : {'Content-Type':'application/json'},
-      body: JSON.stringify({
-        Code : "",
-        player1 : "Dummy",
-        player2 : "Random",
-      })
-    };
+    // if (name="Multiplayer")
+    // {
+      console.log("Starting a game vs another local player.")
+        const requestOptions=
+      {
+        method : 'POST',
+        headers : {'Content-Type':'application/json'},
+        body: JSON.stringify({
+          Code : "",
+          player1 : "Dummy",
+          player2 : "Random",
+        })
+      };
+    // }
+    // else
+    // {
+    //   console.log("Starting a game vs the AI")
+    //   const requestOptions=
+    //   {
+    //     method : 'POST',
+    //     headers : {'Content-Type':'application/json'},
+    //     body: JSON.stringify({
+    //       Code : "",
+    //       player1 : "Dummy",
+    //       player2 : "AI",
+    //     })
+    //   };
+    // }
     fetch('/DhametCode/create-game',requestOptions).
       then((response)=> response.json()).
       then((data)=> {
@@ -245,7 +264,7 @@ class Board extends Component {
             i={i} 
             j={j} 
             value = {board[i][j]} 
-            player={this.state.player} 
+            player= {this.state.player} 
             move = {this.state.move} 
             onMove={this.handleMove} 
             onHover={this.handleHover}
@@ -261,7 +280,12 @@ class Board extends Component {
         <div id="board" onMouseLeave={this.handleMouseLeave}>
           {Cells}
       </div>
-      < div>The current player is {this.state.player}</div>
+      
+      <div className="board_controls">
+                <div> The current player is {this.state.player}</div>
+                <button onClick ={() => this.CreateGameRequest("Multiplayer")}> Multiplayer </button>
+                <button onClick ={() => this.CreateGameRequest("AI")} > play vs AI </button>    
+      </div>
     </DndProvider>
     );
   };

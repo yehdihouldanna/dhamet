@@ -2,8 +2,7 @@
 # |<<<<<<<<<<<<<<<<<                 Dhamet AI Project                 >>>>>>>>>>>>>>>> |
 # +-------------------------------------------------------------------------------------+
 
-
-# Introduction :
+### Introduction :
 
 This project is an implementation of Dhamet which is a traditionnal Mauritanian board game.
 it's in the same family of board games such as checkers and such but goes back way before theses variants.
@@ -14,26 +13,43 @@ Some ressources that inspired the way this code is made are :
 
 The rules are adapted by relying on this magazine: [Jeux et Stratégie, no 27, juin-juillet 1984, p. 46-48](http://fr.1001mags.com/parution/jeux-strategie/numero-27-jun-jui-1984)
 
+### Mathematical majoration of the number of the possible moves in the game :
 
-# The technologies used in this Project are : 
-'   `Python` , `Django` : For the back end and the game code and AI agents
-    `SQLite3` , For the data storage and access,
-    `React JS`, `JavaScript`,`Bootstrap`, `CSS3` for the front end user web page.
-    `Rest_framework` : for the linking between both ends.
+Given that the game has 81 quares with each squares having 5 possible states (corresponding to the type of the piece it contains ({regular,dhaima}x{white,black} or empty)),
+and each postition have two players to move,
+and that at each position we can have 5 states (either players win =2 , draw by blockade, or draw by repetition)
+and that with the rule of 50_moves of non killing max (elsewise the game could go forever 'repetition')
 
-# The structure of the project :
+then we can majorate the number of the possible moves with an upper bound as follows :
+$$ NumberofMoves < 81^{5} \times 2 \times 5 \times 50 ≈ 1.7 \times 10^{12} $$
+So the number of moves in Dhamet 40 is less than <font color ="red"> $1.7\times10^{12}$ </font>which makes it -computationnaly speaking- much simpler than chess ($≈ 2\times10^{76}$)
+### The technologies used in this Project are : 
+-    `Python` , `Django` : For the back end and the game code and AI agents
+
+-    `SQLite3` , For the data storage and access,
+
+-    `React JS`, `JavaScript`,`Bootstrap`, `CSS3` for the front end user web page.
+  
+-    `Rest_framework` & `web-pack` : for the linking between both ends.
+
+-    `Channels` : which is a python library that allows for asynchronous communication
+                  it's a way to simplify the code of `websockets` in django projects.
+                  so that 2 players can play the game online against each other.
+
+
+### The structure of the project :
 
 The project is mainly a Django Project that links multiple apps :
 
 The result of the tree command (simplified) is as follows :
-```Python 
+
 Project Folder:.
-├───DhametCode
+├───<font color="blue">DhametCode</font>
 │   ├───migrations
 │   ├───templates
 │   ├───utils
-├───DhametFront
-├───React_UI
+├───<font color="blue">DhametFront</font>
+├───<font color="blue">React_UI</font>
 │   ├───migrations
 │   ├───node_modules
 │   ├───src
@@ -47,16 +63,16 @@ Project Folder:.
 ├───Therory_sources
 ├───uploads
     └───images
-```
+
 From which we can see the three main apps of the project :
 
-**DhametFront** : is the Django project entry :
+**DhametFront** : is the Django project's entry :
 
-**React_UI**    : is the app of the project that is charge of rendering the game to user on the browser,
+**React_UI**    : is the app who is in charge of rendering the game to user on the browser,
 
-**DhametCode**  : it is the app in charge of the game in the back end, it is also were the games data set is architectured and communicated with,
+**DhametCode**  : it is the app who is in charge of the game in the back end, it is also where the game's data is architectured and accessed,
 
-# Some crucial implementation details : 
+### Some crucial implementation details : 
 The game is represented by a state, this state have for now in the code two representations :
 
 - The first representation is  *a 9x9 matrix* : containing :
@@ -125,6 +141,7 @@ In the available moves function the logic is to base on the matrix representatio
 
 
 **The end conditions are multiple :**
+
     * 1. if one of the players' gets opponenet `score reduced to zero`.
 
     * 2. if one of the players have `no available moves`
@@ -132,10 +149,13 @@ In the available moves function the logic is to base on the matrix representatio
     * 3. if the game goes on for `so long without a change in score`.(this is a customisable condition.)
 
 
-# Extra details :
+### Extra details :
 
 - The **console version** of the game is a standalone dependency and can be executed by itself just : 
-**`cd DhametCode/utils && python Board.py`**  it does print the board elegantly on the console and could be played by itself.
+```shell
+cd DhametCode/utils && python Board.py
+```  
+it does print the board elegantly on the console and could be played by itself.
 
 - The database could be changed in the future base on demand and needs so the `SQLite3` that is used can be replaced.
 
@@ -145,5 +165,23 @@ In the available moves function the logic is to base on the matrix representatio
 
     * Click-DoubleClick (recommended): you can select a piece by clicking it, once selected you can click on the moves you want to perform and double click on the last one in order to signal the intent of ending your turn.
 
+### Some Util commands for devellopement: 
 
+to start the `django` porject type in :```shell 
+python manage.py runserver ```
+To compile the updated react component in the React_UI app u have to use teh web pack configuration so just type in the terminal :
+
+```shell 
+npm run dev 
+```
+To Start the redis-cli
+
+```shell
+cd "C:\\Program Files\\Redis" && 
+".\redis-cli -h localhost"
+```
+then start the redis server (in another terminal) with    
+```shell 
+redis-server
+```
 

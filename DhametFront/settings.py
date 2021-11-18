@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'channels', # avoids some probelems by having it first on the apps list.
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -41,6 +42,7 @@ INSTALLED_APPS = [
     'React_UI',
     'debug_toolbar',
     'rest_framework',
+    
 
 ]
 
@@ -82,9 +84,19 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'DhametFront.wsgi.application'
 
-
+# Channels
+ASGI_APPLICATION = 'DhametFront.asgi.application'
+CHANNEL_LAYERS = {
+    'default': {
+        # 'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
+}
+}
 # Database
-# https://docs.djangoproject.com/en/2.2/ref/settings/#databases
+# https://docs.djangoproject.com/en/2.2/ref/settings/#databases²
 
 DATABASES = {
     'default': {

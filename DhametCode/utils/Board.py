@@ -88,7 +88,6 @@ class State():
             for j in range(0,self.n):
                 a = self.board[i,j]
                 if np.sign(a)==-1:
-                # print('{0:>3}'.format(self.board[i,j]),end =" ",file=file)
                     cprint('{0:>3}'.format(a),color = "red",end =" ",file=file)
                 elif np.sign(a)==1:
                     cprint('{0:>3}'.format(a),color = "green",end =" ",file=file)

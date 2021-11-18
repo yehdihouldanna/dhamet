@@ -1,0 +1,19 @@
+{
+    "name": "Django",
+    "type": "python",
+    "request": "launch",
+    "stopOnEntry": true,
+    "python": "C:\\Users\\yehdi\\Anaconda3\\python.exe",
+    "program": "${workspaceRoot}/manage.py",
+    "args": [
+        "runserver",
+        "8000",
+        // "--noreload"                
+    ],
+    "debugOptions": [
+        "WaitOnAbnormalExit",
+        "WaitOnNormalExit",
+        "RedirectOutput",
+        "DjangoDebugging"
+    ]
+}

@@ -14,7 +14,6 @@ class App extends Component
     render()
     {
         return (
-        // <Board/>
             <Routes>
                 <Route exact path = "/" element = {<p>This is the home page go to /game for the board</p>}></Route>
                 <Route exact path = "/game" element = {<Board/>} ></Route>

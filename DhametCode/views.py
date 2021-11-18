@@ -33,6 +33,7 @@ class CreateGameView(generics.ListAPIView):
         return Response({'Bad Request': 'Invalid data...'}, status=status.HTTP_400_BAD_REQUEST)
     
 class GameMoveView(generics.ListAPIView):
+    """The view that process the player's moves sent by the client"""
     serializer_class = GameMoveSerializer
     queryset = Game.objects.all()
 
@@ -41,7 +42,7 @@ class GameMoveView(generics.ListAPIView):
         board = self.deserialize(game.State)
         game_instance = State(n=9,board=board,player = Player, length=length)
         print('the move received is : ',Move)
-        game_instance.show_board(file=sys.stderr)
+        # game_instance.show_board(file=sys.stderr)
         moves = Move.split(" ")
         moved = False
         for k in range(len(moves)-1):
@@ -49,7 +50,7 @@ class GameMoveView(generics.ListAPIView):
             destination = moves[k+1]
             xs,ys = [int(i) for i in source]
             xd,yd = [int(i) for i in destination]
-            print(f"Moving form {xs}{ys} to {xd}{yd}")
+            # print(f"Moving form {xs}{ys} to {xd}{yd}")
             moved = game_instance.move((xs,ys),(xd,yd))
             if not moved:
                 break
@@ -100,6 +101,7 @@ class GameMoveView(generics.ListAPIView):
         return board
 
     def post(self,request,format=None):
+        """The view's main method for returning a reponse to client requests"""
         if not self.request.session.exists(self.request.session.session_key): # check if the session exists
             self.request.session.create()
         serializer = self.serializer_class(data= request.data)
@@ -123,31 +125,35 @@ class GameMoveView(generics.ListAPIView):
                         Moves = game.Moves+"\n"+Move
                         game.Moves = Moves
                         game.last_move=Move
-                        game.Ongoing=not ended
+                        game.Ongoing= not ended
                         if ended:
                             game.Winner= winner
                         game.save()
+
+                        # # if the player moved and we are playing vs an AI the AI moves too:
+                        # if queryset[0].player1=="AI" and Current_Player==0 or queryset[0].player2 =="AI" and Current_Player==1:
+                        #     agent = Player.
+
                         return Response(GameMoveSerializer(game).data,status = status.HTTP_202_ACCEPTED)
                 
         return Response({'Bad Request': 'Invalid data...'}, status=status.HTTP_400_BAD_REQUEST)
 
+
+
+
 def say_hello(request):
     try :
-        # we can pull data from a database
-        # transform data
-        game = Game.objects.all()
-        print(game)
-        # send email ...
-        player = Player.objects.filter(Name="Yehdhih ANNA")[0];
-
-        print(game)
-        print(player)
-        params = { 
-                    "player1":game[0].Player1,
-                    "player1_profile" : player.Image.url,
-                    "player2":game[0].Player2,
-                    'moves' : game[0].Moves
-                }
-        return render(request,"index.html",params)
+        params = request.data
+        return render(request,"index.html",{})
     except:
         return HttpResponse("Problem when accessing the game data")
+
+
+def index(request):
+    return render(request, 'index.html', {})
+
+def room(request, room_name):
+    return render(request, 'room.html', 
+    {
+        'room_name': room_name,
+    })
