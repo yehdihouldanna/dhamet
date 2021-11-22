@@ -313,13 +313,6 @@ class Board extends Component {
 
     this.props.client.onopen = () => {
       console.log('A new client Connected');
-      this.props.client.send(
-        JSON.stringify({
-          'Code': this.state.Code,
-          'State': this.state.board_txt,
-          'last_move': move_str,
-          'Current_Player': this.state.player,
-        }));
     };
     // this.props.client.onmessage = (message) => {
     //   console.log(message);
@@ -338,7 +331,8 @@ class Board extends Component {
           console.log("The answer is being processed: ", data);
           let game_state = me.state;
           console.log("the game state is : ", game_state);
-          game_state.player = game_state.player === 0 ? 1 : 0;
+          game_state.player = data.Current_Player;
+          // game_state.player = game_state.player === 0 ? 1 : 0;
           console.log("The player now is : ", game_state.player);
           game_state.board_txt = data.State;
           me.setState(game_state);

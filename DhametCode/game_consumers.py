@@ -217,7 +217,7 @@ class GameConsumer(AsyncWebsocketConsumer):
                         'Code':Code,
                         'State': game.State,
                         'last_move': "",
-                        'Current_Player':Current_Player})
+                        'Current_Player':game.Length%2})
                     return moved,output_data
                     # return Response(GameMoveSerializer(game).data,status = status.HTTP_202_ACCEPTED)
         # return moved, json.dumps({'Bad Request': 'Invalid data...'})
