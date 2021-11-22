@@ -1,0 +1,56 @@
+</DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width ,initial-scale=1">
+    <title>Dhamet</title>
+    {% load static %}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
+    <!-- <link
+            rel = "stylesheet" 
+            type = "text/css"
+            href = "{% static 'css/index.css'  %}"
+            /> -->
+</head>
+
+<body>
+   
+    
+    <div id="main">
+        <button id="startbutton" onclick="CreateGameRequest()">Play Online</button>
+    </div>
+    <!-- <script src = "{% static 'frontend/main.js' %}"></script> -->
+    <script>
+        function CreateGameRequest() {
+            console.log("Starting a game vs another local player.")
+            const requestOptions =
+            {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    Code: "",
+                    player1: "Dummy",
+                    player2: "Random",
+                })
+            };
+            fetch('/DhametCode/create-game', requestOptions).
+                then((response) => response.json()).
+                then((data) => {
+                    console.log("Created successfully a game who's code is :", data.Code)
+                    window.location.replace(
+                        "http://"+
+                        window.location.host
+                        + '/game/'
+                        + data.Code
+                        +'/'
+                    )
+                    
+                })
+        };
+    </script>
+</body>
+
+</html>

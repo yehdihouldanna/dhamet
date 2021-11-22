@@ -13,8 +13,7 @@ django_asgi_app = get_asgi_application()
 
 from channels.auth import AuthMiddlewareStack
 from channels.routing import ProtocolTypeRouter, URLRouter
-from DhametCode.routing import websocket_urlpatterns
-from DhametCode.game_consumers import ChatConsumer
+from .routing import websocket_urlpatterns
 from channels.security.websocket import AllowedHostsOriginValidator,OriginValidator
 
 application = ProtocolTypeRouter({

@@ -47,6 +47,7 @@ const CellTarget = {
     //             "Mouse : (",Mouse.x,",",Mouse.y,")",
     //             "HoverRadius : ",Allowed_radius
     //             );
+    
     // Only perform the move when the mouse is in the inner allowed area of the hover elsewise just exit function by return
     // Dragging downwards
     if (Mouse.y<hoverBoundingRect.top || Mouse.y>hoverBoundingRect.bottom) {
@@ -111,7 +112,7 @@ class Cell extends Component {
   constructor()
   {
     super();
-    this.onStartMove=this.onStartMove.bind(this);
+    // this.onStartMove=this.onStartMove.bind(this);
   }
   componentDidUpdate(prevProps) {
     if (!prevProps.isOver && this.props.isOver) {
@@ -126,11 +127,11 @@ class Cell extends Component {
       // shallowly, not including nested targets
     }
   }
-  onStartMove(piece_key)
-  {
-    console.log(this.props);
-    this.props.onStartMove(piece_key);
-  }
+  // onStartMove(piece_key)
+  // {
+  //   console.log(this.props);
+  //   this.props.onStartMove(piece_key);
+  // }
   
   render() {
     // console.log("the props of the cell are : ", this.props);
@@ -161,7 +162,7 @@ class Cell extends Component {
                         i={this.props.i}
                         j={this.props.j}
                         player = {this.props.player}
-                        onStartMove = {this.onStartMove}
+                        onStartMove = {this.props.onStartMove}
                         onMove = {this.props.onMove}
                         onClick = {this.props.onClick}
                         >

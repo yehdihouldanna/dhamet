@@ -37,6 +37,7 @@ const PieceSource = {
     // Return the data describing the dragged item
     // console.log("Begginind drag ! ",component);
     let piece_key = component.props.i.toString()+component.props.j.toString();
+    console.log("the piece key is : '",piece_key,"'")
     component.props.onStartMove(piece_key);
     return props
   },

@@ -17,12 +17,12 @@ The rules are adapted by relying on this magazine: [Jeux et Stratégie, no 27, j
 
 Given that the game has 81 quares with each squares having 5 possible states (corresponding to the type of the piece it contains ({regular,dhaima}x{white,black} or empty)),
 and each postition have two players to move,
-and that at each position we can have 5 states (either players win =2 , draw by blockade, or draw by repetition)
-and that with the rule of 50_moves of non killing max (elsewise the game could go forever 'repetition')
+and that at each position we can have 5 states (either player win =2 , draw by blockade, or draw by repetition)
+and that we have to oblige a rule of 50_moves of non killing max (elsewise the game could go forever 'repetition')
 
 then we can majorate the number of the possible moves with an upper bound as follows :
 $$ NumberofMoves < 81^{5} \times 2 \times 5 \times 50 ≈ 1.7 \times 10^{12} $$
-So the number of moves in Dhamet 40 is less than <font color ="red"> $1.7\times10^{12}$ </font>which makes it -computationnaly speaking- much simpler than chess ($≈ 2\times10^{76}$)
+So the number of moves in Dhamet 40 is less than <font color ="red"> $1.7 \times 10^{12}$ </font>which makes it -computationnaly speaking- much simpler than chess ($≈ 2\times10^{76}$)
 ### The technologies used in this Project are : 
 -    `Python` , `Django` : For the back end and the game code and AI agents
 
@@ -42,14 +42,14 @@ So the number of moves in Dhamet 40 is less than <font color ="red"> $1.7\times1
 The project is mainly a Django Project that links multiple apps :
 
 The result of the tree command (simplified) is as follows :
-
+```shell
 Project Folder:.
-├───<font color="blue">DhametCode</font>
+├───DhametCode
 │   ├───migrations
 │   ├───templates
 │   ├───utils
-├───<font color="blue">DhametFront</font>
-├───<font color="blue">React_UI</font>
+├───DhametFront
+├───React_UI
 │   ├───migrations
 │   ├───node_modules
 │   ├───src
@@ -63,7 +63,7 @@ Project Folder:.
 ├───Therory_sources
 ├───uploads
     └───images
-
+```
 From which we can see the three main apps of the project :
 
 **DhametFront** : is the Django project's entry :
@@ -174,14 +174,23 @@ To compile the updated react component in the React_UI app u have to use teh web
 ```shell 
 npm run dev 
 ```
-To Start the redis-cli
 
-```shell
-cd "C:\\Program Files\\Redis" && 
-".\redis-cli -h localhost"
-```
-then start the redis server (in another terminal) with    
+
+ **To Start the redis-cli**
+first start the redis server (in another terminal) with    
 ```shell 
 redis-server
 ```
+Then start redis-cli as follows (assuming that the installation folder is located here)
+
+```shell
+cd "C:\\Program Files\\Redis" ; "redis-cli"
+```
+or with arguments as follows
+
+```shell
+cd "C:\\Program Files\\Redis" &
+".\redis-cli -h localhost -p6379"
+```
+
 

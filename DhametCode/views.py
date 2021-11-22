@@ -138,9 +138,6 @@ class GameMoveView(generics.ListAPIView):
                 
         return Response({'Bad Request': 'Invalid data...'}, status=status.HTTP_400_BAD_REQUEST)
 
-
-
-
 def say_hello(request):
     try :
         params = request.data
