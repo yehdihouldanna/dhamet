@@ -1,7 +1,7 @@
 import pytest
 
-from backend.users.forms import UserCreationForm
-from backend.users.tests.factories import UserFactory
+from DhametFront.users.forms import UserCreationForm
+from DhametFront.users.tests.factories import UserFactory
 
 pytestmark = pytest.mark.django_db
 

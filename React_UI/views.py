@@ -2,9 +2,9 @@ from django.shortcuts import render
 # Create your views here.
 
 def index(request,*args , **kwargs):
-    print("this function got called from,",str(request))
-    print(args)
-    print(kwargs)
+    # print("this function got called from,",str(request))
+    # print(args)
+    # print(kwargs)
     if len(kwargs):
         outputs = {'game_code': kwargs['game_code'],}
         return render(request,'frontend/game_online.html',outputs)

@@ -3,9 +3,9 @@ from django.contrib.auth.models import AnonymousUser
 from django.http.response import Http404
 from django.test import RequestFactory
 
-from backend.users.models import User
-from backend.users.tests.factories import UserFactory
-from backend.users.views import (
+from DhametFront.users.models import User
+from DhametFront.users.tests.factories import UserFactory
+from DhametFront.users.views import (
     UserRedirectView,
     UserUpdateView,
     user_detail_view,

@@ -1,14 +1,14 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from rest_framework.serializers import Serializer
-from .models import Game ,Player
+from .models import Game 
 from rest_framework import generics , status
 from rest_framework.response import Response
 from .serializers import GameSerializer , CreateGameSerializer , GameMoveSerializer
 from .utils.Board import State
 import numpy as np
 import sys
-# from .utils.Players import Human, Agent
+
+from users.models import User
 
 # Create your views here.
 class GameView(generics.ListAPIView):
@@ -22,28 +22,46 @@ class CreateGameView(generics.ListAPIView):
     def post(self,request,format = None):
         if not self.request.session.exists(self.request.session.session_key): # check if the session exists
             self.request.session.create()
-        serializer = self.serializer_class(data=request.data)
-        Code_ = self.request.session.session_key
-        if serializer.is_valid():
-            player1 = serializer.data.get('player1')
-            player2 = serializer.data.get('player2')
-            game = Game(player1=player1,player2=player2)
+        # serializer = self.serializer_class(data=request.data)
+        # Code_ = self.request.session.session_key
+        if request.user.is_authenticated:
+            user = User.objects.filter(name = request.user.name)[0]
+        else : 
+            try:
+                user = User.objects.filter(name = "Guest")[0]
+            except:
+                user = User(name = "Guest",phone=000)
+                user.save()
+            
+        # if serializer.is_valid(): # needs to be integrated somehow , but for now it causes problem since the id can't be passed blank.
+        queryset_ = Game.get_available_games()
+        if len(queryset_): # if game
+            game = queryset_[0]
+            game.opponent = user
             game.save()
+            print(f"User : {user.username} Have Joined the game {game.get_game_code()} created by {game.creator}")
+            return Response(CreateGameSerializer(game).data,status = status.HTTP_202_ACCEPTED)
+        else:
+
+            game = Game(creator = user )
+            game.save()
+            print(f"User : {user.username} Have Created a game who's id is {game.get_game_code()}")
             return Response(CreateGameSerializer(game).data,status = status.HTTP_201_CREATED)
-        return Response({'Bad Request': 'Invalid data...'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # return Response({'Bad Request': 'Invalid data...'}, status=status.HTTP_400_BAD_REQUEST)
     
 class GameMoveView(generics.ListAPIView):
     """The view that process the player's moves sent by the client"""
     serializer_class = GameMoveSerializer
     queryset = Game.objects.all()
 
-    def get_game_update(self,game,Player,Move):
+    def get_game_update(self,game,current_turn,move):
         length = game.Length
         board = self.deserialize(game.State)
-        game_instance = State(n=9,board=board,player = Player, length=length)
-        print('the move received is : ',Move)
+        game_instance = State(n=9,board=board,player = current_turn, length=length)
+        print('the move received is : ', move)
         # game_instance.show_board(file=sys.stderr)
-        moves = Move.split(" ")
+        moves = move.split(" ")
         moved = False
         for k in range(len(moves)-1):
             source = moves[k]
@@ -105,35 +123,38 @@ class GameMoveView(generics.ListAPIView):
         if not self.request.session.exists(self.request.session.session_key): # check if the session exists
             self.request.session.create()
         serializer = self.serializer_class(data= request.data)
+
+        if request.user.is_authenticated:
+            user = User.objects.filter(name = request.user.name)
+        else:
+            user = User.objects.filter(name = "Guest")
+
         if serializer.is_valid():
-            # Code = self.request.session.session_key
-            Code = serializer.data.get('Code')
-            # print(Code,serializer.is_valid())
-            if Code!="":
-                queryset = Game.objects.filter(Code=Code)
+            id = serializer.data.get('id')
+            if id!="":
+                queryset = Game.objects.filter(id=id)
                 if queryset.exists():
-                    Current_Player  = serializer.data.get('Current_Player')
-                    board_txt =serializer.data.get('State')
-                    Move = serializer.data.get('last_move')
-                    print(f"in the post method move:{Move}")
-                    game = queryset.filter(Code=Code)[0]
-                    moved,board,ended,player,length,winner = self.get_game_update(game,Current_Player,Move)
+                    current_turn  = serializer.data.get('current_turn')
+                    board_txt =serializer.data.get('state')
+                    move = serializer.data.get('last_move')
+                    print(f"in the post method move:{move}")
+                    game = queryset.filter(id=id)[0]
+                    moved,board,ended,player,length,winner = self.get_game_update(game,current_turn,move)
                     if moved :
                         board_txt=self.serialize(board)
-                        game.State = board_txt
-                        game.Length = length
-                        Moves = game.Moves+"\n"+Move
-                        game.Moves = Moves
-                        game.last_move=Move
-                        game.Ongoing= not ended
+                        game.state = board_txt
+                        game.length = length
+                        moves = game.moves+"\n"+move
+                        game.moves = moves
+                        game.last_move = move
+
                         if ended:
-                            game.Winner= winner
+                            game.winner = user
                         game.save()
 
                         # # if the player moved and we are playing vs an AI the AI moves too:
                         # if queryset[0].player1=="AI" and Current_Player==0 or queryset[0].player2 =="AI" and Current_Player==1:
                         #     agent = Player.
-
                         return Response(GameMoveSerializer(game).data,status = status.HTTP_202_ACCEPTED)
                 
         return Response({'Bad Request': 'Invalid data...'}, status=status.HTTP_400_BAD_REQUEST)

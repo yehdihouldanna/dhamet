@@ -8,6 +8,6 @@ class UsersConfig(AppConfig):
 
     def ready(self):
         try:
-            import backend.users.signals  # noqa F401
+            import DhametFront.users.signals  # noqa F401
         except ImportError:
             pass

@@ -1,6 +1,6 @@
 import pytest
 
-from backend.users.models import User
+from DhametFront.users.models import User
 
 pytestmark = pytest.mark.django_db
 

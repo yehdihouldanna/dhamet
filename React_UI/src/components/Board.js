@@ -162,12 +162,14 @@ class Board extends Component {
       const requestOptions =
       {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json',
+                    "X-CSRFToken": '{{ csrf_token }}' },
         body: JSON.stringify({
-          'Code': this.state.Code,
-          'State': this.state.board_txt,
+          'id': this.state.Code,
+          'state': this.state.board_txt,
           'last_move': move_str,
-          'Current_Player': this.state.player,
+          'current_turn': this.state.player,
+          'winner':"",
         })
       };
       fetch('/DhametCode/move', requestOptions).
@@ -183,67 +185,13 @@ class Board extends Component {
             let game_state = this.state;
             game_state.player = game_state.player === 0 ? 1 : 0;
             console.log("The player now is : ", game_state.player);
-            game_state.board_txt = data.State;
+            game_state.board_txt = data.state;
             this.setState(game_state);
-            this.deserialize(data.State);
+            this.deserialize(data.state);
             this.state.move = "";
           }
         }
         );
-    }
-  };
-  MoveRequest_ws_(move_str) {
-    /*This function communicate with the makeGameMove view in the 
-      this one uses teh websocket*/
-    console.log("starting websocket move request");
-    console.log("Code:", this.state.Code);
-    if (this.state.Code === "") {
-      this.CreateGameRequest();
-
-    }
-    else if (move_str.length >= 5) {
-      // TODO  : the websocket could be optimized
-      console.log(this.state.Code);
-      const MoveWebSocket = new WebSocket(
-        'ws://'
-        + window.location.host
-        + '/DhametCode/'
-        + 'move/'
-        + this.state.Code
-        + '/'
-      );
-      console.log("Trying the move : ", move_str);
-      let me = this;
-      MoveWebSocket.onmessage = function (e) {
-        const data = JSON.parse(e.data);
-        console.log("Websocket returned successfully with data : ", data);
-
-        if (typeof data["Bad Request"] != "undefined") {
-          console.log("Invalid Move : Ignored!");
-          me.state.move = "";
-        }
-        else {
-          console.log("The answer is being processed: ", data);
-          let game_state = me.state;
-          console.log("the game state is : ", game_state);
-          game_state.player = game_state.player === 0 ? 1 : 0;
-          console.log("The player now is : ", game_state.player);
-          game_state.board_txt = data.State;
-          me.setState(game_state);
-          me.deserialize(data.State);
-          me.state.move = "";
-        }
-      };
-      MoveWebSocket.onclose = function (e) {
-        console.error('Chat socket closed unexpectedly');
-      };
-      MoveWebSocket.onopen = () => MoveWebSocket.send(
-        JSON.stringify({
-          'Code': this.state.Code,
-          'State': this.state.board_txt,
-          'last_move': move_str,
-          'Current_Player': this.state.player,
-        }));
     }
   };
   MoveRequest_ws(move_str) {
@@ -255,14 +203,51 @@ class Board extends Component {
       this.CreateGameRequest();
     }
     else if (move_str.length >= 5) {
-   
       console.log("Trying the move : ", move_str);
+    //   if (this.props.client.readyState === WebSocket.CLOSED) 
+    //   {
+    //     this.props.client.onopen = () => {
+    //       console.log('A new client Connected');
+    //     };
+    //     let me = this;
+    //       this.props.client.onmessage = function (e) {
+    //         const data = JSON.parse(e.data);
+    //         console.log("Client returned successfully with data : ", data);
+    
+    //         if (typeof data["Bad Request"] != "undefined") {
+    //           console.log("Invalid Move : Ignored!");
+    //           me.state.move = "";
+    //         }
+    //         else {
+    //           console.log("The answer is being processed: ", data);
+    //           let game_state = me.state;
+    //           console.log("the game state is : ", game_state);
+    //           game_state.player = data.current_turn;
+    //           console.log("The winner returned is : ",data.winner)
+    //           // game_state.player = game_state.player === 0 ? 1 : 0;
+    //           console.log("The player now is : ", game_state.player);
+    //           game_state.board_txt = data.state;
+    //           me.setState(game_state);
+    //           me.deserialize(data.state);
+    //           me.state.move = "";
+    //           if (data.winner!==null && data.winner!=="")
+    //           {// TODO : change this to a better thing.
+    //             alert(data.winner+" Won the game!");
+    //           }
+    //         }
+    //       };
+    
+    //     this.props.client.onclose = function (e) {
+    //       console.error('Client socket closed unexpectedly');
+    //     };
+    //  }
         this.props.client.send(
         JSON.stringify({
-          'Code': this.state.Code,
-          'State': this.state.board_txt,
+          'id': this.state.Code,
+          'state': this.state.board_txt,
           'last_move': move_str,
-          'Current_Player': this.state.player,
+          'current_turn': this.state.player,
+          'winner':"",
         }));
     }
   };
@@ -273,11 +258,11 @@ class Board extends Component {
     const requestOptions =
     {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'X-CSRFToken' : "{{csrf_token}}" },
       body: JSON.stringify({
-        Code: "",
-        player1: "Dummy",
-        player2: "Random",
+        "id": "",
+        "creator": "",
+        "opponent": "",
       })
     };
     // }
@@ -314,30 +299,29 @@ class Board extends Component {
     this.props.client.onopen = () => {
       console.log('A new client Connected');
     };
-    // this.props.client.onmessage = (message) => {
-    //   console.log(message);
-    // };
-
     let me = this;
       this.props.client.onmessage = function (e) {
         const data = JSON.parse(e.data);
-        console.log("Client returned successfully with data : ", data);
+        
 
         if (typeof data["Bad Request"] != "undefined") {
           console.log("Invalid Move : Ignored!");
           me.state.move = "";
         }
         else {
-          console.log("The answer is being processed: ", data);
+          console.log("We received a correct data: ", data);
           let game_state = me.state;
-          console.log("the game state is : ", game_state);
-          game_state.player = data.Current_Player;
-          // game_state.player = game_state.player === 0 ? 1 : 0;
+          game_state.player = data.current_turn;
+          // console.log("The winner returned is : ",data.winner)
           console.log("The player now is : ", game_state.player);
-          game_state.board_txt = data.State;
+          game_state.board_txt = data.state;
           me.setState(game_state);
-          me.deserialize(data.State);
+          me.deserialize(data.state);
           me.state.move = "";
+          if (data.winner!==null && data.winner!=="")
+          {// TODO : change this to a better thing.
+            alert(data.winner+" Won the game!");
+          }
         }
       };
 

@@ -5,11 +5,13 @@ import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 from .utils.Board import State
-from DhametCode.models import Game,Player
+from DhametCode.models import Game
+from users.models import User
 from rest_framework.response import Response
 from rest_framework import status
 import numpy as np
 import sys
+from datetime import datetime
 
 # This is a functional chat conumer could be used later to add a chat functionality.
 class ChatConsumer(AsyncWebsocketConsumer):
@@ -96,27 +98,18 @@ class GameConsumer(AsyncWebsocketConsumer):
         # data = event['data']
         # sender = self.scope["user"].username
         # receiver = self.scope['path'].split('_')[1]
-        moved, output_data = await self.post_move(event)
+        output_data = await self.post_move(event)
+
         # Send message to WebSocket
-
         await self.send(text_data = output_data)
-        # await self.send(text_data = json.dumps({'data': data}))
 
-
-    # @database_sync_to_async
-    # def post_move(self , sender  , receiver ,data):
-    #     sender = Player.objects.filter(username = sender)[0]
-    #     receiver = Player.objects.filter(username = sender)[0]
-    #     Game.objects.create(sender = sender , receiver = receiver , text =data)    
-
-
-    def get_game_update(self,game,Player,Move):
-        length = game.Length
-        board = self.deserialize(game.State)
-        game_instance = State(n=9,board=board,player = Player, length=length)
-        print('the move received is : ',Move)
-        game_instance.show_board(file=sys.stderr)
-        moves = Move.split(" ")
+    def get_game_update(self,game,current_turn,move):
+        length = game.length
+        board = self.deserialize(game.state)
+        game_instance = State(n=9,board=board,player = current_turn, length=length)
+        # print('the move received is : ',move)
+        # game_instance.show_board(file=sys.stderr)
+        moves = move.split(" ")
         moved = False
         for k in range(len(moves)-1):
             source = moves[k]
@@ -131,9 +124,9 @@ class GameConsumer(AsyncWebsocketConsumer):
             ended  = game_instance.check_end_condition()
             game_instance.player = not game_instance.player
             game_instance.length+=1
-            return True, game_instance.board,ended,game_instance.player,game_instance.length,game_instance.winner
+            return True, game_instance.board,ended,game_instance.length
         
-        return False ,None,None,None,None,None
+        return False ,None,None,None
 
     def serialize(self,board):
         "serialize the matrix board into a string format"
@@ -155,7 +148,6 @@ class GameConsumer(AsyncWebsocketConsumer):
 
     def deserialize(self,txt):
         "deserialize a string board into a matrix board"
-
         board = np.zeros((9,9),dtype=int)
         k = 0
         for i in range(9):
@@ -173,52 +165,63 @@ class GameConsumer(AsyncWebsocketConsumer):
                 k+=1
         return board
 
+
+
     @database_sync_to_async
     def post_move(self , event):
-        sender = self.scope["user"].username
-        # receiver = self.scope['path'].split('_')[1]
+        user = self.scope['user']
         data = event["data"]
-        print(f"Starting the post_move method with sender : {sender}\n data : {data}")
-        Code = data["Code"]
-        # 'Code':this.state.Code,
-        # 'State': this.state.board_txt,
-        # 'last_move': move_str,
-        # 'Current_Player':this.state.player,
+        print(f"Starting the post_move method with sender : {user.username}\n data : {data}")
+        id = data["id"]
+
+        if user.is_authenticated:
+            user = User.objects.filter(name = user.name)[0]
+        else:
+            user = User.objects.filter(name = "Guest")[0]
+
         moved = False
-        if Code!="":
-            queryset = Game.objects.filter(Code=Code)
+        if id!="":
+            queryset = Game.objects.filter(id=id)
             if queryset.exists():
-                Current_Player  = data['Current_Player']
-                board_txt = data['State']
-                Move = data['last_move']
-                print(f"in the post method move:{Move}")
+                # current_turn  = data['current_turn']
+                board_txt = data['state']
+                move = data['last_move']
+                print(f"in the post method move:{move}")
                 game = queryset[0]
-                moved,board,ended,player,length,winner = self.get_game_update(game,Current_Player,Move)
+                current_turn = game.current_turn
+                print("first move : current turn is :",current_turn )
+                moved,board,ended,length = self.get_game_update(game,current_turn,move)
                 if moved :
-                    board_txt=self.serialize(board)
-                    game.State = board_txt
-                    game.Length = length
-                    Moves = game.Moves+"\n"+Move
-                    game.Moves = Moves
-                    game.last_move=Move
-                    game.Ongoing= not ended
+                    board_txt = self.serialize(board)
+                    game.state = board_txt
+                    game.length = length
+                    moves = game.moves+"\n"+move
+                    game.moves = moves
+                    game.last_move= move
+                    game.current_turn = (game.current_turn+1)%2
+                    
                     if ended:
-                        game.Winner= winner
+                        game.winner_= user
+                        game.completed = datetime.now()
+
                     game.save()
 
-                    output_data  = json.dumps({
-                        'Code':Code,
-                        'State': game.State,
-                        'last_move': Move,
-                        'Current_Player':Current_Player})
-                    return moved,output_data
-                else:
-                    output_data  = json.dumps({
-                        'Code':Code,
-                        'State': game.State,
-                        'last_move': "",
-                        'Current_Player':game.Length%2})
-                    return moved,output_data
-                    # return Response(GameMoveSerializer(game).data,status = status.HTTP_202_ACCEPTED)
-        # return moved, json.dumps({'Bad Request': 'Invalid data...'})
-        # return Response({'Bad Request': 'Invalid data...'}, status=status.HTTP_400_BAD_REQUEST)
+                winner_=""
+
+                try:
+                    winner_ = game.winner.name
+                except:
+                    pass
+
+                output_data  = json.dumps({
+                    'id':id,
+                    'state': game.state,
+                    'last_move': move,
+                    'current_turn':game.current_turn,
+                    'winner' : winner_})
+                
+                return output_data
+        
+        raise Exception("You can't make a move in a non existing game!!")
+        
+        

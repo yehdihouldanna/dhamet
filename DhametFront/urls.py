@@ -30,11 +30,10 @@ urlpatterns = [
     
     path("users/", include("users.urls", namespace="users")),
     path("accounts/", include("allauth.urls")),
-    
     path('api-token-auth/', obtain_auth_token),
 
     path('',include('React_UI.urls'))
-] +static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)
+] + static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)
 
 #------
 

@@ -1,7 +1,7 @@
 import pytest
 from django.urls import resolve, reverse
 
-from backend.users.models import User
+from DhametFront.users.models import User
 
 pytestmark = pytest.mark.django_db
 
