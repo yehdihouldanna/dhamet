@@ -10,10 +10,6 @@ import Cell from './Cell';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import React, { Component } from 'react';
-// import { w3cwebsocket as W3CWebSocket } from "websocket";
-
-// const client = new W3CWebSocket('ws://127.0.0.1:8000');
-
 
 
 class Board extends Component {
@@ -67,6 +63,9 @@ class Board extends Component {
     // Binding extra util methods
     this.serialize = this.serialize.bind(this);
     this.deserialize = this.deserialize.bind(this);
+
+
+    this.update_moves_time_line = this.update_moves_time_line.bind(this);
   };
   //------------------------------------------
   //Utils Methods : 
@@ -112,21 +111,21 @@ class Board extends Component {
   //-------------------------------------------------
   // "Click Vs DoubleClick"  Handling :
   //---------------------------------------------------------------------------------------
-  doClickAction(key) {
-    if (this.state.move === "") { this.state.move = key; }
+  doClickAction(key,piece_present) {
+    if (this.state.move === "" && piece_present) { this.state.move = key; }
     else if (!this.state.move.slice(-5).includes(key) && this.state.move !== "") { this.state.move += " " + key; }
     console.log("current move : ", this.state.move);
   };
-  doDoubleClickAction(key) {
+  doDoubleClickAction(key,piece_present) {
     if (!this.state.move.slice(-5).includes(key) && this.state.move !== "") { this.state.move += " " + key; }
     this.handleMove();
   };
-  handleClick(e, key) {
+  handleClick(e, key,piece_present) {
     if (e.detail > 1) {
-      this.doDoubleClickAction(key);
+      this.doDoubleClickAction(key,piece_present);
     }
     else {
-      this.doClickAction(key);
+      this.doClickAction(key,piece_present);
     }
   };
   //-------------------------------------------------
@@ -204,43 +203,6 @@ class Board extends Component {
     }
     else if (move_str.length >= 5) {
       console.log("Trying the move : ", move_str);
-    //   if (this.props.client.readyState === WebSocket.CLOSED) 
-    //   {
-    //     this.props.client.onopen = () => {
-    //       console.log('A new client Connected');
-    //     };
-    //     let me = this;
-    //       this.props.client.onmessage = function (e) {
-    //         const data = JSON.parse(e.data);
-    //         console.log("Client returned successfully with data : ", data);
-    
-    //         if (typeof data["Bad Request"] != "undefined") {
-    //           console.log("Invalid Move : Ignored!");
-    //           me.state.move = "";
-    //         }
-    //         else {
-    //           console.log("The answer is being processed: ", data);
-    //           let game_state = me.state;
-    //           console.log("the game state is : ", game_state);
-    //           game_state.player = data.current_turn;
-    //           console.log("The winner returned is : ",data.winner)
-    //           // game_state.player = game_state.player === 0 ? 1 : 0;
-    //           console.log("The player now is : ", game_state.player);
-    //           game_state.board_txt = data.state;
-    //           me.setState(game_state);
-    //           me.deserialize(data.state);
-    //           me.state.move = "";
-    //           if (data.winner!==null && data.winner!=="")
-    //           {// TODO : change this to a better thing.
-    //             alert(data.winner+" Won the game!");
-    //           }
-    //         }
-    //       };
-    
-    //     this.props.client.onclose = function (e) {
-    //       console.error('Client socket closed unexpectedly');
-    //     };
-    //  }
         this.props.client.send(
         JSON.stringify({
           'id': this.state.Code,
@@ -317,6 +279,7 @@ class Board extends Component {
           game_state.board_txt = data.state;
           me.setState(game_state);
           me.deserialize(data.state);
+          me.update_moves_time_line();
           me.state.move = "";
           if (data.winner!==null && data.winner!=="")
           {// TODO : change this to a better thing.
@@ -329,6 +292,46 @@ class Board extends Component {
       console.error('Client socket closed unexpectedly');
     };
   }
+  //----------------------------------------
+  // Web Page modifiers :
+  //----------------------------------------
+  update_moves_time_line()
+  {
+    let time_line_item = document.createElement("div");
+    // time_line_item.setAttribute( "class",  "timeline-item");
+    time_line_item.classList.add( "timeline-item");
+    // time_line_item.classList.add( "yetAClass", "moreClasses", "anyClass" );
+
+    let time_label = document.createElement("div");
+    time_label.classList.add("timeline-label", "fw-bolder", "text-gray-800", "fs-6");
+    var today = new Date();
+    var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+    time_label.innerHTML = time;
+
+    let badge = document.createElement("div");
+    badge.classList.add("timeline-badge");
+    let icon = document.createElement("i");
+    // the icon colors class : are [blue:"text_primary",yellow: "text-warning",red:"text-danger",green:"text_success"]
+
+    if (this.state.player)
+    {icon.classList.add("fa", "fa-genderless", "text-warning" ,"fs-1");}
+    else
+    {icon.classList.add("fa", "fa-genderless", "text-primary" ,"fs-1");}
+    
+    badge.appendChild(icon)
+
+    let move_div = document.createElement("div");
+    move_div.classList.add("fw-mormal", "timeline-content", "text-muted", "ps-3");
+    move_div.innerHTML=this.state.move;
+
+    time_line_item.appendChild(time_label);
+    time_line_item.appendChild(badge);
+    time_line_item.appendChild(move_div);
+
+    document.getElementById("MovesContainer").appendChild(time_line_item);
+  }
+
+
   // --------------------------------------
   // Rendering React native method :
   //---------------------------------------
@@ -356,17 +359,24 @@ class Board extends Component {
         );
       }
     }
+    try {
+      document.getElementById("current_turn").innerHTML = "The current player is :" + this.state.player.toString();
+    }
+    catch 
+    {
+      // <div className="board_controls">
+      //   <div> The current player is {this.state.player}</div>
+      // </div>
+    }
+
+    
     return (
       <DndProvider backend={HTML5Backend}>
         <div id="board" onMouseLeave={this.handleMouseLeave}>
           {Cells}
         </div>
 
-        <div className="board_controls">
-          <div> The current player is {this.state.player}</div>
-          <button onClick={() => this.CreateGameRequest("Multiplayer")}> Multiplayer </button>
-          <button onClick={() => this.CreateGameRequest("AI")} > play vs AI </button>
-        </div>
+        
       </DndProvider>
     );
   };

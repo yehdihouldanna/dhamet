@@ -3,6 +3,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name = "viewport"  content ="width=device-width ,initial-scale=1">
+        <!-- {% extends "index.html" %} -->
         <title>Dhamet</title>
         {% csrf_token %}
         {% load static %}
@@ -22,7 +23,7 @@
         <div id ="main">
             <h3 id = "h3Title">Game : </h3> 
             <div id ="app">
-                <div id="root">
+                <div id="dhamet_container">
                     This is the main static Html page Containing only the board
                     <div id="board"></div>
                     <div id="Moves_log"></div>>
@@ -37,40 +38,6 @@
              <!-- ------------------------------------------------------ -->
              
 <script src = "{% static 'frontend/main.js' %}"></script>
-<script>
-    // const game_code = JSON.parse(document.getElementById('game_code').textContent);
-    // document.getElementById("h3Title").innerHTML+=game_code;
-    // let current = 1;
-    // const chatSocket = new WebSocket(
-    //     'ws://'
-    //     + window.location.host
-    //     + '/DhametCode/'
-    //     + 'move/'
-    //     + game_code
-    //     + '/'
-    // );
-
-    // chatSocket.onmessage = function(e) {
-    //     const data = JSON.parse(e.data);
-    //     console.log("We should have received a message");
-    //     console.log(data);
-    //     document.querySelector('#app').value += (data.message + '\n');
-    // };
-
-    // chatSocket.onclose = function(e) {
-    //     console.error('Chat socket closed unexpectedly');
-    // };
-
-    // document.querySelector('#board').onclick = function(e) {
-    //     console.log("clicked on baord");
-    //     chatSocket.send(JSON.stringify({
-    //         "id" : current,
-    //         'message': message,
-    //         "game_code" : 123,
-    //     }));
-    //     messageInputDom.value = '';
-    // };
-</script>
 
     </body>
 </html>

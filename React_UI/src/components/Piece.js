@@ -91,7 +91,7 @@ class Piece extends Component {
   {
     if ((this.props.player ===0 && this.props.color==="White") || (this.props.player ===1 && this.props.color==="Black"))
     {
-      this.props.onClick(e,key);
+      this.props.onClick(e,key,1);
     }
   }
   render() {

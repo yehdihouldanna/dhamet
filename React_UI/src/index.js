@@ -4,7 +4,6 @@ import '/static/css/index.css';
 import App from './App';
 import {BrowserRouter as Router} from "react-router-dom";
 import {hashHistory} from "react-router"
-import { HashRouter } from 'react-router-dom'
 
 let game_code = "";
 try 
@@ -33,6 +32,6 @@ ReactDOM.render(
     
   // </React.StrictMode>
   ,
-  document.getElementById('root')
+  document.getElementById('dhamet_container')
 );
 

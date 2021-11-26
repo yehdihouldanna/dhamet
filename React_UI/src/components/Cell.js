@@ -144,7 +144,7 @@ class Cell extends Component {
     if(this.props.value===0)
         { 
             return connectDropTarget(
-                <div className="cell"  onClick = {(e)=>this.props.onClick(e,this.props.i.toString()+this.props.j.toString())}> 
+                <div className="cell"  onClick = {(e)=>this.props.onClick(e,this.props.i.toString()+this.props.j.toString(),0)}> 
                   {this.props.i.toString()+this.props.j.toString()}
                     {/* {isOver && <div>Drop Here!</div>} */}
                 </div>

@@ -4,9 +4,11 @@
 {% load crispy_forms_tags %}
 
 {% block head_title %}{% trans "Sign In" %}{% endblock %}
-
-{% block header %}{% endblock %}
 {% block breadcrumb %}{% endblock %}
+
+{% block header %}
+{% endblock header %}
+
 
 {% block inner %}
   <div class="container">
@@ -21,7 +23,7 @@
           {% csrf_token %}
           {{ form|crispy }}
           {% if redirect_field_value %}
-            <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}"/>
+            <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
           {% endif %}
           <button class="primaryAction btn btn-primary" type="submit">{% trans "Sign In" %}</button>
         </form>
@@ -29,5 +31,5 @@
       </div>
     </div>
   </div>
-{% endblock %}
+{% endblock inner%}
 

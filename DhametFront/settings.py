@@ -42,13 +42,17 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
     'DhametCode',
     'React_UI',
+    'website',
+
     'debug_toolbar',
     'rest_framework',
     "rest_framework.authtoken",
     "users.apps.UsersConfig",
     'corsheaders',
+    'crispy_forms'
 ]
 
 AUTHENTICATION_BACKENDS = [
@@ -102,7 +106,9 @@ ROOT_URLCONF = 'DhametFront.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates'), 
+                 os.path.join(BASE_DIR, 'templates', 'allauth','templates')],
+                
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -179,6 +185,14 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
+
+PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
+STATIC_ROOT = os.path.join(PROJECT_DIR, 'static')
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'website/static/'),
+    os.path.join(BASE_DIR, 'React_UI/static/'),
+]
 
 MEDIA_ROOT = BASE_DIR + '/uploads'
 MEDIA_URL = "/files/"
