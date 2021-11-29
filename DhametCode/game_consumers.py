@@ -201,15 +201,15 @@ class GameConsumer(AsyncWebsocketConsumer):
                     game.current_turn = (game.current_turn+1)%2
                     
                     if ended:
-                        game.winner_= user
+                        game.winner= user
                         game.completed = datetime.now()
 
                     game.save()
 
-                winner_=""
+                winner=""
 
                 try:
-                    winner_ = game.winner.name
+                    winner = game.winner.name
                 except:
                     pass
 
@@ -218,7 +218,7 @@ class GameConsumer(AsyncWebsocketConsumer):
                     'state': game.state,
                     'last_move': move,
                     'current_turn':game.current_turn,
-                    'winner' : winner_})
+                    'winner' : winner})
                 
                 return output_data
         

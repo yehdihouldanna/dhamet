@@ -4,9 +4,9 @@
   height : 83px;
   display : inline-block;
   position:relative;
-  border:solid 1px olive;
+  border:solid 1px rgba(243, 227, 227, 0.301);
   border-radius:5px;
-  color :white;
+  color :rgba(243, 227, 227, 0.301);
   font-weight: bold;
 }
 
@@ -20,5 +20,18 @@
 .cell:hover
 {
   background-color: rgba(245, 212, 130, 0.61);
-  
+}
+
+.highlight_last_move
+{
+  background-color: rgba(9, 240, 9, 0.3);
+}
+.highlight_current_move
+{
+  background-color: rgba(253, 236, 2, 0.25);
+}
+
+.cell_active
+{
+  border:solid 1px rgba(255, 0, 0, 0.75);
 }

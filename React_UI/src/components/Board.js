@@ -41,6 +41,7 @@ class Board extends Component {
       Client : props.client,
       board_txt: "wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww_bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
       move: "",
+      last_move:"",
       timer: 0,
       delay: 200,
       prevent: false,
@@ -115,6 +116,9 @@ class Board extends Component {
     if (this.state.move === "" && piece_present) { this.state.move = key; }
     else if (!this.state.move.slice(-5).includes(key) && this.state.move !== "") { this.state.move += " " + key; }
     console.log("current move : ", this.state.move);
+    let game_state = this.state;
+    game_state.move = this.state.move;
+    this.setState(game_state);
   };
   doDoubleClickAction(key,piece_present) {
     if (!this.state.move.slice(-5).includes(key) && this.state.move !== "") { this.state.move += " " + key; }
@@ -254,12 +258,25 @@ class Board extends Component {
   handleMouseLeave() {
     console.log("On Mouse Leave got called");
     this.state.move = "";
+    let game_state = this.state;
+    game_state.move = this.state.move;
+    this.setState(game_state);
+    
   }
   // Componenets Native methods :
   componentWillMount() {
 
     this.props.client.onopen = () => {
       console.log('A new client Connected');
+
+      this.props.client.send(
+        JSON.stringify({
+          'id': this.state.Code,
+          'state': this.state.board_txt,
+          'last_move': this.state.move,
+          'current_turn': this.state.player,
+          'winner':"",
+        }));
     };
     let me = this;
       this.props.client.onmessage = function (e) {
@@ -273,16 +290,24 @@ class Board extends Component {
         else {
           console.log("We received a correct data: ", data);
           let game_state = me.state;
-          game_state.player = data.current_turn;
-          // console.log("The winner returned is : ",data.winner)
-          console.log("The player now is : ", game_state.player);
-          game_state.board_txt = data.state;
-          me.setState(game_state);
-          me.deserialize(data.state);
-          me.update_moves_time_line();
-          me.state.move = "";
+          
+            game_state.player = data.current_turn;
+            // console.log("The winner returned is : ",data.winner)
+            console.log("The player now is : ", game_state.player);
+            game_state.board_txt = data.state;
+
+            if (game_state.last_move != data.last_move)
+            { 
+              game_state.last_move= data.last_move;
+              me.setState(game_state);
+              me.deserialize(data.state);
+              me.update_moves_time_line();
+            }
+            me.state.move = "";
+          
           if (data.winner!==null && data.winner!=="")
           {// TODO : change this to a better thing.
+            
             alert(data.winner+" Won the game!");
           }
         }
@@ -297,38 +322,43 @@ class Board extends Component {
   //----------------------------------------
   update_moves_time_line()
   {
-    let time_line_item = document.createElement("div");
-    // time_line_item.setAttribute( "class",  "timeline-item");
-    time_line_item.classList.add( "timeline-item");
-    // time_line_item.classList.add( "yetAClass", "moreClasses", "anyClass" );
+    if (this.state.move!=="")
+    {
+      let time_line_item = document.createElement("div");
+      // time_line_item.setAttribute( "class",  "timeline-item");
+      // mb for margin bottom
+      time_line_item.classList.add( "timeline-item","mb-2");
+      // time_line_item.classList.add( "yetAClass", "moreClasses", "anyClass" );
 
-    let time_label = document.createElement("div");
-    time_label.classList.add("timeline-label", "fw-bolder", "text-gray-800", "fs-6");
-    var today = new Date();
-    var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
-    time_label.innerHTML = time;
+      let time_label = document.createElement("div");
+      time_label.classList.add("timeline-label", "fw-bolder", "text-gray-800", "fs-6");
+      var today = new Date();
+      // var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+      var time = today.getMinutes() + ":" + today.getSeconds();
+      time_label.innerHTML = time;
 
-    let badge = document.createElement("div");
-    badge.classList.add("timeline-badge");
-    let icon = document.createElement("i");
-    // the icon colors class : are [blue:"text_primary",yellow: "text-warning",red:"text-danger",green:"text_success"]
+      let badge = document.createElement("div");
+      badge.classList.add("timeline-badge");
+      let icon = document.createElement("i");
+      // the icon colors class : are [blue:"text_primary",yellow: "text-warning",red:"text-danger",green:"text_success"]
+      
+      
+      if (this.state.player)
+      {icon.classList.add("fa", "fa-genderless", "text-dark" ,"fs-1");}
+      else
+      {icon.classList.add("fa", "fa-genderless", "text-secondary" ,"fs-1");}
+      badge.appendChild(icon)
 
-    if (this.state.player)
-    {icon.classList.add("fa", "fa-genderless", "text-warning" ,"fs-1");}
-    else
-    {icon.classList.add("fa", "fa-genderless", "text-primary" ,"fs-1");}
-    
-    badge.appendChild(icon)
+      let move_div = document.createElement("div");
+      move_div.classList.add("fw-mormal", "timeline-content", "text-muted", "ps-3");
+      move_div.innerHTML=this.state.move;
 
-    let move_div = document.createElement("div");
-    move_div.classList.add("fw-mormal", "timeline-content", "text-muted", "ps-3");
-    move_div.innerHTML=this.state.move;
+      time_line_item.appendChild(time_label);
+      time_line_item.appendChild(badge);
+      time_line_item.appendChild(move_div);
 
-    time_line_item.appendChild(time_label);
-    time_line_item.appendChild(badge);
-    time_line_item.appendChild(move_div);
-
-    document.getElementById("MovesContainer").appendChild(time_line_item);
+      document.getElementById("MovesContainer").appendChild(time_line_item);
+    }
   }
 
 
@@ -342,6 +372,12 @@ class Board extends Component {
     for (let i = len - 1; i >= 0; i--) {
       for (let j = 0; j < len; j++) {
         let key = i.toString() + j.toString();
+        let ex_css_class="";
+        if (this.state.last_move.includes(key))
+        {
+          ex_css_class = " highlight_last_move";
+        }
+
         Cells.push(
           <Cell
             key={key}
@@ -354,25 +390,31 @@ class Board extends Component {
             onHover={this.handleHover}
             onStartMove={this.handleStartMove}
             onClick={this.handleClick}
+            ex_css_class ={ex_css_class}
+            toggle = {this.state.move.includes(key)}
           >
           </Cell>
         );
       }
     }
     try {
-      document.getElementById("current_turn").innerHTML = "The current player is :" + this.state.player.toString();
+      if(this.state.player)
+      {
+        document.getElementById("current_turn").innerHTML ="<span class='bullet bullet-dot bg-dark h-30px w-30px me-5'></span> Black's turn to play.";
+      }
+      else
+      {
+        document.getElementById("current_turn").innerHTML ="<span class='bullet bullet-dot bg-secondary h-30px w-30px me-5'></span> White's turn to play.";
+      }
+      
     }
     catch 
-    {
-      // <div className="board_controls">
-      //   <div> The current player is {this.state.player}</div>
-      // </div>
-    }
+    {}
 
     
     return (
       <DndProvider backend={HTML5Backend}>
-        <div id="board" onMouseLeave={this.handleMouseLeave}>
+        <div id="board"  onMouseLeave={this.handleMouseLeave}>
           {Cells}
         </div>
 
