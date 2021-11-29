@@ -12,15 +12,35 @@ def main(request,*args,**kwargs):
     if len(kwargs):
         outputs = {'game_code': kwargs['game_code']}
     return render(request,"index.html",outputs)
+    
 
 def sign_in(request):
     return render(request,"authentication/layouts/basic/sign-in.html")
 
-
 def sign_up(request):
     return render(request,"authentication/layouts/basic/sign-out.html")
-def docs(request):
-    return render(request,"documentation/getting-started.html")
+
+
+def docs_Fr(request):
+    return render(request,"Documentation/getting-started_Fr.html")
+    
+def docs_Ar(request):
+    return render(request,"Documentation/getting-started_Ar.html")
+
+
+def regles_Ar(request):
+    return render(request,"Documentation/base/utilities.html")
+   
+def regles_Fr(request):
+    return render(request,"Documentation/base/utilities_Fr.html")
+
+   
+def Intro_Ar(request):
+    return render(request,"Documentation/getting-started/build/gulp.html")
+def Intro_Fr(request):
+    return render(request,"Documentation/getting-started/build/gulp_Fr.html")
+
+
 
 
     

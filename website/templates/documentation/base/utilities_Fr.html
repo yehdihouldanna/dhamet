@@ -12,9 +12,9 @@ License: For each use you must have a valid license purchased only from above li
 -->
 <html lang="en">
 	<!--begin::Head-->
-	<head><base href="../">
-		<title>Introduction Sur Dhamet</title>
-		{% load static %}
+	<head><base href="../../">
+		<title>Les régles du jeu</title>
+        {% load static %}
 		<meta charset="utf-8" />
 		<meta name="description" content="The most advanced Bootstrap Admin Theme on Themeforest trusted by 94,000 beginners and professionals. Multi-demo, Dark Mode, RTL support and complete React, Angular, Vue &amp; Laravel versions. Grab your copy now and get life-time updates for free." />
 		<meta name="keywords" content="Metronic, bootstrap, bootstrap 5, Angular, VueJs, React, Laravel, admin themes, web design, figma, web development, free templates, free admin themes, bootstrap theme, bootstrap template, bootstrap dashboard, bootstrap dak mode, bootstrap button, bootstrap datepicker, bootstrap timepicker, fullcalendar, datatables, flaticon" />
@@ -25,16 +25,16 @@ License: For each use you must have a valid license purchased only from above li
 		<meta property="og:url" content="https://keenthemes.com/metronic" />
 		<meta property="og:site_name" content="Keenthemes | Metronic" />
 		<link rel="canonical" href="https://preview.keenthemes.com/metronic8" />
-		<link rel="shortcut icon" href="{% static 'assets/media/logos/favicon.ico' %}" />
+		<link rel="shortcut icon" href="{% static 'assets/media/logos/favicon.ico'%}" />
 		<!--begin::Fonts-->
 		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" />
 		<!--end::Fonts-->
 		<!--begin::Page Vendor Stylesheets(used by this page)-->
-		<link href="{% static 'assets/plugins/custom/prismjs/prismjs.bundle.css' %}" rel="stylesheet" type="text/css" />
+		<link href="{% static 'assets/plugins/custom/prismjs/prismjs.bundle.css'%}" rel="stylesheet" type="text/css" />
 		<!--end::Page Vendor Stylesheets-->
 		<!--begin::Global Stylesheets Bundle(used by all pages)-->
-		<link href="{% static 'assets/plugins/global/plugins.bundle.css' %}" rel="stylesheet" type="text/css" />
-		<link href="{% static 'assets/css/style.bundle.css' %}" rel="stylesheet" type="text/css" />
+		<link href="{% static 'assets/plugins/global/plugins.bundle.css'%}" rel="stylesheet" type="text/css" />
+		<link href="{% static 'assets/css/style.bundle.css'%}" rel="stylesheet" type="text/css" />
 		<!--end::Global Stylesheets Bundle-->
 	</head>
 	<!--end::Head-->
@@ -50,7 +50,7 @@ License: For each use you must have a valid license purchased only from above li
 					<div class="docs-aside-logo flex-column-auto h-75px" id="kt_docs_aside_logo">
 						<!--begin::Link-->
 						<a href="../../demo6/dist/index.html">
-							<img alt="Logo" src="{% static 'assets/media/logos/logo-1.svg' %}" class="h-25px" />
+							<img alt="Logo" src="{% static 'assets/media/logos/logo-1.svg'%}" class="h-25px" />
 						</a>
 						<!--end::Link-->
 					</div>
@@ -64,81 +64,66 @@ License: For each use you must have a valid license purchased only from above li
 								<div class="menu-item">
 									<h4 class="menu-content text-muted mb-0 fs-7 text-uppercase">Getting Started</h4>
 								</div>
-								<div class="menu-item">
-									<a class="menu-link active py-2" href="../../demo6/dist/documentation/getting-started.html">
-										<span class="menu-title">Aperçu</span>
-									</a>
-								</div>
 								
 								<div data-kt-menu-trigger="click" class="menu-item menu-accordion">
-									
+									<span class="menu-link py-2">
+										<span class="menu-title">Build</span>
+										<span class="menu-arrow"></span>
+									</span>
 									<div class="menu-sub menu-sub-accordion">
 										<div class="menu-item">
-											<a class="menu-link py-2" href="../../demo6/dist/documentation/getting-started/customization/sass.html">
+											<a class="menu-link py-2" href="../../demo6/dist/documentation/getting-started/build/gulp.html">
 												<span class="menu-bullet">
 													<span class="bullet bullet-dot"></span>
 												</span>
-												<span class="menu-title">SASS</span>
+												<span class="menu-title">Gulp</span>
 											</a>
 										</div>
 										<div class="menu-item">
-											<a class="menu-link py-2" href="../../demo6/dist/documentation/getting-started/customization/javascript.html">
+											<a class="menu-link py-2" href="../../demo6/dist/documentation/getting-started/build/webpack.html">
 												<span class="menu-bullet">
 													<span class="bullet bullet-dot"></span>
 												</span>
-												<span class="menu-title">Javascript</span>
-											</a>
-										</div>
-										<div class="menu-item">
-											<a class="menu-link py-2" href="../../demo6/dist/documentation/getting-started/customization/no-jquery.html">
-												<span class="menu-bullet">
-													<span class="bullet bullet-dot"></span>
-												</span>
-												<span class="menu-title">No jQuery</span>
+												<span class="menu-title">Webpack</span>
 											</a>
 										</div>
 									</div>
 								</div>
+								<div class="menu-item">
+									<a class="menu-link py-2" href="../../demo6/dist/documentation/getting-started/multi-demo.html">
+										<span class="menu-title">Multi-demo</span>
+									</a>
+								</div>
+								<div class="menu-item">
+									<a class="menu-link py-2" href="../../demo6/dist/documentation/getting-started/file-structure.html">
+										<span class="menu-title">File Structure</span>
+									</a>
+								</div>
+								<div data-kt-menu-trigger="click" class="menu-item menu-accordion">
+									<span class="menu-link py-2">
+										<span class="menu-title">Customization</span>
+										<span class="menu-arrow"></span>
+									</span>
+									
+								</div>
+								
 								<div class="menu-item">
 									<a class="menu-link py-2" href="../../demo6/dist/documentation/getting-started/illustrations.html">
 										<span class="menu-title">Illustrations</span>
 									</a>
 								</div>
 								
-								<div class="menu-item">
-									<a class="menu-link py-2" href="../../demo6/dist/documentation/getting-started/rtl.html">
-										<span class="menu-title">RTL Version</span>
-									</a>
-								</div>
-								<div class="menu-item">
-									<a class="menu-link py-2" href="https://preview.keenthemes.com/metronic8/demo6/layout-builder.html" target="blank">
-										<span class="menu-title">Layout Builder</span>
-									</a>
-								</div>
-								<div data-kt-menu-trigger="click" class="menu-item menu-accordion">
-									<span class="menu-link py-2">
-										<span class="menu-title">Server Side Integration</span>
-										<span class="menu-arrow"></span>
-									</span>
-									<div class="menu-sub menu-sub-accordion">
-										<div class="menu-item">
-											<a class="menu-link py-2" href="../../demo6/dist/documentation/getting-started/integration/blazor.html">
-												<span class="menu-bullet">
-													<span class="bullet bullet-dot"></span>
-												</span>
-												<span class="menu-title">Blazor</span>
-											</a>
-										</div>
-									</div>
-								</div>
-								<div class="menu-item">
-									<a class="menu-link py-2" href="../../demo6/dist/documentation/getting-started/updates.html">
-										<span class="menu-title">Updates</span>
-									</a>
-								</div>
+							
+								
 								<div class="menu-item">
 									<a class="menu-link py-2" href="../../demo6/dist/documentation/getting-started/references.html">
 										<span class="menu-title">References</span>
+									</a>
+								</div>
+								<div class="menu-item">
+									<a class="menu-link py-2" href="../../demo6/dist/documentation/getting-started/changelog.html">
+										<span class="menu-title">Changelog
+										<span class="badge badge-changelog badge-light-danger bg-hover-danger text-hover-white fw-bold fs-9 px-2 ms-2">v8.0.30</span></span>
 									</a>
 								</div>
 								<div class="menu-item">
@@ -148,7 +133,7 @@ License: For each use you must have a valid license purchased only from above li
 									<h4 class="menu-content text-muted mb-0 fs-7 text-uppercase">Base</h4>
 								</div>
 								<div class="menu-item">
-									<a class="menu-link py-2" href="../../demo6/dist/documentation/base/utilities.html">
+									<a class="menu-link active py-2" href="../../demo6/dist/documentation/base/utilities.html">
 										<span class="menu-title">Utilities</span>
 									</a>
 								</div>
@@ -1323,7 +1308,7 @@ License: For each use you must have a valid license purchased only from above li
 								<!--begin::Aside toggle-->
 								<div class="d-flex align-items-center d-lg-none ms-n2 me-1" title="Show aside menu">
 									<div class="btn btn-icon btn-flex btn-active-color-primary" id="kt_docs_aside_toggle">
-										<!--begin::Svg Icon | path: icons/duotune/abstract/abs015.svg-->
+										<!--begin::Svg Icon | path: icons/duotune/abstract/abs015.svg'%}-->
 										<span class="svg-icon svg-icon-1 mt-1">
 											<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
 												<path d="M21 7H3C2.4 7 2 6.6 2 6V4C2 3.4 2.4 3 3 3H21C21.6 3 22 3.4 22 4V6C22 6.6 21.6 7 21 7Z" fill="black" />
@@ -1337,8 +1322,8 @@ License: For each use you must have a valid license purchased only from above li
 								<!--begin::Logo-->
 								<div class="d-flex d-lg-none align-items-center flex-grow-1 flex-lg-grow-0 me-3 me-lg-15">
 									<a href="../../demo6/dist/index.html">
-										<img alt="Logo" src="{% static 'assets/media/logos/logo-1.svg' %}" class="d-none d-lg-block h-25px" />
-										<img alt="Logo" src="{% static 'assets/media/logos/logo-2.svg' %}" class="d-lg-none h-35px" />
+										<img alt="Logo" src="{% static 'assets/media/logos/logo-1.svg'%}" class="d-none d-lg-block h-25px" />
+										<img alt="Logo" src="{% static 'assets/media/logos/logo-2.svg'%}" class="d-lg-none h-35px" />
 									</a>
 								</div>
 								<!--end::Logo-->
@@ -1358,10 +1343,15 @@ License: For each use you must have a valid license purchased only from above li
 											<!--begin::Breadcrumb-->
 											<ul class="breadcrumb breadcrumb-separatorless fw-bold fs-6 my-1">
 												<!--begin::Item-->
-												<li class="breadcrumb-item text-gray-600">Getting Started</li>
+												<li class="breadcrumb-item text-gray-600">Base</li>
 												<!--end::Item-->
 												<!--begin::Item-->
-												<li class="breadcrumb-item text-dark">Aperçu</li>
+												<li class="breadcrumb-item">
+													<span class="bullet w-5px h-2px"></span>
+												</li>
+												<!--end::Item-->
+												<!--begin::Item-->
+												<li class="breadcrumb-item text-dark">Utilities</li>
 												<!--end::Item-->
 											</ul>
 											<!--end::Breadcrumb-->
@@ -1376,7 +1366,7 @@ License: For each use you must have a valid license purchased only from above li
 											<!--begin::Tablet and mobile search toggle-->
 											<div data-kt-search-element="toggle" class="d-flex d-lg-none align-items-center">
 												<div class="btn btn-icon btn-color-gray-700 btn-active-color-primary bg-body w-40px h-40px">
-													<!--begin::Svg Icon | path: icons/duotune/general/gen004.svg-->
+													<!--begin::Svg Icon | path: icons/duotune/general/gen004.svg'%}-->
 													<span class="svg-icon svg-icon-2">
 														<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
 															<path d="M21.7 18.9L18.6 15.8C17.9 16.9 16.9 17.9 15.8 18.6L18.9 21.7C19.3 22.1 19.9 22.1 20.3 21.7L21.7 20.3C22.1 19.9 22.1 19.3 21.7 18.9Z" fill="black" />
@@ -1393,7 +1383,7 @@ License: For each use you must have a valid license purchased only from above li
 												<input type="hidden" />
 												<!--end::Hidden input-->
 												<!--begin::Icon-->
-												<!--begin::Svg Icon | path: icons/duotune/general/gen021.svg-->
+												<!--begin::Svg Icon | path: icons/duotune/general/gen021.svg'%}-->
 												<span class="svg-icon svg-icon-2 svg-icon-gray-700 position-absolute top-50 translate-middle-y ms-4">
 													<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
 														<rect opacity="0.5" x="17.0365" y="15.1223" width="8.15546" height="2" rx="1" transform="rotate(45 17.0365 15.1223)" fill="black" />
@@ -1412,7 +1402,7 @@ License: For each use you must have a valid license purchased only from above li
 												<!--end::Spinner-->
 												<!--begin::Reset-->
 												<span class="btn btn-flush btn-active-color-primary position-absolute top-50 end-0 translate-middle-y lh-0 d-none me-4" data-kt-search-element="clear">
-													<!--begin::Svg Icon | path: icons/duotune/arrows/arr061.svg-->
+													<!--begin::Svg Icon | path: icons/duotune/arrows/arr061.svg'%}-->
 													<span class="svg-icon svg-icon-2 me-0">
 														<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
 															<rect opacity="0.5" x="6" y="17.3137" width="16" height="2" rx="1" transform="rotate(-45 6 17.3137)" fill="black" />
@@ -1440,7 +1430,7 @@ License: For each use you must have a valid license purchased only from above li
 															<!--end::Item-->
 															<!--begin::Item-->
 															<a href="../../demo6/dist/documentation/getting-started/build/gulp.html" data-kt-searchable="true" class="d-none d-flex flex-column text-dark text-hover-primary py-2">
-																<span class="fw-bolder fs-5 mb-0">Introduction</span>
+																<span class="fw-bolder fs-5 mb-0">Gulp</span>
 																<span class="fw-bold fs-base text-muted">Automate &amp; enhance your build workflow</span>
 															</a>
 															<!--end::Item-->
@@ -2463,7 +2453,7 @@ License: For each use you must have a valid license purchased only from above li
 													<div data-kt-search-element="empty" class="text-center d-none">
 														<!--begin::Icon-->
 														<div class="pt-10 pb-5">
-															<!--begin::Svg Icon | path: icons/duotune/files/fil024.svg-->
+															<!--begin::Svg Icon | path: icons/duotune/files/fil024.svg'%}-->
 															<span class="svg-icon svg-icon-4x opacity-50">
 																<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
 																	<path opacity="0.3" d="M14 2H6C4.89543 2 4 2.89543 4 4V20C4 21.1046 4.89543 22 6 22H18C19.1046 22 20 21.1046 20 20V8L14 2Z" fill="black" />
@@ -2510,120 +2500,41 @@ License: For each use you must have a valid license purchased only from above li
 								<!--begin::Card Body-->
 								<div class="card-body fs-6 py-15 px-10 py-lg-15 px-lg-15 text-gray-700">
 									<!--begin::Section-->
-									<div class="px-md-10 pt-md-10 pb-md-5">
+									<div class="pb-10">
+										<!--begin::Heading-->
+										<h1 class="anchor fw-bolder mb-5" id="overview">
+										<a href="#overview"></a>Régles du jeu</h1>
+										<!--end::Heading-->
 										<!--begin::Block-->
-										<div class="text-center mb-20">
-											<h1 class="fs-2tx fw-bolder mb-8">Savoir Rapidement jouer
-											<span class="d-inline-block position-relative ms-2">
-												<span class="d-inline-block mb-2">Dhamet</span>
-												<span class="d-inline-block position-absolute h-8px bottom-0 end-0 start-0 bg-success translate rounded"></span>
-											</span></h1>
-											<div class="fw-bold fs-2 text-gray-500 mb-10">Les Dammes du Desrt
-											</div>
-										</div>
-										<!--end::Block-->
-										<!--begin::Row-->
-										<div class="row g-0">
-											<!--begin::Col-->
-											<div class="col-md-6 mb-10">
-												<div class="bg-light bg-opacity-50 rounded-3 p-10 mx-md-5 h-md-100">
-													
-													<h1 class="mb-5">Introduction</h1>
-													<div class="fs-4 text-gray-600 py-3">Le Srand, ou Dhamet , est le jeu national mauritanien. Mais ce fut surtout le jeu des nomades de tout le Sahara.Variante élaborée des jeux de dames , il en multiplie les possibilités de combinaisons.Fasciant ! 
-									
-													</div>
-													<a href="../../demo6/dist/documentation/getting-started/build/gulp.html" class="btn btn-lg btn-flex btn-link btn-color-info">Voir plus
-													<!--begin::Svg Icon | path: icons/duotune/arrows/arr064.svg-->
-													<span class="svg-icon ms-2 svg-icon-3">
-														<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-															<rect opacity="0.5" x="18" y="13" width="13" height="2" rx="1" transform="rotate(-180 18 13)" fill="black" />
-															<path d="M15.4343 12.5657L11.25 16.75C10.8358 17.1642 10.8358 17.8358 11.25 18.25C11.6642 18.6642 12.3358 18.6642 12.75 18.25L18.2929 12.7071C18.6834 12.3166 18.6834 11.6834 18.2929 11.2929L12.75 5.75C12.3358 5.33579 11.6642 5.33579 11.25 5.75C10.8358 6.16421 10.8358 6.83579 11.25 7.25L15.4343 11.4343C15.7467 11.7467 15.7467 12.2533 15.4343 12.5657Z" fill="black" />
-														</svg>
-													</span>
-													<!--end::Svg Icon--></a>
-												</div>
-											</div>
-											<!--end::Col-->
-											<!--begin::Col-->
-											<div class="col-md-6 mb-10">
-												<div class="bg-light bg-opacity-50 rounded-3 p-10 mx-md-5 h-md-100">
-													
-													<h1 class="mb-5">Régles du jeux</h1>
-													<div class="fs-4 text-gray-600 py-3">Le jeu se déroule alternativement entre les deux joueurs . coup aprés coup . les blancs commencent toujours.</div>
-													<a href="../../demo6/dist/documentation/base/utilities.html" class="btn btn-lg btn-flex btn-link btn-color-success">Voir plus
-													<!--begin::Svg Icon | path: icons/duotune/arrows/arr064.svg-->
-													<span class="svg-icon ms-2 svg-icon-3">
-														<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-															<rect opacity="0.5" x="18" y="13" width="13" height="2" rx="1" transform="rotate(-180 18 13)" fill="black" />
-															<path d="M15.4343 12.5657L11.25 16.75C10.8358 17.1642 10.8358 17.8358 11.25 18.25C11.6642 18.6642 12.3358 18.6642 12.75 18.25L18.2929 12.7071C18.6834 12.3166 18.6834 11.6834 18.2929 11.2929L12.75 5.75C12.3358 5.33579 11.6642 5.33579 11.25 5.75C10.8358 6.16421 10.8358 6.83579 11.25 7.25L15.4343 11.4343C15.7467 11.7467 15.7467 12.2533 15.4343 12.5657Z" fill="black" />
-														</svg>
-													</span>
-													<!--end::Svg Icon--></a>
-												</div>
-											</div>
-											<!--end::Col-->
-											<!--begin::Col-->
-											<div class="col-md-6 mb-10">
-												<div class="bg-light bg-opacity-50 rounded-3 p-10 mx-md-5 h-md-100">
-													<div class="d-flex flex-center w-60px h-60px rounded-3 bg-light-danger bg-opacity-90 mb-10">
-														<!--begin::Svg Icon | path: icons/duotune/abstract/abs027.svg-->
-														<span class="svg-icon svg-icon-danger svg-icon-3x">
-															<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-																<path opacity="0.3" d="M21.25 18.525L13.05 21.825C12.35 22.125 11.65 22.125 10.95 21.825L2.75 18.525C1.75 18.125 1.75 16.725 2.75 16.325L4.04999 15.825L10.25 18.325C10.85 18.525 11.45 18.625 12.05 18.625C12.65 18.625 13.25 18.525 13.85 18.325L20.05 15.825L21.35 16.325C22.35 16.725 22.35 18.125 21.25 18.525ZM13.05 16.425L21.25 13.125C22.25 12.725 22.25 11.325 21.25 10.925L13.05 7.62502C12.35 7.32502 11.65 7.32502 10.95 7.62502L2.75 10.925C1.75 11.325 1.75 12.725 2.75 13.125L10.95 16.425C11.65 16.725 12.45 16.725 13.05 16.425Z" fill="black" />
-																<path d="M11.05 11.025L2.84998 7.725C1.84998 7.325 1.84998 5.925 2.84998 5.525L11.05 2.225C11.75 1.925 12.45 1.925 13.15 2.225L21.35 5.525C22.35 5.925 22.35 7.325 21.35 7.725L13.05 11.025C12.45 11.325 11.65 11.325 11.05 11.025Z" fill="black" />
-															</svg>
-														</span>
-														<!--end::Svg Icon-->
-													</div>
-													<h1 class="mb-5">Extended Utility Classes</h1>
-													<div class="fs-4 text-gray-600 py-3">Build whatever you want without a single line of CSS/SASS code by just using our low-level utility classes and base components.</div>
-													<a href="../../demo6/dist/documentation/base/utilities.html" class="btn btn-lg btn-flex btn-link btn-color-danger">Learn more
-													<!--begin::Svg Icon | path: icons/duotune/arrows/arr064.svg-->
-													<span class="svg-icon ms-2 svg-icon-3">
-														<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-															<rect opacity="0.5" x="18" y="13" width="13" height="2" rx="1" transform="rotate(-180 18 13)" fill="black" />
-															<path d="M15.4343 12.5657L11.25 16.75C10.8358 17.1642 10.8358 17.8358 11.25 18.25C11.6642 18.6642 12.3358 18.6642 12.75 18.25L18.2929 12.7071C18.6834 12.3166 18.6834 11.6834 18.2929 11.2929L12.75 5.75C12.3358 5.33579 11.6642 5.33579 11.25 5.75C10.8358 6.16421 10.8358 6.83579 11.25 7.25L15.4343 11.4343C15.7467 11.7467 15.7467 12.2533 15.4343 12.5657Z" fill="black" />
-														</svg>
-													</span>
-													<!--end::Svg Icon--></a>
-												</div>
-											</div>
-											<!--end::Col-->
-											<!--begin::Col-->
-											<div class="col-md-6 mb-10">
-												<div class="bg-light bg-opacity-50 rounded-3 p-10 mx-md-5 h-md-100">
-													<div class="d-flex flex-center w-60px h-60px rounded-3 bg-light-info bg-opacity-90 mb-10">
-														<!--begin::Svg Icon | path: icons/duotune/abstract/abs047.svg-->
-														<span class="svg-icon svg-icon-info svg-icon-3x">
-															<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-																<path opacity="0.3" d="M12.3028 2C2.20276 8.5 0.302758 19.4 12.3028 22C24.3028 19.4 22.4028 8.5 12.3028 2Z" fill="black" />
-																<path d="M12.3028 22L20.6028 13.7C20.7028 17.5 18.2028 20.7 12.3028 22ZM19.6028 9.7C19.1028 8.7 18.5028 7.7 17.6028 6.7L12.3028 12V17L19.6028 9.7ZM9.40277 4.10001C8.50277 4.90001 7.60277 5.80001 6.90277 6.60001L12.2028 11.9V6.89999L9.40277 4.10001ZM12.3028 2V7L15.2028 4.10001C14.3028 3.40001 13.3028 2.7 12.3028 2ZM4.00278 13.7L12.3028 22V17L5.00278 9.7C4.40278 11.1 4.00278 12.4 4.00278 13.7Z" fill="black" />
-															</svg>
-														</span>
-														<!--end::Svg Icon-->
-													</div>
-													<h1 class="mb-5">Illustrations</h1>
-													<div class="fs-4 text-gray-600 py-3">Use our in-house designed vector illustrations to convey a light mood to your users and make them feel at ease while using your sites and apps.</div>
-													<a href="../../demo6/dist/documentation/getting-started/illustrations.html" class="btn btn-lg btn-flex btn-link btn-color-info">Preview Illustrations
-													<!--begin::Svg Icon | path: icons/duotune/arrows/arr064.svg-->
-													<span class="svg-icon ms-2 svg-icon-3">
-														<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-															<rect opacity="0.5" x="18" y="13" width="13" height="2" rx="1" transform="rotate(-180 18 13)" fill="black" />
-															<path d="M15.4343 12.5657L11.25 16.75C10.8358 17.1642 10.8358 17.8358 11.25 18.25C11.6642 18.6642 12.3358 18.6642 12.75 18.25L18.2929 12.7071C18.6834 12.3166 18.6834 11.6834 18.2929 11.2929L12.75 5.75C12.3358 5.33579 11.6642 5.33579 11.25 5.75C10.8358 6.16421 10.8358 6.83579 11.25 7.25L15.4343 11.4343C15.7467 11.7467 15.7467 12.2533 15.4343 12.5657Z" fill="black" />
-														</svg>
-													</span>
-													<!--end::Svg Icon--></a>
-												</div>
-											</div>
-											<!--end::Col-->
-										</div>
-										<!--end::Row-->
+										<div class="py-5">Le jeu se déroule alternativement entre les deux joueurs . coup aprés coup . les blancs commencent toujours.<br>
+									    Déplacement des pions : chaque joueur ne déplace que ses pions . Un pion avance d'une intersection contigué vide en suivant colonne ou diagonnale; mais jamais une rangée.<br>
+										Une intersection ne peut Être occupée que par un seul pion.
+										le but c'est d'eliminer tous les pions de son adversaire , ou de lui bloquer tous déplacements ( ce dexiéme cas rarement dans la pratique)<br>
+										Prise des poins :un pion pris est éliminé et retiré du jeu. Pour capturer un poin adverse, on doit depasser par-dessus ce pion en ligne droite.
+										pour atteindre une case contigué libre, et ce suir une rangée , une colonne ou une diagonale , aussi bien par devant de côté, ou par deriére.On est obligé de prendre dés qu'on le peut.<br>
+										Sur le diagrame 2,le pion blanc c7 peut capturer un poin noir en sautant en a9,c9,e7,c5 ou a5; de meme ,le pion blanc g6 peut prendre en g4,e6,g8 et i6.<br>
+										
+										<br><br><br> <a href="{% static 'assets/media/avatars/diagramme2.png'%}"><img src="{% static 'assets/media/avatars/diagramme2.png'%}"   class="rounded mx-auto d-block" alt="" /></a><br><br>
+										
+										
+										<ul class="py-0">
+										<li class="py-2" >Rafles : on est toujour obligé de prendre  et toujours le plus de pions possible de son adversaire . <br>
+										On dit aux dames qu'on effectue une rafle. Mais attention , contrairement aux dames, les pions  doivent etre retirés du jeu au fur et à mersure que le joueur effectue sa rafle.
+										Sur le diagramme 3,le pion blanc g7 exécute la rafle suivante : i5 x g3 x g5 x e7 x c9 ( en abssence de notation on va utiliser seul des échecs). </li><br>
+										<li class="py-2"> Sultans : lorsqu'un pion atteint le rangée la plus reculée du camp de son adversaire , ce pion est promu Sultan , Comme pour une dame au jeu de Dames, on lui adjoint un autre pion de sa couleur.<br>
+										Le Sultan se déplace dans toutes les directions , et d'un nombre de cases quelconque. Il peut prendre un pion adverse placé sur la trajectoire. quelle que soit la distance à condition que la case contigué au pion convoité soit libre.<br>
+										Sur le diagramme 3 , le Sultan b7 ne peut se déplacer que sur la rangée 7 et la colonne b (il n'a pas de diagonale). <br>Par contre , le Sultan e5 pourait de déplacer sur la colonne e ,la rangée 5 et les diagonales a9 et i9, mais comme il peut capturer le pion c3 , il doit le faire , en sautant par-dessus et se posant sur b2.
+									     <br><br> <a href="{% static 'assets/media/avatars/diagramme3.png'%}"><img src="{% static 'assets/media/avatars/diagramme3.png'%}"  class="rounded mx-auto d-block"alt="" /></a> <br>
+										<li class="py-2">Soufflés : lorsqu'un joueur n'a pas effectué sa rafle cmompléte , son adversaire peut l'exiger ou lui souffler son pion ou son sultan(c'est-à-dire le rétirer du jeu)<br>
+										Dans le cas de rafles compliquées , le joueur annonce à l'avance le nombre de pions qu'il va prendre .Si son adversaire démontre qu'il pouvait en prendre d'avantage , il souffle le pion ou le Sultan qui devait effectuer la rafle
+										<br>
+										</li>
+										</ul>
+
+										
 									</div>
-									<!--end::Section-->
-								</div>
-								<!--end::Card Body-->
-							</div>
-							<!--end::Card-->
+									
+									
 						</div>
 						<!--end::Container-->
 					</div>
@@ -2644,7 +2555,7 @@ License: For each use you must have a valid license purchased only from above li
 								<li class="menu-item">
 									<!--begin::Menu link-->
 									<a href="https://www.youtube.com/c/KeenThemesTuts/videos" target="_blank" class="menu-link px-3">
-										<img alt="Keenthemes Youtube" src="{% static 'assets/media/svg/social-logos/youtube.svg' %}" class="h-20px" />
+										<img alt="Keenthemes Youtube" src="{% static 'assets/media/svg/social-logos/youtube.svg'%}" class="h-20px" />
 									</a>
 									<!--end::Menu link-->
 								</li>
@@ -2653,7 +2564,7 @@ License: For each use you must have a valid license purchased only from above li
 								<li class="menu-item">
 									<!--begin::Menu link-->
 									<a href="https://github.com/KeenthemesHub" target="_blank" class="menu-link px-3">
-										<img alt="Keenthemes Github" src="{% static 'assets/media/svg/social-logos/github.svg' %}" class="h-20px" />
+										<img alt="Keenthemes Github" src="{% static 'assets/media/svg/social-logos/github.svg'%}" class="h-20px" />
 									</a>
 									<!--end::Menu link-->
 								</li>
@@ -2662,7 +2573,7 @@ License: For each use you must have a valid license purchased only from above li
 								<li class="menu-item">
 									<!--begin::Menu link-->
 									<a href="https://twitter.com/keenthemes" target="_blank" class="menu-link px-3">
-										<img alt="Keenthemes Twitter" src="{% static 'assets/media/svg/social-logos/twitter.svg' %}" class="h-20px" />
+										<img alt="Keenthemes Twitter" src="{% static 'assets/media/svg/social-logos/twitter.svg'%}" class="h-20px" />
 									</a>
 									<!--end::Menu link-->
 								</li>
@@ -2671,7 +2582,7 @@ License: For each use you must have a valid license purchased only from above li
 								<li class="menu-item">
 									<!--begin::Menu link-->
 									<a href="https://www.instagram.com/keenthemes" target="_blank" class="menu-link px-3">
-										<img alt="Keenthemes Instagram" src="{% static 'assets/media/svg/social-logos/instagram.svg' %}" class="h-20px" />
+										<img alt="Keenthemes Instagram" src="{% static 'assets/media/svg/social-logos/instagram.svg'%}" class="h-20px" />
 									</a>
 									<!--end::Menu link-->
 								</li>
@@ -2680,7 +2591,7 @@ License: For each use you must have a valid license purchased only from above li
 								<li class="menu-item">
 									<!--begin::Menu link-->
 									<a href="https://www.facebook.com/keenthemes" target="_blank" class="menu-link px-3">
-										<img alt="Keenthemes Facebook" src="{% static 'assets/media/svg/social-logos/facebook.svg' %}" class="h-20px" />
+										<img alt="Keenthemes Facebook" src="{% static 'assets/media/svg/social-logos/facebook.svg'%}" class="h-20px" />
 									</a>
 									<!--end::Menu link-->
 								</li>
@@ -2689,7 +2600,7 @@ License: For each use you must have a valid license purchased only from above li
 								<li class="menu-item">
 									<!--begin::Menu link-->
 									<a href="https://dribbble.com/keenthemes" target="_blank" class="menu-link px-3">
-										<img alt="Keenthemes Dribbble" src="{% static 'assets/media/svg/social-logos/dribbble.svg' %}" class="h-20px" />
+										<img alt="Keenthemes Dribbble" src="{% static 'assets/media/svg/social-logos/dribbble.svg'%}" class="h-20px" />
 									</a>
 									<!--end::Menu link-->
 								</li>
@@ -2720,7 +2631,7 @@ License: For each use you must have a valid license purchased only from above li
 					<h3 class="card-title fw-bolder text-gray-700">Explore Metronic</h3>
 					<div class="card-toolbar">
 						<button type="button" class="btn btn-sm btn-icon btn-active-light-primary me-n5" id="kt_explore_close">
-							<!--begin::Svg Icon | path: icons/duotune/arrows/arr061.svg-->
+							<!--begin::Svg Icon | path: icons/duotune/arrows/arr061.svg'%}-->
 							<span class="svg-icon svg-icon-2">
 								<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
 									<rect opacity="0.5" x="6" y="17.3137" width="16" height="2" rx="1" transform="rotate(-45 6 17.3137)" fill="black" />
@@ -2808,7 +2719,7 @@ License: For each use you must have a valid license purchased only from above li
 										<!--begin::Demo-->
 										<div class="overlay overflow-hidden position-relative border border-4 border-gray-200 rounded">
 											<div class="overlay-wrapper">
-												<img src="{% static 'assets/media/demos/demo1.png' %}" alt="demo" class="w-100" />
+												<img src="{% static 'assets/media/demos/demo1.png" alt="demo" class="w-100" />
 											</div>
 											<div class="overlay-layer bg-dark bg-opacity-10">
 												<a href="https://preview.keenthemes.com/metronic8/demo1" class="btn btn-sm btn-success shadow">Demo 1</a>
@@ -2822,7 +2733,7 @@ License: For each use you must have a valid license purchased only from above li
 										<!--begin::Demo-->
 										<div class="overlay overflow-hidden position-relative border border-4 border-gray-200 rounded">
 											<div class="overlay-wrapper">
-												<img src="{% static 'assets/media/demos/demo2.png' %}" alt="demo" class="w-100" />
+												<img src="{% static 'assets/media/demos/demo2.png" alt="demo" class="w-100" />
 											</div>
 											<div class="overlay-layer bg-dark bg-opacity-10">
 												<a href="https://preview.keenthemes.com/metronic8/demo2" class="btn btn-sm btn-success shadow">Demo 2</a>
@@ -2836,7 +2747,7 @@ License: For each use you must have a valid license purchased only from above li
 										<!--begin::Demo-->
 										<div class="overlay overflow-hidden position-relative border border-4 border-gray-200 rounded">
 											<div class="overlay-wrapper">
-												<img src="{% static 'assets/media/demos/demo3.png' %}" alt="demo" class="w-100" />
+												<img src="{% static 'assets/media/demos/demo3.png" alt="demo" class="w-100" />
 											</div>
 											<div class="overlay-layer bg-dark bg-opacity-10">
 												<a href="https://preview.keenthemes.com/metronic8/demo3" class="btn btn-sm btn-success shadow">Demo 3</a>
@@ -2850,7 +2761,7 @@ License: For each use you must have a valid license purchased only from above li
 										<!--begin::Demo-->
 										<div class="overlay overflow-hidden position-relative border border-4 border-gray-200 rounded">
 											<div class="overlay-wrapper">
-												<img src="{% static 'assets/media/demos/demo4.png' %}" alt="demo" class="w-100" />
+												<img src="{% static 'assets/media/demos/demo4.png" alt="demo" class="w-100" />
 											</div>
 											<div class="overlay-layer bg-dark bg-opacity-10">
 												<a href="https://preview.keenthemes.com/metronic8/demo4" class="btn btn-sm btn-success shadow">Demo 4</a>
@@ -2864,7 +2775,7 @@ License: For each use you must have a valid license purchased only from above li
 										<!--begin::Demo-->
 										<div class="overlay overflow-hidden position-relative border border-4 border-gray-200 rounded">
 											<div class="overlay-wrapper">
-												<img src="{% static 'assets/media/demos/demo5.png' %}" alt="demo" class="w-100" />
+												<img src="{% static 'assets/media/demos/demo5.png" alt="demo" class="w-100" />
 											</div>
 											<div class="overlay-layer bg-dark bg-opacity-10">
 												<a href="https://preview.keenthemes.com/metronic8/demo5" class="btn btn-sm btn-success shadow">Demo 5</a>
@@ -2878,7 +2789,7 @@ License: For each use you must have a valid license purchased only from above li
 										<!--begin::Demo-->
 										<div class="overlay overflow-hidden position-relative border border-4 border-success rounded">
 											<div class="overlay-wrapper">
-												<img src="{% static 'assets/media/demos/demo6.png' %}" alt="demo" class="w-100" />
+												<img src="{% static 'assets/media/demos/demo6.png" alt="demo" class="w-100" />
 											</div>
 											<div class="overlay-layer bg-dark bg-opacity-10">
 												<a href="https://preview.keenthemes.com/metronic8/demo6" class="btn btn-sm btn-success shadow">Demo 6</a>
@@ -2892,7 +2803,7 @@ License: For each use you must have a valid license purchased only from above li
 										<!--begin::Demo-->
 										<div class="overlay overflow-hidden position-relative border border-4 border-gray-200 rounded">
 											<div class="overlay-wrapper">
-												<img src="{% static 'assets/media/demos/demo7.png' %}" alt="demo" class="w-100" />
+												<img src="{% static 'assets/media/demos/demo7.png" alt="demo" class="w-100" />
 											</div>
 											<div class="overlay-layer bg-dark bg-opacity-10">
 												<a href="https://preview.keenthemes.com/metronic8/demo7" class="btn btn-sm btn-success shadow">Demo 7</a>
@@ -2906,7 +2817,7 @@ License: For each use you must have a valid license purchased only from above li
 										<!--begin::Demo-->
 										<div class="overlay overflow-hidden position-relative border border-4 border-gray-200 rounded">
 											<div class="overlay-wrapper">
-												<img src="{% static 'assets/media/demos/demo8.png' %}" alt="demo" class="w-100" />
+												<img src="{% static 'assets/media/demos/demo8.png" alt="demo" class="w-100" />
 											</div>
 											<div class="overlay-layer bg-dark bg-opacity-10">
 												<a href="https://preview.keenthemes.com/metronic8/demo8" class="btn btn-sm btn-success shadow">Demo 8</a>
@@ -2920,7 +2831,7 @@ License: For each use you must have a valid license purchased only from above li
 										<!--begin::Demo-->
 										<div class="overlay overflow-hidden position-relative border border-4 border-gray-200 rounded">
 											<div class="overlay-wrapper">
-												<img src="{% static 'assets/media/demos/demo9.png' %}" alt="demo" class="w-100" />
+												<img src="{% static 'assets/media/demos/demo9.png" alt="demo" class="w-100" />
 											</div>
 											<div class="overlay-layer bg-dark bg-opacity-10">
 												<a href="https://preview.keenthemes.com/metronic8/demo9" class="btn btn-sm btn-success shadow">Demo 9</a>
@@ -2934,7 +2845,7 @@ License: For each use you must have a valid license purchased only from above li
 										<!--begin::Demo-->
 										<div class="overlay overflow-hidden position-relative border border-4 border-gray-200 rounded">
 											<div class="overlay-wrapper">
-												<img src="{% static 'assets/media/demos/demo10.png' %}" alt="demo" class="w-100" />
+												<img src="{% static 'assets/media/demos/demo10.png" alt="demo" class="w-100" />
 											</div>
 											<div class="overlay-layer bg-dark bg-opacity-10">
 												<a href="https://preview.keenthemes.com/metronic8/demo10" class="btn btn-sm btn-success shadow">Demo 10</a>
@@ -2948,7 +2859,7 @@ License: For each use you must have a valid license purchased only from above li
 										<!--begin::Demo-->
 										<div class="overlay overflow-hidden position-relative border border-4 border-gray-200 rounded">
 											<div class="overlay-wrapper">
-												<img src="{% static 'assets/media/demos/demo11.png' %}" alt="demo" class="w-100" />
+												<img src="{% static 'assets/media/demos/demo11.png" alt="demo" class="w-100" />
 											</div>
 											<div class="overlay-layer bg-dark bg-opacity-10">
 												<a href="https://preview.keenthemes.com/metronic8/demo11" class="btn btn-sm btn-success shadow">Demo 11</a>
@@ -2962,7 +2873,7 @@ License: For each use you must have a valid license purchased only from above li
 										<!--begin::Demo-->
 										<div class="overlay overflow-hidden position-relative border border-4 border-gray-200 rounded">
 											<div class="overlay-wrapper">
-												<img src="{% static 'assets/media/demos/demo12.png' %}" alt="demo" class="w-100" />
+												<img src="{% static 'assets/media/demos/demo12.png" alt="demo" class="w-100" />
 											</div>
 											<div class="overlay-layer bg-dark bg-opacity-10">
 												<a href="https://preview.keenthemes.com/metronic8/demo12" class="btn btn-sm btn-success shadow">Demo 12</a>
@@ -2976,7 +2887,7 @@ License: For each use you must have a valid license purchased only from above li
 										<!--begin::Demo-->
 										<div class="overlay overflow-hidden position-relative border border-4 border-gray-200 rounded">
 											<div class="overlay-wrapper">
-												<img src="{% static 'assets/media/demos/demo13.png' %}" alt="demo" class="w-100" />
+												<img src="{% static 'assets/media/demos/demo13.png" alt="demo" class="w-100" />
 											</div>
 											<div class="overlay-layer bg-dark bg-opacity-10">
 												<a href="https://preview.keenthemes.com/metronic8/demo13" class="btn btn-sm btn-success shadow">Demo 13</a>
@@ -2990,7 +2901,7 @@ License: For each use you must have a valid license purchased only from above li
 										<!--begin::Demo-->
 										<div class="overlay overflow-hidden position-relative border border-4 border-gray-200 rounded">
 											<div class="overlay-wrapper">
-												<img src="{% static 'assets/media/demos/demo14.png' %}" alt="demo" class="w-100" />
+												<img src="{% static 'assets/media/demos/demo14.png" alt="demo" class="w-100" />
 											</div>
 											<div class="overlay-layer bg-dark bg-opacity-10">
 												<a href="https://preview.keenthemes.com/metronic8/demo14" class="btn btn-sm btn-success shadow">Demo 14</a>
@@ -3004,7 +2915,7 @@ License: For each use you must have a valid license purchased only from above li
 										<!--begin::Demo-->
 										<div class="overlay overflow-hidden position-relative border border-4 border-gray-200 rounded">
 											<div class="overlay-wrapper">
-												<img src="{% static 'assets/media/demos/demo15.png' %}" alt="demo" class="w-100" />
+												<img src="{% static 'assets/media/demos/demo15.png" alt="demo" class="w-100" />
 											</div>
 											<div class="overlay-layer bg-dark bg-opacity-10">
 												<a href="https://preview.keenthemes.com/metronic8/demo15" class="btn btn-sm btn-success shadow">Demo 15</a>
@@ -3018,7 +2929,7 @@ License: For each use you must have a valid license purchased only from above li
 										<!--begin::Demo-->
 										<div class="overlay overflow-hidden position-relative border border-4 border-gray-200 rounded">
 											<div class="overlay-wrapper">
-												<img src="{% static 'assets/media/demos/demo16.png' %}" alt="demo" class="w-100" />
+												<img src="{% static 'assets/media/demos/demo16.png" alt="demo" class="w-100" />
 											</div>
 											<div class="overlay-layer bg-dark bg-opacity-10">
 												<a href="https://preview.keenthemes.com/metronic8/demo16" class="btn btn-sm btn-success shadow">Demo 16</a>
@@ -3032,7 +2943,7 @@ License: For each use you must have a valid license purchased only from above li
 										<!--begin::Demo-->
 										<div class="overlay overflow-hidden position-relative border border-4 border-gray-200 rounded">
 											<div class="overlay-wrapper">
-												<img src="{% static 'assets/media/demos/demo17.png' %}" alt="demo" class="w-100 opacity-25" />
+												<img src="{% static 'assets/media/demos/demo17.png" alt="demo" class="w-100 opacity-25" />
 											</div>
 											<div class="overlay-layer bg-dark bg-opacity-10">
 												<div class="badge badge-white px-6 py-4 fw-bold fs-base shadow">Coming soon</div>
@@ -3046,7 +2957,7 @@ License: For each use you must have a valid license purchased only from above li
 										<!--begin::Demo-->
 										<div class="overlay overflow-hidden position-relative border border-4 border-gray-200 rounded">
 											<div class="overlay-wrapper">
-												<img src="{% static 'assets/media/demos/demo18.png' %}" alt="demo" class="w-100 opacity-25" />
+												<img src="{% static 'assets/media/demos/demo18.png" alt="demo" class="w-100 opacity-25" />
 											</div>
 											<div class="overlay-layer bg-dark bg-opacity-10">
 												<div class="badge badge-white px-6 py-4 fw-bold fs-base shadow">Coming soon</div>
@@ -3060,7 +2971,7 @@ License: For each use you must have a valid license purchased only from above li
 										<!--begin::Demo-->
 										<div class="overlay overflow-hidden position-relative border border-4 border-gray-200 rounded">
 											<div class="overlay-wrapper">
-												<img src="{% static 'assets/media/demos/demo19.png' %}" alt="demo" class="w-100 opacity-25" />
+												<img src="{% static 'assets/media/demos/demo19.png" alt="demo" class="w-100 opacity-25" />
 											</div>
 											<div class="overlay-layer bg-dark bg-opacity-10">
 												<div class="badge badge-white px-6 py-4 fw-bold fs-base shadow">Coming soon</div>
@@ -3074,7 +2985,7 @@ License: For each use you must have a valid license purchased only from above li
 										<!--begin::Demo-->
 										<div class="overlay overflow-hidden position-relative border border-4 border-gray-200 rounded">
 											<div class="overlay-wrapper">
-												<img src="{% static 'assets/media/demos/demo20.png' %}" alt="demo" class="w-100 opacity-25" />
+												<img src="{% static 'assets/media/demos/demo20.png" alt="demo" class="w-100 opacity-25" />
 											</div>
 											<div class="overlay-layer bg-dark bg-opacity-10">
 												<div class="badge badge-white px-6 py-4 fw-bold fs-base shadow">Coming soon</div>
@@ -3088,7 +2999,7 @@ License: For each use you must have a valid license purchased only from above li
 										<!--begin::Demo-->
 										<div class="overlay overflow-hidden position-relative border border-4 border-gray-200 rounded">
 											<div class="overlay-wrapper">
-												<img src="{% static 'assets/media/demos/demo21.png' %}" alt="demo" class="w-100 opacity-25" />
+												<img src="{% static 'assets/media/demos/demo21.png" alt="demo" class="w-100 opacity-25" />
 											</div>
 											<div class="overlay-layer bg-dark bg-opacity-10">
 												<div class="badge badge-white px-6 py-4 fw-bold fs-base shadow">Coming soon</div>
@@ -3102,7 +3013,7 @@ License: For each use you must have a valid license purchased only from above li
 										<!--begin::Demo-->
 										<div class="overlay overflow-hidden position-relative border border-4 border-gray-200 rounded">
 											<div class="overlay-wrapper">
-												<img src="{% static 'assets/media/demos/demo22.png' %}" alt="demo" class="w-100 opacity-25" />
+												<img src="{% static 'assets/media/demos/demo22.png" alt="demo" class="w-100 opacity-25" />
 											</div>
 											<div class="overlay-layer bg-dark bg-opacity-10">
 												<div class="badge badge-white px-6 py-4 fw-bold fs-base shadow">Coming soon</div>
@@ -3116,7 +3027,7 @@ License: For each use you must have a valid license purchased only from above li
 										<!--begin::Demo-->
 										<div class="overlay overflow-hidden position-relative border border-4 border-gray-200 rounded">
 											<div class="overlay-wrapper">
-												<img src="{% static 'assets/media/demos/demo23.png' %}" alt="demo" class="w-100 opacity-25" />
+												<img src="{% static 'assets/media/demos/demo23.png" alt="demo" class="w-100 opacity-25" />
 											</div>
 											<div class="overlay-layer bg-dark bg-opacity-10">
 												<div class="badge badge-white px-6 py-4 fw-bold fs-base shadow">Coming soon</div>
@@ -3141,7 +3052,7 @@ License: For each use you must have a valid license purchased only from above li
 		<!--end::Exolore drawer-->
 		<!--begin::Scrolltop-->
 		<div id="kt_scrolltop" class="scrolltop" data-kt-scrolltop="true">
-			<!--begin::Svg Icon | path: icons/duotune/arrows/arr066.svg-->
+			<!--begin::Svg Icon | path: icons/duotune/arrows/arr066.svg'%}-->
 			<span class="svg-icon">
 				<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
 					<rect opacity="0.5" x="13" y="6" width="13" height="2" rx="1" transform="rotate(90 13 6)" fill="black" />
@@ -3154,15 +3065,15 @@ License: For each use you must have a valid license purchased only from above li
 		<script>var hostUrl = "{% static 'assets/";</script>
 		<!--begin::Javascript-->
 		<!--begin::Global Javascript Bundle(used by all pages)-->
-		<script src="{% static 'assets/plugins/global/plugins.bundle.js' %}"></script>
-		<script src="{% static 'assets/js/scripts.bundle.js' %}"></script>
+		<script src="{% static 'assets/plugins/global/plugins.bundle.js"></script>
+		<script src="{% static 'assets/js/scripts.bundle.js"></script>
 		<!--end::Global Javascript Bundle-->
 		<!--begin::Page Vendors Javascript(used by this page)-->
-		<script src="{% static 'assets/plugins/custom/prismjs/prismjs.bundle.js' %}"></script>
+		<script src="{% static 'assets/plugins/custom/prismjs/prismjs.bundle.js"></script>
 		<!--end::Page Vendors Javascript-->
 		<!--begin::Page Custom Javascript(used by this page)-->
-		<script src="{% static 'assets/js/custom/documentation/documentation.js' %}"></script>
-		<script src="{% static 'assets/js/custom/documentation/search.js' %}"></script>
+		<script src="{% static 'assets/js/custom/documentation/documentation.js"></script>
+		<script src="{% static 'assets/js/custom/documentation/search.js"></script>
 		<!--end::Page Custom Javascript-->
 		<!--end::Javascript-->
 	</body>
