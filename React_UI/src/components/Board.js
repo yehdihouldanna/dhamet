@@ -26,22 +26,16 @@ class Board extends Component {
         [-1, -1, -1, -1, -1, -1, -1, -1, -1],
         [-1, -1, -1, -1, -1, -1, -1, -1, -1],
         [-1, -1, -1, -1, -1, -1, -1, -1, -1]],
-        // board : // to test for the final stages of the game.
-        // [[1,   1,   1,   1,   1,   1,   0,   1,   1 ],
-        //   [ 0,   0,   0,   0,   0,   0,   0,   0,   1 ],
-        //   [ 0,   0,   0,   0,   0,   0,   0,   0,   0 ],
-        //   [ 0,   0,   0,   0,   0,   0,   0,   0,   0 ],
-        //   [ 1,   0,   0,   0,   0,   0,   0,   0,   0 ],
-        //   [ 0,   0,   0,   0,   0,   0,   0,   0,   1 ],
-        //   [ 0,   0,   0,   0,   0,   0,   0,   0,  -1 ],
-        //   [ 0,   0,   0,   0,   0,   0,   0,   0,   0 ],
-        //   [ 0,   0,   0,   0,   0,   0,   0,   0,   0 ]],
       player: 0,
       Code: props.game_code,
       Client : props.client,
       board_txt: "wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww_bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      previous_board : "wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww_bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
       move: "",
-      last_move:"",
+      last_move :"",
+      creator   :"",
+      opponent  :"",
+      winner : "",
       timer: 0,
       delay: 200,
       prevent: false,
@@ -64,7 +58,6 @@ class Board extends Component {
     // Binding extra util methods
     this.serialize = this.serialize.bind(this);
     this.deserialize = this.deserialize.bind(this);
-
 
     this.update_moves_time_line = this.update_moves_time_line.bind(this);
   };
@@ -138,7 +131,6 @@ class Board extends Component {
   
   handleStartMove(piece_key) {
     this.state.move = piece_key;
-    // console.log("handleStartMove got called ! the move now is : ",this.state.move);
     console.log(this.state.move)
   }
   handleHover(cell_key) {
@@ -147,8 +139,16 @@ class Board extends Component {
   }
   handleMove() {
     if (this.state.move.length) {
-      // this.MoveRequest(this.state.move);
-      this.MoveRequest_ws(this.state.move);
+      if(this.state.AI)
+      {
+        console.log("We are calling the view for AI.")
+        this.MoveRequest(this.state.move);
+      }
+      else
+      {
+        console.log("We are calling websocket")
+        this.MoveRequest_ws(this.state.move);
+      }
     }
   };
   //-----------------------------------------------------------------------
@@ -156,11 +156,11 @@ class Board extends Component {
   //-----------------------------------------------------------------------
   MoveRequest(move_str) {
     /*This function communicate with the makeGameMove view in the 
-      back end to update the board appopriatly after a move*/
-
-    console.log("Code:", this.state.Code);
-    if (this.state.Code === "") { this.CreateGameRequest(); }
-    else if (move_str.length >= 5) {
+      back end to update the board appopriatly after a move it is used
+      in games vs AI only as it doesnt require a websocket to play vs AI.
+      */
+      
+      if (move_str.length >= 5) {
       console.log("Trying the move : ", move_str);
       const requestOptions =
       {
@@ -206,6 +206,7 @@ class Board extends Component {
       this.CreateGameRequest();
     }
     else if (move_str.length >= 5) {
+      
       console.log("Trying the move : ", move_str);
         this.props.client.send(
         JSON.stringify({
@@ -215,11 +216,26 @@ class Board extends Component {
           'current_turn': this.state.player,
           'winner':"",
         }));
+
+      {
+        let me = this
+        setTimeout(function () {
+          if (me.state.previous_board != me.state.board_txt) {
+            console.log("The AI request waited for 250 ms !")
+            me.props.client.send(
+              JSON.stringify({
+                'id': me.state.Code,
+                'state': me.state.board_txt,
+                'last_move': move_str,
+                'current_turn': me.state.player,
+                'winner':"",
+              }));
+          }
+      }, 250);
+      }
     }
   };
   CreateGameRequest(name) {
-    // if (name="Multiplayer")
-    // {
     console.log("Starting a game vs another local player.")
     const requestOptions =
     {
@@ -231,26 +247,13 @@ class Board extends Component {
         "opponent": "",
       })
     };
-    // }
-    // else
-    // {
-    //   console.log("Starting a game vs the AI")
-    //   const requestOptions=
-    //   {
-    //     method : 'POST',
-    //     headers : {'Content-Type':'application/json'},
-    //     body: JSON.stringify({
-    //       Code : "",
-    //       player1 : "Dummy",
-    //       player2 : "AI",
-    //     })
-    //   };
-    // }
     fetch('/DhametCode/create-game', requestOptions).
       then((response) => response.json()).
       then((data) => {
         let game_state = this.state;
         game_state.Code = data.Code;
+        game_state.creatro = data.creator
+        game_state.opponent = data.opponent
         this.setState(game_state);
         console.log("Create successfully a game who's code is :", data.Code)
       }).then(() => this.handleMove())
@@ -261,62 +264,68 @@ class Board extends Component {
     let game_state = this.state;
     game_state.move = this.state.move;
     this.setState(game_state);
-    
   }
   // Componenets Native methods :
   componentWillMount() {
-
-    this.props.client.onopen = () => {
-      console.log('A new client Connected');
-
-      this.props.client.send(
-        JSON.stringify({
-          'id': this.state.Code,
-          'state': this.state.board_txt,
-          'last_move': this.state.move,
-          'current_turn': this.state.player,
-          'winner':"",
-        }));
-    };
-    let me = this;
-      this.props.client.onmessage = function (e) {
-        const data = JSON.parse(e.data);
-        
-
-        if (typeof data["Bad Request"] != "undefined") {
-          console.log("Invalid Move : Ignored!");
-          me.state.move = "";
-        }
-        else {
-          console.log("We received a correct data: ", data);
-          let game_state = me.state;
-          
-            game_state.player = data.current_turn;
-            // console.log("The winner returned is : ",data.winner)
-            console.log("The player now is : ", game_state.player);
-            game_state.board_txt = data.state;
-
-            if (game_state.last_move != data.last_move)
-            { 
-              game_state.last_move= data.last_move;
-              me.setState(game_state);
-              me.deserialize(data.state);
-              me.update_moves_time_line();
+        this.props.client.onopen = () => {
+          console.log('A new client Connected');
+          this.props.client.send(
+            JSON.stringify({
+              'id': this.state.Code,
+              'state': this.state.board_txt,
+              'last_move': this.state.move,
+              'current_turn': this.state.player,
+              'creator' : this.state.creator,
+              'opponent' : this.state.opponent,
+              'winner':this.state.winner,
+            }));
+        };
+        let me = this;
+          this.props.client.onmessage = function (e) {
+            const data = JSON.parse(e.data);
+            var moved = false;
+            if (typeof data["Bad Request"] != "undefined") {
+              console.log("Invalid Move : Ignored!");
+              me.state.move = "";
             }
-            me.state.move = "";
-          
-          if (data.winner!==null && data.winner!=="")
-          {// TODO : change this to a better thing.
-            
-            alert(data.winner+" Won the game!");
-          }
-        }
-      };
+            else {
+                console.log("We received a correct data: ", data);
+                let game_state = me.state;
+                
+                game_state.player = data.current_turn;
+                // console.log("The winner returned is : ",data.winner)
+                console.log("The player now is : ", game_state.player);
+                game_state.board_txt = data.state;
+    
+                if (game_state.last_move != data.last_move)
+                { 
+                  game_state.last_move= data.last_move;
+                  me.setState(game_state);
+                  me.deserialize(data.state);
+                  me.update_moves_time_line();
+                  
+                }
+                me.state.move = "";
+                if (data.winner!==null && data.winner!=="")
+                {// TODO : change this to a better thing.
+                    alert(data.winner+" Won the game!");
+                    me.state.winner = data.winner
+                }
+                if (data.opponent!== me.state.opponent)
+                {
+                  me.state.opponent = data.opponent;
+                  me.state.creator  = data.creator;
+                }
 
-    this.props.client.onclose = function (e) {
-      console.error('Client socket closed unexpectedly');
-    };
-  }
+              
+
+            }
+          };
+          this.props.client.onclose = function (e) {
+          console.error('Client socket closed unexpectedly');
+        };
+      
+    }
   //----------------------------------------
   // Web Page modifiers :
   //----------------------------------------
@@ -360,8 +369,6 @@ class Board extends Component {
       document.getElementById("MovesContainer").appendChild(time_line_item);
     }
   }
-
-
   // --------------------------------------
   // Rendering React native method :
   //---------------------------------------
@@ -377,7 +384,6 @@ class Board extends Component {
         {
           ex_css_class = " highlight_last_move";
         }
-
         Cells.push(
           <Cell
             key={key}
@@ -406,19 +412,13 @@ class Board extends Component {
       {
         document.getElementById("current_turn").innerHTML ="<span class='bullet bullet-dot bg-secondary h-30px w-30px me-5'></span> White's turn to play.";
       }
-      
     }
-    catch 
-    {}
-
-    
+    catch {}
     return (
       <DndProvider backend={HTML5Backend}>
         <div id="board"  onMouseLeave={this.handleMouseLeave}>
           {Cells}
         </div>
-
-        
       </DndProvider>
     );
   };

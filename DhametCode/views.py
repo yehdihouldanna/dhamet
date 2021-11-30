@@ -7,7 +7,8 @@ from .serializers import GameSerializer , CreateGameSerializer , GameMoveSeriali
 from .utils.Board import State
 import numpy as np
 import sys
-
+from datetime import datetime
+from .utils.Players import Random
 from users.models import User
 
 # Create your views here.
@@ -28,39 +29,43 @@ class CreateGameView(generics.ListAPIView):
             user = User.objects.filter(name = request.user.name)[0]
         else : 
             try:
-                user = User.objects.filter(name = "Guest")[0]
+                user = User.objects.filter(name = "Guest")
             except:
-                user = User(name = "Guest",phone=000)
+                user = User(username= "Guest",name = "Guest",phone=000)
                 user.save()
             
         # if serializer.is_valid(): # needs to be integrated somehow , but for now it causes problem since the id can't be passed blank.
-        queryset_ = Game.get_available_games()
-        if len(queryset_): # if game
-            game = queryset_[0]
-            game.opponent = user
+        if request.data['opponent'] == "AI_Random":
+            try:
+                ai = User.objects.filter(name = "AI_Random")[0]
+            except:
+                ai = User(username = "AI_Random" ,name="AI_Random", phone=000)
+                ai.save()
+            
+            game = Game(creator = user , opponent = ai)
             game.save()
-            print(f"User : {user.username} Have Joined the game {game.get_game_code()} created by {game.creator}")
-            return Response(CreateGameSerializer(game).data,status = status.HTTP_202_ACCEPTED)
-        else:
-
-            game = Game(creator = user )
-            game.save()
-            print(f"User : {user.username} Have Created a game who's id is {game.get_game_code()}")
+            print(f"User : {user.username} Have Created a game vs computer who's id is {game.get_game_code()}")
             return Response(CreateGameSerializer(game).data,status = status.HTTP_201_CREATED)
-
-        # return Response({'Bad Request': 'Invalid data...'}, status=status.HTTP_400_BAD_REQUEST)
+        else :
+            queryset_ = Game.get_available_games()
+            if len(queryset_): # if game
+                game = queryset_[0]
+                game.opponent = user
+                game.save()
+                print(f"User : {user.username} Have Joined the game {game.get_game_code()} created by {game.creator}")
+                return Response(CreateGameSerializer(game).data,status = status.HTTP_202_ACCEPTED)
+            else:
+                game = Game(creator = user )
+                game.save()
+                print(f"User : {user.username} Have Created a game who's id is {game.get_game_code()}")
+                return Response(CreateGameSerializer(game).data,status = status.HTTP_201_CREATED)
     
 class GameMoveView(generics.ListAPIView):
     """The view that process the player's moves sent by the client"""
     serializer_class = GameMoveSerializer
     queryset = Game.objects.all()
 
-    def get_game_update(self,game,current_turn,move):
-        length = game.Length
-        board = self.deserialize(game.State)
-        game_instance = State(n=9,board=board,player = current_turn, length=length)
-        print('the move received is : ', move)
-        # game_instance.show_board(file=sys.stderr)
+    def get_game_update(self,game_instance,move):
         moves = move.split(" ")
         moved = False
         for k in range(len(moves)-1):
@@ -68,7 +73,6 @@ class GameMoveView(generics.ListAPIView):
             destination = moves[k+1]
             xs,ys = [int(i) for i in source]
             xd,yd = [int(i) for i in destination]
-            # print(f"Moving form {xs}{ys} to {xd}{yd}")
             moved = game_instance.move((xs,ys),(xd,yd))
             if not moved:
                 break
@@ -76,9 +80,9 @@ class GameMoveView(generics.ListAPIView):
             ended  = game_instance.check_end_condition()
             game_instance.player = not game_instance.player
             game_instance.length+=1
-            return True, game_instance.board,ended,game_instance.player,game_instance.length,game_instance.winner
+            return True, game_instance.board,ended,game_instance.length
         
-        return False ,None,None,None,None,None
+        return False ,None,None,None
 
     def serialize(self,board):
         "serialize the matrix board into a string format"
@@ -134,30 +138,67 @@ class GameMoveView(generics.ListAPIView):
             if id!="":
                 queryset = Game.objects.filter(id=id)
                 if queryset.exists():
-                    current_turn  = serializer.data.get('current_turn')
+                    current_turn_game  = serializer.data.get('current_turn')
+
                     board_txt =serializer.data.get('state')
                     move = serializer.data.get('last_move')
                     print(f"in the post method move:{move}")
-                    game = queryset.filter(id=id)[0]
-                    moved,board,ended,player,length,winner = self.get_game_update(game,current_turn,move)
-                    if moved :
-                        board_txt=self.serialize(board)
-                        game.state = board_txt
-                        game.length = length
-                        moves = game.moves+"\n"+move
-                        game.moves = moves
-                        game.last_move = move
-
+                    game = queryset[0]
+                    current_turn = game.current_turn
+                    length = game.length
+                    board = self.deserialize(game.state)
+                    game_instance = State(n=9,board=board,player = current_turn, length=length)
+                    if not current_turn_game:
+                        moved,board,ended,length = self.get_game_update(game_instance,move)
+                        if moved :
+                            board_txt = self.serialize(board)
+                            game.state = board_txt
+                            game.length = length
+                            moves = game.moves+"\n"+move
+                            game.moves = moves
+                            game.last_move= move
+                            game.current_turn = (game.current_turn+1)%2
+                        
                         if ended:
                             game.winner = user
+                            game.completed = datetime.now()
+
                         game.save()
 
-                        # # if the player moved and we are playing vs an AI the AI moves too:
-                        # if queryset[0].player1=="AI" and Current_Player==0 or queryset[0].player2 =="AI" and Current_Player==1:
-                        #     agent = Player.
+                        winner=""
+                        try:
+                            winner = game.winner.name
+                        except:
+                            pass
+
                         return Response(GameMoveSerializer(game).data,status = status.HTTP_202_ACCEPTED)
-                
-        return Response({'Bad Request': 'Invalid data...'}, status=status.HTTP_400_BAD_REQUEST)
+
+                    else: # the AI is playing (black)
+                        Agent = Random('AI',current_turn)
+                        move = Agent.move(game_instance)
+                        print(f"The AI agent moved : {move}")
+                        moved,board,ended,length = self.get_game_update(game,game_instance,current_turn,move)
+                        if moved :
+                            board_txt = self.serialize(board)
+                            game.state = board_txt
+                            game.length = length
+                            moves = game.moves+"\n"+move
+                            game.moves = moves
+                            game.last_move= move
+                            game.current_turn = (game.current_turn+1)%2
+                        if ended:
+                            game.winner = user
+                            game.completed = datetime.now()
+                        game.save()
+                        winner=""
+                        try:
+                            winner = game.winner.name
+                        except:
+                            pass
+                        return Response(GameMoveSerializer(game).data,status = status.HTTP_202_ACCEPTED)
+
+            raise Exception(f"user {user.name} tried to make a move in a non existing game!!")    
+        
 
 def say_hello(request):
     try :

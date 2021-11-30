@@ -56,7 +56,6 @@ class Naive(Agent):
                 break
         return move
 
-
 class Random(Agent):
     """
     This a random agent that chooses a random move from the first available moves.
@@ -85,6 +84,43 @@ class Random(Agent):
             key  = random.choice(list(dict_))
             destination = random.choice(dict_[key])
             move = key +" "+ str(destination[0])+str(destination[1])
+        return move
+
+class Dummy(Agent):
+    """
+    This is a dummy agent it choses the best move available to it in his turn
+    """
+    def __init__(self,name,player):
+        self.name = "Dummy " + name
+        self.player  = player
+        self.pieces_indices=None
+        self.choices_limit = 5
+    def move(self,state):
+        move="_"
+        dict_ = {}
+        if self.player: #case the agent is playing with black pieces
+            self.pieces_indices = np.argwhere(state.board<=-1)
+        else :
+            self.pieces_indices = np.argwhere(state.board>=1)
+        for i in range(self.pieces_indices.shape[0]):
+            x,y = tuple(self.pieces_indices[i])
+            
+            chains = state.get_chain_moves(x,y)
+            if len(chains):
+                best_cp_move = max(chains, key=chains.get)
+                score = chains[best_cp_move]
+                dict_[best_cp_move] = score
+            else :    
+                moves,_ = state.available_moves(x,y)
+                # take one move randomly from the availble non take
+                if len(moves):
+                    move_ = random.choice(moves)
+                    dict_[str(x)+str(y)+" "+str(move_[0])+str(move_[1])] = 0
+
+            if len(dict_)>= self.choices_limit:
+                break
+        if(len(dict_)):
+            move  = max(dict_, key=dict_.get)
         return move
 
 

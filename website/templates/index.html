@@ -4023,7 +4023,7 @@ License: For each use you must have a valid license purchased only from above li
 									<div class="card card-xl-stretch mb-xl-8" >
 										<button type = "button" id="startbutton"
 											class="btn btn-primary w-100 py-3" type="button"
-											onclick="CreateGameRequest()">Play Vs Computer</button>
+											onclick="CreateGameRequest('AI')">Play Vs Computer</button>
 										</div>
 									</div>
 
@@ -4031,38 +4031,65 @@ License: For each use you must have a valid license purchased only from above li
 									<div class="card card-xl-stretch mb-xl-8" >
 										<button type = "button" id="startbutton"
 											class="btn btn-primary w-100 py-3" type="button"
-											onclick="CreateGameRequest()">Play Online</button>
+											onclick="CreateGameRequest('Online')">Play Online</button>
 										<script>
-											function CreateGameRequest() {
-												console.log("Starting a game online.")
-												const requestOptions =
+											function CreateGameRequest(type) {
+												if (type==='Online')
 												{
-													method: 'POST',
-													// cors: "same-origin",
-													// credentials: 'same-origin',
-													headers: { 'Content-Type': 'application/json',
-																"X-CSRFToken": '{{ csrf_token }}' },
-													body: JSON.stringify({
-														// csrfmiddlewaretoken: '{{ csrf_token }}',
-														id: "",
-														creator: "",
-														opponent: "",
-									
-													})
-												};
-												fetch('/DhametCode/create-game', requestOptions).
-													then((response) => response.json()).
-													then((data) => {
-														console.log("Created successfully a game who's code is :", data.id)
-														window.location.replace(
-															"http://"+
-															window.location.host
-															+ '/main/game/'
-															+ data.id
-															+'/'
-														)
-														
-													})
+													console.log("Starting a game online.")
+													const requestOptions =
+													{
+														method: 'POST',
+														headers: { 'Content-Type': 'application/json',
+																	"X-CSRFToken": '{{ csrf_token }}' },
+														body: JSON.stringify({
+															id: "",
+															creator: "",
+															opponent: "",
+														})
+													};
+													fetch('/DhametCode/create-game', requestOptions).
+														then((response) => response.json()).
+														then((data) => {
+															console.log("Created successfully an Online game who's code is :", data.id)
+															window.location.replace(
+																"http://"+
+																window.location.host
+																+ '/main/game/'
+																+ data.id
+																+'/'
+															)
+														})
+												}
+												else if(type === 'AI')
+												{
+													document.getElementById("opponent").innerHTML+= "AI Random"
+													console.log("Creating a game vs The Random AI");
+													const requestOptions =
+													{
+														method: 'POST',
+														headers: { 'Content-Type': 'application/json',
+																	"X-CSRFToken": '{{ csrf_token }}' },
+														body: JSON.stringify({
+															id: "",
+															creator: "",
+															opponent: "AI_Random",
+														})
+													};
+													fetch('/DhametCode/create-game', requestOptions).
+														then((response) => response.json()).
+														then((data) => {
+															console.log("Created successfully a game VS AI who's code is :", data.id)
+															window.location.replace(
+																"http://"+
+																window.location.host
+																+ '/main/game/'
+																+ data.id
+																+'/'
+															)
+														})
+												}
+												
 											};
 										</script>
 									</div>
@@ -4078,6 +4105,10 @@ License: For each use you must have a valid license purchased only from above li
 											<div class="alert bg-light-primary border border-primary d-flex flex-column flex-sm-row p-5 mb-5"">
 												<h3 id= "current_turn" class="card-title align-items-center ">
 												</h3>
+											</div>
+											<div class="alert bg-light-primary border border-primary d-flex flex-column flex-sm-row p-5 mb-5"">
+												<h3 id= "opponent" class="card-title align-items-center ">
+												<span class='bullet bullet-dot bg-dark h-30px w-30px me-5'></span> </h3>
 											</div>
 											<div class="card-toolbar">
 												<!--begin::Menu-->
