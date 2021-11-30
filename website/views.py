@@ -14,11 +14,15 @@ def main(request,*args,**kwargs):
     return render(request,"index.html",outputs)
     
 
+def game(request):
+    return render(request,"jouer.html")
+
+
 def sign_in(request):
     return render(request,"authentication/layouts/basic/sign-in.html")
 
 def sign_up(request):
-    return render(request,"authentication/layouts/basic/sign-out.html")
+    return render(request,"authentication/layouts/basic/sign-up.html")
 
 
 def docs_Fr(request):

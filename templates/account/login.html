@@ -2,6 +2,7 @@
 
 {% load i18n %}
 {% load crispy_forms_tags %}
+{% load static %}
 
 {% block head_title %}{% trans "Sign In" %}{% endblock %}
 {% block breadcrumb %}{% endblock %}
@@ -11,25 +12,48 @@
 
 
 {% block inner %}
-  <div class="container">
-    <div class="row align-items-center justify-content-center" style="height: 400px">
-
-      <div class="col-8 offset card card-body">
-        <h1 class="text-center mb-10 mt-5">{% trans "Sign In" %}</h1>
-
-
-
-        <form class="login" method="POST" action="{% url 'account_login' %}">
+<div class="text-center mb-10">
+  <!--begin::Title-->
+  <h1 class="text-dark mb-3">{% trans "Sign In" %}</h1>
+  <!--end::Title-->
+  
+</div>
+    <!--begin::Body-->
+    <div class="d-flex flex-column flex-lg-row-fluid py-10">
+      <!--begin::Content-->
+      <div class="d-flex flex-center flex-column flex-column-fluid">
+        <!--begin::Wrapper-->
+        <div class="w-lg-500px p-10 p-lg-15 mx-auto">
+        <form class="form w-100" id="kt_sign_in_form"  method="POST" action="{% url 'account_login' %}">
+          
           {% csrf_token %}
           {{ form|crispy }}
+          
           {% if redirect_field_value %}
             <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
           {% endif %}
-          <button class="primaryAction btn btn-primary" type="submit">{% trans "Sign In" %}</button>
+          <div class="text-center">
+          <button id="kt_sign_in_submit" class="btn btn-lg btn-primary w-100 mb-5" type="submit">{% trans "Sign In" %}</button>
+          <div class="text-center text-muted text-uppercase fw-bolder mb-5">or</div>
+									<!--end::Separator-->
+									<!--begin::Google link-->
+									<a href="#" class="btn btn-flex flex-center btn-light btn-lg w-100 mb-5">
+									<img alt="Logo" src="{% static 'assets/media/svg/brand-logos/google-icon.svg' %}" class="h-20px me-3" />Continue with Google</a>
+									<!--end::Google link-->
+									<!--begin::Google link-->
+									<a href="#" class="btn btn-flex flex-center btn-light btn-lg w-100 mb-5">
+									<img alt="Logo" src="{% static 'assets/media/svg/brand-logos/facebook-4.svg' %}" class="h-20px me-3" />Continue with Facebook</a>
+									<!--end::Google link-->
+									<!--begin::Google link-->
+									<a href="#" class="btn btn-flex flex-center btn-light btn-lg w-100">
+									<img alt="Logo" src="{% static 'assets/media/svg/brand-logos/apple-black.svg' %}" class="h-20px me-3" />Continue with Apple</a>
+									<!--end::Google link-->
+								</div>
         </form>
 
       </div>
     </div>
   </div>
+  
 {% endblock inner%}
 

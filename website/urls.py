@@ -1,12 +1,16 @@
 from django.urls import path, re_path
-from .views import   Intro_Fr, main, regles_Ar, regles_Fr,sign_in, docs_Ar,docs_Fr, Intro_Ar
+from .views import   Intro_Fr, game, main, regles_Ar, regles_Fr,sign_in, docs_Ar,docs_Fr, Intro_Ar, sign_up
 
 urlpatterns = [           
     path('',main),
 
 
     #TODO correct the urls in the html file 
+    path('jouer.html',game),
+
     path('authentication/layouts/basic/sign-in.html/',sign_in),
+    path('authentication/layouts/basic/sign-up.html',sign_up),
+
     path('Documentation/getting-started_Fr.html',docs_Fr),
     path('Documentation/getting-started_Ar.html',docs_Ar),
 
@@ -15,6 +19,8 @@ urlpatterns = [
 
     path('Documentation/base/utilities.html',regles_Ar),
     path('Documentation/base/utilities_Fr.html',regles_Fr),
+
+    
     
     path('sign-in',sign_in),
     re_path(r'(?P<game_code>\w+)/$',main),

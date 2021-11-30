@@ -1364,7 +1364,7 @@
     };
     var PasteBin = function (editor) {
       var lastRng = Cell(null);
-      var pasteBinDefaultContent = '%MCEPASTEBIN%';
+      var pasteBinDefaultContent = '%MCEPASTEBIN%}';
       return {
         create: function () {
           return create(editor, lastRng, pasteBinDefaultContent);

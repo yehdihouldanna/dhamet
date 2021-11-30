@@ -114,11 +114,11 @@ function findPosY(obj) {
             X: this.toLocaleTimeString(),
             y: ('' + this.getFullYear()).substr(2, 4),
             Y: '' + this.getFullYear(),
-            '%': '%'
+            '%}': '%}'
         };
         let result = '', i = 0;
         while (i < format.length) {
-            if (format.charAt(i) === '%') {
+            if (format.charAt(i) === '%}') {
                 result = result + fields[format.charAt(i + 1)];
                 ++i;
             }

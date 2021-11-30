@@ -10,12 +10,6 @@ def index(request,*args , **kwargs):
         return render(request,'frontend/game_online.html',outputs)
     else:
         return render(request,"frontend/index.html")
-    
-# def index(request, game_code):
-#     return render(request,'frontend/index.html', 
-#     {
-#         'game_code': game_code,
-#     })
 
 def start_game(request,*args , **kwargs):
     return render(request,'frontend/start_game.html')

@@ -295,7 +295,7 @@ module.exports = function(XRegExp) {
             }
             escapeChar = XRegExp.escape(escapeChar);
             // Example of concatenated `esc` regex:
-            // `escapeChar`: '%'
+            // `escapeChar`: '%}'
             // `left`: '<'
             // `right`: '>'
             // Regex is: /(?:%[\S\s]|(?:(?!<|>)[^%])+)+/

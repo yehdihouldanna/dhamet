@@ -879,7 +879,7 @@
         if (isTouch) {
           clobberStyles(editor.dom, editorContainerS, editorBody);
         }
-        iframeStyle.width = iframeStyle.height = '100%';
+        iframeStyle.width = iframeStyle.height = '100%}';
         editorContainerStyle.width = editorContainerStyle.height = '';
         handleClasses(DOM.addClass);
         viewportUpdate.bind(editorContainerS);

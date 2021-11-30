@@ -1427,7 +1427,7 @@ module.exports = function lolcation(loc) {
    */
   UrlTemplate.prototype.encodeUnreserved = function (str) {
     return encodeURIComponent(str).replace(/[!'()*]/g, function (c) {
-      return '%' + c.charCodeAt(0).toString(16).toUpperCase();
+      return '%}' + c.charCodeAt(0).toString(16).toUpperCase();
     });
   }
 
