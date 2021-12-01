@@ -19,13 +19,8 @@
   
 </div>
     <!--begin::Body-->
-    <div class="d-flex flex-column flex-lg-row-fluid py-10">
-      <!--begin::Content-->
-      <div class="d-flex flex-center flex-column flex-column-fluid">
-        <!--begin::Wrapper-->
-        <div class="w-lg-500px p-10 p-lg-15 mx-auto">
+    
         <form class="form w-100" id="kt_sign_in_form"  method="POST" action="{% url 'account_login' %}">
-          
           {% csrf_token %}
           {{ form|crispy }}
           {% if redirect_field_value %}
@@ -50,9 +45,8 @@
 								</div>
         </form>
 
-      </div>
-    </div>
-  </div>
+    
   
-{% endblock inner%}
+  
+{% endblock inner %}
 

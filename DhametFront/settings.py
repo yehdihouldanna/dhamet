@@ -80,6 +80,7 @@ SOCIALACCOUNT_ADAPTER = "users.adapters.SocialAccountAdapter"
 AUTH_USER_MODEL = 'users.User'
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 SITE_ID = 1
+CRISPY_TEMPLATE_PACK ='bootstrap4'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
