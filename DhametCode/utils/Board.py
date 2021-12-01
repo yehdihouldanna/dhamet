@@ -164,20 +164,33 @@ class State():
 
             return True
 
+    def move_from_str(self,move_str):
+        moves = move_str.split(" ")
+        moved = False
+        for k in range(len(moves)-1):
+            source = moves[k]
+            destination = moves[k+1]
+            xs,ys = [int(i) for i in source]
+            xd,yd = [int(i) for i in destination]
+            moved = self.move((xs,ys),(xd,yd))
+            if not moved:
+                break
+
 
     def get_chain_moves(self,x,y):
         # TODO : optimize this function to return only the optimal chained move and reduce the overhead
-        """this function returns moves and a relative score to each move
-        the score is the sum values of the killed pieces during that move.
+        """This function returns all possible moves including the chained ones.
         """
         chains = {}
         move_str = str(x)+str(y)
         chains [move_str]=0
-        self.helper_chain_moves(x,y,move_str,chains)
+        first_lvl = True
+        self.helper_chain_moves(x,y,move_str,chains,first_lvl)
         del chains[move_str]
+        # cprint(f"Chains : {chains}" ,color ="blue")
         return chains
 
-    def helper_chain_moves(self,x,y,move_str,chains):
+    def helper_chain_moves(self,x,y,move_str,chains,first_lvl=False):
         if len(move_str)>=3*self.ai_limit_takes_per_turn+2:
             return 
         else:
@@ -190,15 +203,18 @@ class State():
                     move = move_str + " " +str(x_)+str(y_)
                     chains[move] = chains[move_str] + 1
                     self.move((x,y),(x_,y_))
-                    self.helper_chain_moves(x_,y_,move,chains)
+                    self.helper_chain_moves(x_,y_,move,chains,False)
                     self.set_board(temp_board)
                     self.set_player(current_player)
+                elif first_lvl and not score:
+                    move = move_str + " " +str(x_)+str(y_)
+                    chains[move] = 0
         # print(f"chain move {move_str} exited Ok!")
 
 
     def available_moves(self,x,y):
         """
-        This function return all the available moves of the given piece.
+        This function return all the available moves of the given piece moves that are only one level possible.
         params : x,y : piece coordinates on the board
         returns : possible moves - list containing tuples of coordinates of possible moves
                   scores  - list the scores of the moves (aka the number of pieces that move killed)
@@ -444,17 +460,28 @@ class Play_Game():
 
 
 if __name__=="__main__":
-    # Player1 = Human("Saadna",0)
+    Player1 = Human("Yehdhih",0)
+    # Player1 = Human("Nevisse",0)
     # Player1 = Human("Aleyen",0)
-    Player1 = Random("Agent 1",0)
-    Player2 = Random("Agent 2",1)
+    # Player1 = Random("Agent 1",0)
+    # Player2 = Random("Agent 2",1)
+    Player2 = MinMax("Min 1 : ",1,depth = 2)
     print("The game started :" )
     print(f"{Player1.name} is playing White.")
     print(f"{Player2.name} is playing Black.")
-    name = "game" + str(time.time()) +".txt"
-    file_name= os.path.join(os.getcwd(),"logs",name)
-    match = Play_Game(Player1,Player2,n=9,file_name=file_name)
+
+    save_to_file  = False
+
+    if save_to_file:
+        name = "game" + str(time.time()) +".txt"
+        file_name= os.path.join(os.getcwd(),"logs",name)
+    else :
+        file_name = None
+    match = Play_Game(Player1,Player2,n=9,file_name=file_name,console=True)
     while(not match.game_ended):
         match.turn()
-    with open(os.path.join(os.getcwd(),"logs","labels.txt"),mode="a") as f:
-        f.write(name+","+match.game.winner+"\n")
+
+
+    if save_to_file:
+        with open(os.path.join(os.getcwd(),"logs","labels.txt"),mode="a") as f:
+            f.write(name+","+match.game.winner+"\n")

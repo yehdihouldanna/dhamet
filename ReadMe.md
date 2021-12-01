@@ -194,3 +194,8 @@ cd "C:\\Program Files\\Redis" &
 ```
 
 
+### git commands (hard) :
+to merge recursively while favoring the current local branch with another branch foo
+```Bash
+git merge -s recursive -X ours foo
+```
