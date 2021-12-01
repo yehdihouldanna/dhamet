@@ -628,7 +628,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 function jsTransform(element, attr, prefix, postfix, to, duration, callback) {
   var tick = Math.min(duration, 10),
-      unit = (to.indexOf('%') >= 0) ? '%' : 'px',
+      unit = (to.indexOf('%}') >= 0) ? '%}' : 'px',
       to = to.replace(unit, ''),
       from = Number(element.style[attr].replace(prefix, '').replace(postfix, '').replace(unit, '')),
       positionTick = (to - from) / duration * tick,
@@ -1722,7 +1722,7 @@ var tns = function(options) {
   function getSlideMarginLeft (i) {
     return CALC ?
       CALC + '(' + i * 100 + '% / ' + slideCountNew + ')' :
-      i * 100 / slideCountNew + '%';
+      i * 100 / slideCountNew + '%}';
   }
 
   function getInnerWrapperStyles (edgePaddingTem, gutterTem, fixedWidthTem, speedTem, autoHeightBP) {
@@ -1750,7 +1750,7 @@ var tns = function(options) {
     } else {
       return CALC ?
         CALC + '(' + slideCountNew * 100 + '% / ' + itemsTem + ')' :
-        slideCountNew * 100 / itemsTem + '%';
+        slideCountNew * 100 / itemsTem + '%}';
     }
   }
 
@@ -1764,7 +1764,7 @@ var tns = function(options) {
       var dividend = carousel ? slideCountNew : itemsTem;
       width = CALC ?
         CALC + '(100% / ' + dividend + ')' :
-        100 / dividend + '%';
+        100 / dividend + '%}';
     }
 
     width = 'width:' + width;
@@ -1972,7 +1972,7 @@ var tns = function(options) {
     if (!carousel) {
       for (var i = index, l = index + Math.min(slideCount, items); i < l; i++) {
         var item = slideItems[i];
-        item.style.left = (i - index) * 100 / items + '%';
+        item.style.left = (i - index) * 100 / items + '%}';
         (0,_helpers_addClass_js__WEBPACK_IMPORTED_MODULE_17__.addClass)(item, animateIn);
         (0,_helpers_removeClass_js__WEBPACK_IMPORTED_MODULE_18__.removeClass)(item, animateNormal);
       }
@@ -2818,7 +2818,7 @@ var tns = function(options) {
       for (var i = index, l = index + slideCount; i < l; i++) {
         var item = slideItems[i],
             classN = i < index + items ? animateIn : animateNormal;
-        item.style.left = (i - index) * 100 / items + '%';
+        item.style.left = (i - index) * 100 / items + '%}';
         (0,_helpers_addClass_js__WEBPACK_IMPORTED_MODULE_17__.addClass)(item, classN);
       }
     }
@@ -3085,7 +3085,7 @@ var tns = function(options) {
         // add transitions to visible slides when adjusting their positions
         (0,_helpers_addClass_js__WEBPACK_IMPORTED_MODULE_17__.addClass)(item, 'tns-moving');
 
-        item.style.left = (i - index) * 100 / items + '%';
+        item.style.left = (i - index) * 100 / items + '%}';
         (0,_helpers_addClass_js__WEBPACK_IMPORTED_MODULE_17__.addClass)(item, animateIn);
         (0,_helpers_removeClass_js__WEBPACK_IMPORTED_MODULE_18__.removeClass)(item, animateNormal);
       } else if (item.style.left) {
@@ -3228,7 +3228,7 @@ var tns = function(options) {
 
     if (hasRightDeadZone) { val = Math.max(val, rightBoundary); }
 
-    val += (horizontal && !autoWidth && !fixedWidth) ? '%' : 'px';
+    val += (horizontal && !autoWidth && !fixedWidth) ? '%}' : 'px';
 
     return val;
   }
@@ -3251,7 +3251,7 @@ var tns = function(options) {
         var item = slideItems[i];
 
       // set item positions
-      if (!isOut) { item.style.left = (i - index) * 100 / items + '%'; }
+      if (!isOut) { item.style.left = (i - index) * 100 / items + '%}'; }
 
       if (animateDelay && TRANSITIONDELAY) {
         item.style[TRANSITIONDELAY] = item.style[ANIMATIONDELAY] = animateDelay * (i - number) / 1000 + 's';
@@ -3732,7 +3732,7 @@ var tns = function(options) {
       } else {
         var percentageX = TRANSFORM ? dist * items * 100 / ((viewport + gutter) * slideCountNew): dist * 100 / (viewport + gutter);
         x += percentageX;
-        x += '%';
+        x += '%}';
       }
 
       container.style[transformAttr] = transformPrefix + x + transformPostfix;

@@ -142,7 +142,7 @@
       fmt = fmt.replace('%b', '' + editor.translate(monthsShort[date.getMonth()]));
       fmt = fmt.replace('%A', '' + editor.translate(daysLong[date.getDay()]));
       fmt = fmt.replace('%a', '' + editor.translate(daysShort[date.getDay()]));
-      fmt = fmt.replace('%%', '%');
+      fmt = fmt.replace('%%}', '%}');
       return fmt;
     };
 

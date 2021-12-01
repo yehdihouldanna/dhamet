@@ -2701,7 +2701,7 @@
         'px',
         'pt'
       ],
-      relative: ['%'],
+      relative: ['%}'],
       empty: ['']
     };
     var pattern = function () {
@@ -2800,7 +2800,7 @@
       set$1(cell, 'width', amount + 'px');
     };
     var setPercentageWidth = function (cell, amount) {
-      set$1(cell, 'width', amount + '%');
+      set$1(cell, 'width', amount + '%}');
     };
     var setHeight = function (cell, amount) {
       set$1(cell, 'height', amount + 'px');
@@ -2820,7 +2820,7 @@
     };
     var normalizePixelSize = function (value, cell, getter, setter) {
       var number = parseInt(value, 10);
-      return endsWith(value, '%') && name(cell) !== 'table' ? convert(cell, number, getter, setter) : number;
+      return endsWith(value, '%}') && name(cell) !== 'table' ? convert(cell, number, getter, setter) : number;
     };
     var getTotalHeight = function (cell) {
       var value = getHeightValue(cell);
@@ -2906,7 +2906,7 @@
       return get$8(table) + 'px';
     };
     var getPercentTableWidth$1 = function (table) {
-      return getPercentSize(table, get$8) + '%';
+      return getPercentSize(table, get$8) + '%}';
     };
     var isPercentSizing$1 = function (table) {
       return getRawWidth$1(table).exists(function (size) {
@@ -4026,8 +4026,8 @@
       return rawAmount === amount.toString() ? type(amount) : adt$6.invalid(value);
     };
     var from = function (value) {
-      if (endsWith(value, '%')) {
-        return validateFor('%', adt$6.percent, value);
+      if (endsWith(value, '%}')) {
+        return validateFor('%}', adt$6.percent, value);
       }
       if (endsWith(value, 'px')) {
         return validateFor('px', adt$6.pixels, value);
@@ -4043,9 +4043,9 @@
           return w;
         }, function (px) {
           var ratio = px / totalWidth * 100;
-          return ratio + '%';
+          return ratio + '%}';
         }, function (pc) {
-          return pc + '%';
+          return pc + '%}';
         });
       });
     };
@@ -4070,7 +4070,7 @@
         return constant(num + 'px');
       }, function () {
         var num = 100 / columns;
-        return constant(num + '%');
+        return constant(num + '%}');
       });
       return range$1(columns, f);
     };
@@ -4109,7 +4109,7 @@
       return Size.from(value).fold(constant(value), function (px) {
         return px + amount + 'px';
       }, function (pc) {
-        return pc + amount + '%';
+        return pc + amount + '%}';
       });
     };
     var normalize = function (values) {
@@ -4126,7 +4126,7 @@
           return roundDown(num, 'px');
         }, function (num) {
           return {
-            value: num + '%',
+            value: num + '%}',
             remainder: 0
           };
         });
@@ -4167,7 +4167,7 @@
       });
     };
     var getUnit = function (newSize) {
-      return validate(newSize).fold(constant('px'), constant('px'), constant('%'));
+      return validate(newSize).fold(constant('px'), constant('px'), constant('%}'));
     };
     var redistribute = function (table, optWidth, optHeight, tableSize) {
       var warehouse = Warehouse.fromTable(table);
@@ -4627,8 +4627,8 @@
         position: 'fixed',
         left: '0px',
         top: '0px',
-        width: '100%',
-        height: '100%'
+        width: '100%}',
+        height: '100%}'
       });
       add(div, resolve$1('blocker'));
       add(div, settings.layerClass);
@@ -5097,7 +5097,7 @@
     var defaultTableToolbar = 'tableprops tabledelete | tableinsertrowbefore tableinsertrowafter tabledeleterow | tableinsertcolbefore tableinsertcolafter tabledeletecol';
     var defaultStyles = {
       'border-collapse': 'collapse',
-      'width': '100%'
+      'width': '100%}'
     };
     var defaultCellBorderWidths = range$1(5, function (i) {
       var size = i + 1 + 'px';
@@ -5374,9 +5374,9 @@
           var col = isPreserveTableColumnResizing(editor) || isRightEdgeResize ? getNumColumns(table) - 1 : 0;
           adjustWidth(table, width - startW, col, resizing, tableSize);
         } else if (isPercentage$1(startRawW)) {
-          var percentW = parseFloat(startRawW.replace('%', ''));
+          var percentW = parseFloat(startRawW.replace('%}', ''));
           var targetPercentW = width * percentW / startW;
-          set$1(table, 'width', targetPercentW + '%');
+          set$1(table, 'width', targetPercentW + '%}');
         }
         if (isPixel(startRawW)) {
           syncPixels(table);
@@ -7106,7 +7106,7 @@
     var DefaultRenderOptions = {
       styles: {
         'border-collapse': 'collapse',
-        'width': '100%'
+        'width': '100%}'
       },
       attributes: { border: '1' },
       colGroups: false
@@ -7201,7 +7201,7 @@
       });
     };
     var isPercentage = function (width) {
-      return isString(width) && width.indexOf('%') !== -1;
+      return isString(width) && width.indexOf('%}') !== -1;
     };
     var insert = function (editor, columns, rows, colHeaders, rowHeaders) {
       var defaultStyles = getDefaultStyles(editor);
@@ -7884,7 +7884,7 @@
       };
       var defaultData = {
         height: '',
-        width: '100%',
+        width: '100%}',
         cellspacing: '',
         cellpadding: '',
         caption: false,
