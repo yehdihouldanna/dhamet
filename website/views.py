@@ -30,23 +30,23 @@ def sign_up(request):
 
 
 def docs_Fr(request):
-    return render(request,"Documentation/getting-started_Fr.html")
+    return render(request,"documentation/getting-started_Fr.html")
     
 def docs_Ar(request):
-    return render(request,"Documentation/getting-started_Ar.html")
+    return render(request,"documentation/getting-started_Ar.html")
 
 
 def regles_Ar(request):
-    return render(request,"Documentation/base/utilities.html")
+    return render(request,"documentation/base/utilities.html")
    
 def regles_Fr(request):
-    return render(request,"Documentation/base/utilities_Fr.html")
+    return render(request,"documentation/base/utilities_Fr.html")
 
    
 def Intro_Ar(request):
-    return render(request,"Documentation/getting-started/build/gulp.html")
+    return render(request,"documentation/getting-started/build/gulp.html")
 def Intro_Fr(request):
-    return render(request,"Documentation/getting-started/build/gulp_Fr.html")
+    return render(request,"documentation/getting-started/build/gulp_Fr.html")
 
 
 
