@@ -33,6 +33,7 @@ class Board extends Component {
       previous_board : "wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww_bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
       move: "",
       last_move :"",
+      move_history_render:[],
       creator   :"",
       opponent  :"",
       winner : "",
@@ -60,6 +61,7 @@ class Board extends Component {
     this.deserialize = this.deserialize.bind(this);
 
     this.update_moves_time_line = this.update_moves_time_line.bind(this);
+    this.add_one_history_item = this.add_one_history_item.bind(this);
   };
   //------------------------------------------
   //Utils Methods : 
@@ -218,20 +220,23 @@ class Board extends Component {
         }));
 
       {
-        let me = this
-        setTimeout(function () {
-          if (me.state.previous_board != me.state.board_txt) {
-            console.log("The AI request waited for 250 ms !")
-            me.props.client.send(
-              JSON.stringify({
-                'id': me.state.Code,
-                'state': me.state.board_txt,
-                'last_move': move_str,
-                'current_turn': me.state.player,
-                'winner':"",
-              }));
-          }
-      }, 250);
+        if( this.state.opponent.includes("AI") )
+        {
+            let me = this
+            setTimeout(function () {
+              if (me.state.previous_board != me.state.board_txt) {
+                console.log("The AI request waited for 250 ms !")
+                me.props.client.send(
+                  JSON.stringify({
+                    'id': me.state.Code,
+                    'state': me.state.board_txt,
+                    'last_move': move_str,
+                    'current_turn': me.state.player,
+                    'winner':"",
+                  }));
+              }
+          }, 250);
+        }
       }
     }
   };
@@ -291,7 +296,6 @@ class Board extends Component {
             else {
                 console.log("We received a correct data: ", data);
                 let game_state = me.state;
-                
                 game_state.player = data.current_turn;
                 // console.log("The winner returned is : ",data.winner)
                 console.log("The player now is : ", game_state.player);
@@ -300,10 +304,14 @@ class Board extends Component {
                 if (game_state.last_move != data.last_move)
                 { 
                   game_state.last_move= data.last_move;
+                  game_state.move_history_render.push(game_state.last_move);
                   me.setState(game_state);
+                  if (game_state.move_history_render.length==2)
+                  {
+                    me.update_moves_time_line();
+                    me.state.move_history_render=[];
+                  }
                   me.deserialize(data.state);
-                  me.update_moves_time_line();
-                  
                 }
                 me.state.move = "";
                 if (data.winner!==null && data.winner!=="")
@@ -329,15 +337,13 @@ class Board extends Component {
   //----------------------------------------
   // Web Page modifiers :
   //----------------------------------------
-  update_moves_time_line()
+  add_one_history_item(content,color)
   {
-    if (this.state.move!=="")
-    {
-      let time_line_item = document.createElement("div");
-      // time_line_item.setAttribute( "class",  "timeline-item");
+    console.log("Adding a history item")
+    // colors: [blue:"text_primary",yellow: "text-warning",red:"text-danger",green:"text_success"]
+    let time_line_item = document.createElement("div");
       // mb for margin bottom
-      time_line_item.classList.add( "timeline-item","mb-2");
-      // time_line_item.classList.add( "yetAClass", "moreClasses", "anyClass" );
+      time_line_item.classList.add("timeline-item","mb-2");
 
       let time_label = document.createElement("div");
       time_label.classList.add("timeline-label", "fw-bolder", "text-gray-800", "fs-6");
@@ -345,29 +351,27 @@ class Board extends Component {
       // var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
       var time = today.getMinutes() + ":" + today.getSeconds();
       time_label.innerHTML = time;
-
       let badge = document.createElement("div");
       badge.classList.add("timeline-badge");
       let icon = document.createElement("i");
-      // the icon colors class : are [blue:"text_primary",yellow: "text-warning",red:"text-danger",green:"text_success"]
-      
-      
-      if (this.state.player)
-      {icon.classList.add("fa", "fa-genderless", "text-dark" ,"fs-1");}
-      else
-      {icon.classList.add("fa", "fa-genderless", "text-secondary" ,"fs-1");}
+      let icon_class = "text-"+color;
+      icon.classList.add("fa", "fa-genderless", icon_class ,"fs-1");
       badge.appendChild(icon)
 
       let move_div = document.createElement("div");
       move_div.classList.add("fw-mormal", "timeline-content", "text-muted", "ps-3");
-      move_div.innerHTML=this.state.move;
+      move_div.innerHTML=content;
 
       time_line_item.appendChild(time_label);
       time_line_item.appendChild(badge);
       time_line_item.appendChild(move_div);
 
       document.getElementById("MovesContainer").appendChild(time_line_item);
-    }
+  }
+  update_moves_time_line()
+  {
+    this.add_one_history_item(this.state.move_history_render[0],"dark");
+    this.add_one_history_item(this.state.move_history_render[1],"secondary");
   }
   // --------------------------------------
   // Rendering React native method :

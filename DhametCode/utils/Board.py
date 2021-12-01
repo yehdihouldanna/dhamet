@@ -18,9 +18,8 @@ class State():
     """
     def __init__(self,n=9,board=None,player =0,length=0):
         self.n = n
-        self.player = 0 # who's turn : 0 for white 1 for black.
         self.length = length
-        self.player = player  # since white always start,we can get player from length.
+        self.player = player   # who's turn : 0 for white 1 for black.
         self.pieces = self.n**2 //2  # number of pieces of each player.
         self.white_score = 40
         self.black_score = 40
@@ -167,6 +166,7 @@ class State():
 
 
     def get_chain_moves(self,x,y):
+        # TODO : optimize this function to return only the optimal chained move and reduce the overhead
         """this function returns moves and a relative score to each move
         the score is the sum values of the killed pieces during that move.
         """

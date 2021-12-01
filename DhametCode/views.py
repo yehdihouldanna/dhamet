@@ -29,7 +29,7 @@ class CreateGameView(generics.ListAPIView):
             user = User.objects.filter(name = request.user.name)[0]
         else : 
             try:
-                user = User.objects.filter(name = "Guest")
+                user = User.objects.filter(name = "Guest")[0]
             except:
                 user = User(username= "Guest",name = "Guest",phone=000)
                 user.save()
