@@ -180,15 +180,25 @@ class MinMax(Agent):
                     else:
                         score_ = score - new_score
                     moved = state.move_from_str(new_move)
+                    ended,_ = state.check_end_condition()
                     if not moved:
                         print(f"MinMax Agent tried the move: {new_move} but couldn't perform it!")
-                    b1_move , b1_score = self.minmax(state,score_,cur_depth+1,target_depth,(maxi_turn+1)%2)
-                    if best_score is None or b1_score > best_score :
-                        best_score = b1_score
-                        best_move = new_move
+                    if not ended:
+                        b1_move , b1_score = self.minmax(state,score_,cur_depth+1,target_depth,(maxi_turn+1)%2)
+                        if best_score is None or b1_score > best_score :
+                            best_score = b1_score
+                            best_move = new_move
+                    else:
+                        if maxi_turn:
+                            best_move = new_move
+                            best_score = score_
+                            break
+                        elif best_score is None or score_>best_score:
+                            best_move=new_move
+                            best_score = score_
+
                     state.set_board(temp_board)
                     state.set_player(player)
-                    
             return best_move,best_score
             
             

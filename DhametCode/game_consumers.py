@@ -188,12 +188,10 @@ class GameConsumer(AsyncWebsocketConsumer):
         else:
             user = User.objects.filter(name = "Guest")[0]
 
-        moved = False
         if id!="":
             queryset = Game.objects.filter(id=id)
             if queryset.exists():
                 current_turn_game  = data['current_turn']
-                board_txt = data['state']
                 move = data['last_move']
                 print(f"in the post method move:{move}")
                 game = queryset[0]
@@ -201,10 +199,7 @@ class GameConsumer(AsyncWebsocketConsumer):
                 length = game.length
                 board = self.deserialize(game.state)
                 game_instance = State(n=9,board=board,player = current_turn, length=length)
-                who_won,end_msg = game_instance.check_end_condition()
-                if who_won:
-                    print(end_msg)
-
+                
                 AI_NAMES = ["AI_Random","AI_Dummy","AI_MinMax"]
                 if ((game.creator==user and current_turn_game==0) or (game.opponent == user and current_turn_game)): # user is playing
                     return self.update_game(id,user,game,game_instance,move)

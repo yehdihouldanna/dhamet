@@ -34,16 +34,12 @@ class State():
         self.lim_takes = 10  # limits AI takes per turn (improves performance (when the baord contain few Dhaimat pieces))
         if board is None:
             self.board = np.zeros((n,n),dtype=int)
-            count = 0
-            for i in range(self.n):
-                for j in range(self.n):
-                    if count < self.pieces:
-                        self.board[i,j]=1
-                    elif count==self.pieces:
-                        self.board[i,j]=0
-                    else:
-                        self.board[i,j]=-1
-                    count+=1
+            middle = n//2
+            self.board[:middle,:]=1 # first full row
+            self.board[middle,:middle]=-1
+            self.board[middle,middle]=0
+            self.board[middle,middle+1:]=1
+            self.board[middle+1:]=-1
         else:
             self.board = np.copy(board)
 

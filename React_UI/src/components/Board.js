@@ -21,7 +21,7 @@ class Board extends Component {
         [ 1,  1,  1,  1,  1,  1,  1,  1,  1],
         [ 1,  1,  1,  1,  1,  1,  1,  1,  1],
         [ 1,  1,  1,  1,  1,  1,  1,  1,  1],
-        [ 1,  1,  1,  1,  0, -1, -1, -1, -1],
+        [ -1, -1, -1, -1, 0,  1,  1,  1,  1],
         [-1, -1, -1, -1, -1, -1, -1, -1, -1],
         [-1, -1, -1, -1, -1, -1, -1, -1, -1],
         [-1, -1, -1, -1, -1, -1, -1, -1, -1],
@@ -29,8 +29,8 @@ class Board extends Component {
       player: 0,
       Code: props.game_code,
       Client : props.client,
-      board_txt: "wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww_bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-      previous_board : "wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww_bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      board_txt: "wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwbbbb_wwwwbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      previous_board : "wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwbbbb_wwwwbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
       move: "",
       last_move :"",
       move_history_render:[],
@@ -108,16 +108,54 @@ class Board extends Component {
   // "Click Vs DoubleClick"  Handling :
   //---------------------------------------------------------------------------------------
   doClickAction(key,piece_present) {
-    if (this.state.move === "" && piece_present) { this.state.move = key; }
-    else if (!this.state.move.slice(-5).includes(key) && this.state.move !== "") { this.state.move += " " + key; }
+    if (this.state.move === "" && piece_present) { this.state.move = key;}
+    else if (this.state.move.length>=2) // switching the selected piece
+    {
+      let len = this.state.move.length;
+      let x = Number(this.state.move[len-2])
+      let y = Number(this.state.move[len-1])
+      let xc = Number(key[0])
+      let yc = Number(key[1])
+      if (this.state.board[x][y]*this.state.board[xc][yc]>=1)  // checks if the cellls the two pieces are of the same type
+      {this.state.move = key;}
+      }
+    if (!this.state.move.slice(-5).includes(key) && this.state.move !== "") 
+    { this.state.move += " " + key; }
     console.log("current move : ", this.state.move);
     let game_state = this.state;
     game_state.move = this.state.move;
     this.setState(game_state);
   };
   doDoubleClickAction(key,piece_present) {
-    if (!this.state.move.slice(-5).includes(key) && this.state.move !== "") { this.state.move += " " + key; }
+    if (this.state.move.length>=5)
+    {
+      
+      console.log("This condition got invoked!");
+      console.log("key: ",key,"Move:",this.state.move);
+      // if the user double click his piece and double click on another piece of his
+      let len = this.state.move.length;
+      let x = Number(this.state.move[len-5])
+      let y = Number(this.state.move[len-4])
+      let xc = Number(key[0])
+      let yc = Number(key[1])
+      
+      if (this.state.board[x][y]*this.state.board[xc][yc]>=1) // checks if the two cells containt pieces of the same type
+      { console.log("The indices we are trying : ",x,y,xc,yc, "are equal")
+        this.state.move = ""
+        let game_state = this.state;
+        game_state.move = this.state.move;
+        this.setState(game_state);
+        return;}
+    }
+    if (!this.state.move.slice(-5).includes(key) && this.state.move !== "") 
+    { this.state.move += " " + key;
+      let game_state = this.state;
+      game_state.move = this.state.move;
+      this.setState(game_state);
+    }
     this.handleMove();
+    
+    
   };
   handleClick(e, key,piece_present) {
     if (e.detail > 1) {
@@ -225,7 +263,7 @@ class Board extends Component {
             let me = this
             setTimeout(function () {
               if (me.state.previous_board != me.state.board_txt) {
-                console.log("The AI request waited for 250 ms !")
+                console.log("The AI request waited for 350 ms !")
                 me.props.client.send(
                   JSON.stringify({
                     'id': me.state.Code,

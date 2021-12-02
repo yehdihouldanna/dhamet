@@ -28,7 +28,7 @@ def get_initial_state_json():
 # Create your models here.
 
 class Game(models.Model):
-    init_txt="wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww_bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+    init_txt="wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwbbbb_wwwwbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
     
     created = models.DateTimeField(auto_now_add=True)
     completed = models.DateTimeField(blank = True , null = True)

@@ -195,13 +195,25 @@ cd "C:\\Program Files\\Redis" &
 
 
 ### git commands (hard) :
-to merge recursively while favoring the current local branch with another branch foo
-```Bash
+to merge recursively while favoring the current local branch with another branch foo 
+```shell
 git merge -s recursive -X ours foo
 git merge -s recursive -X ours origin/interface
 ```
 
-to update the historic locally
+to update the historic of git locally
+
 git fetch --all
 
-git pull
+and then each contributor will have to pull from his computer to put have his code up to date.
+with ```git pull```
+
+if it doesn't work,
+we fetch and manuallly merge with master
+
+
+```shell
+git fetch --all
+git merge origin/master
+```
+
