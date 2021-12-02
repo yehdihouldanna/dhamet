@@ -235,7 +235,7 @@ class Board extends Component {
                     'winner':"",
                   }));
               }
-          }, 250);
+          }, 350);
         }
       }
     }

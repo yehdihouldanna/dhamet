@@ -1,82 +1,19 @@
-from django.contrib import messages
-from django.contrib.auth import get_user_model
-from django.contrib.auth.mixins import LoginRequiredMixin
+import django_filters
 from django.urls import reverse
-from django.utils.translation import gettext_lazy as _
-from django.views.generic import DetailView, RedirectView, UpdateView
-import decimal
-import random
-from datetime import date
-import django_filters
-from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
-from django.db.models import F, Sum, Q
-from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
-from django.urls import reverse, reverse_lazy
-from django.db import IntegrityError
-from django.forms import modelformset_factory
-from django.http import HttpResponseRedirect
-from django.shortcuts import get_object_or_404, render
-from django.utils.translation import ugettext_lazy as _
-from django.views.generic import CreateView, DeleteView, UpdateView, View, FormView, ListView
-from django.http import Http404
-from django.views.generic import DetailView, ListView, RedirectView, DeleteView, UpdateView, CreateView
-from .models import *
-from .forms import *
-from django.shortcuts import render
-# Create your views here.
-from django.shortcuts import render
-from django.utils.translation import ugettext_lazy as _
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.urls import reverse_lazy, reverse
-from django.views.generic import DetailView, ListView, RedirectView, DeleteView, \
-    UpdateView, CreateView
-from django.shortcuts import get_object_or_404, render
-from django.views.generic import CreateView, DeleteView, UpdateView, View, \
-    FormView, ListView, TemplateView
-from django.contrib.messages.views import SuccessMessageMixin
-from django.contrib import messages
-from django.views.generic.base import TemplateView
-import requests
-from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
-import django_filters
-from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Field, Fieldset, Div, HTML, ButtonHolder, Submit
-from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Submit, Button, Row, Column
-from django.forms import DateTimeField
-from django.db.models import Avg, Case, Count, F
-from django.utils import timezone
-from django.views.decorators.cache import cache_page
-from django.utils.decorators import method_decorator
-from django.http import HttpResponse, HttpResponseForbidden
-from django.template.loader import get_template
-from django.template import Context
-from django.views.generic.base import TemplateView
-from .models import *
-from django.views.generic.detail import DetailView
-from django.views.generic.edit import CreateView, UpdateView, DeleteView
-from django.utils.decorators import method_decorator
-from django.urls import reverse_lazy
-from django.contrib.messages.views import SuccessMessageMixin
-from django.contrib.auth.decorators import login_required, user_passes_test
-from django.contrib.auth.models import Group
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin, PermissionRequiredMixin
-from django.contrib import messages
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect, get_object_or_404
-from django.utils.translation import gettext_lazy as _
-from django.urls import reverse, reverse_lazy
-from django.contrib.auth.mixins import LoginRequiredMixin, \
-    UserPassesTestMixin, \
-    PermissionRequiredMixin
-from django.views.generic import CreateView, DetailView, ListView, UpdateView, DeleteView
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.contrib.messages.views import SuccessMessageMixin
-from django.views.generic.base import TemplateView
-from django.http import HttpResponseRedirect, HttpResponse
 from django_filters.views import FilterView
+from django.utils.translation import gettext_lazy as _
+from django.contrib.messages.views import SuccessMessageMixin
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Layout, Fieldset, Div
+from django.views.generic import CreateView,RedirectView, UpdateView, DetailView
+from django.views.generic.detail import DetailView
+from django.views.generic.edit import CreateView, UpdateView
 from django.contrib.auth import get_user_model
-from django.utils.timezone import now
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin, PermissionRequiredMixin
+from .forms import *
+from .models import *
+
+# Create your views here.
 
 User = get_user_model()
 

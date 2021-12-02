@@ -198,4 +198,10 @@ cd "C:\\Program Files\\Redis" &
 to merge recursively while favoring the current local branch with another branch foo
 ```Bash
 git merge -s recursive -X ours foo
+git merge -s recursive -X ours origin/interface
 ```
+
+to update the historic locally
+git fetch --all
+
+git pull

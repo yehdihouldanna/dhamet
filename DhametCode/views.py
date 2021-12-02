@@ -77,7 +77,9 @@ class GameMoveView(generics.ListAPIView):
             if not moved:
                 break
         if moved:
-            ended  = game_instance.check_end_condition()
+            ended ,end_msg  = game_instance.check_end_condition()
+            if ended :
+                print(end_msg)
             game_instance.player = not game_instance.player
             game_instance.length+=1
             return True, game_instance.board,ended,game_instance.length

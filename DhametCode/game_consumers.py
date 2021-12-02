@@ -100,34 +100,49 @@ class GameConsumer(AsyncWebsocketConsumer):
         # sender = self.scope["user"].username
         # receiver = self.scope['path'].split('_')[1]
         output_data = await self.post_move(event)
-
         # Send message to WebSocket
         await self.send(text_data = output_data)
 
-    def get_game_update(self,game_instance,move):
-        moves = move.split(" ")
-        moved = False
-        for k in range(len(moves)-1):
-            source = moves[k]
-            destination = moves[k+1]
-            xs,ys = [int(i) for i in source]
-            xd,yd = [int(i) for i in destination]
-            moved = game_instance.move((xs,ys),(xd,yd))
-            if not moved:
-                break
+    def update_game(self,id,user,game,game_instance,move):
+        moved = game_instance.move_from_str(move)
         if moved:
-            ended  = game_instance.check_end_condition()
             game_instance.player = not game_instance.player
             game_instance.length+=1
-            return True, game_instance.board,ended,game_instance.length
-        
-        return False ,None,None,None
+            board_txt = self.serialize(game_instance.board)
+            game.state = board_txt
+            game.length = game_instance.length
+            moves = game.moves+"\n"+move
+            game.moves = moves
+            game.last_move= move
+            game.current_turn = (game.current_turn+1)%2
+        ended,end_msg = game_instance.check_end_condition()
+        if ended:
+            game.winner = user
+            game.completed = datetime.now()
+        game.save()
+        winner=""
+        try:
+            winner = game.winner.name
+            if(not len(winner)):
+                winner = game.winner.username
+        except:
+            pass
+        output_data  = json.dumps({
+                    'id':id,
+                    'state': game.state,
+                    'last_move': move,
+                    'current_turn':game.current_turn,
+                    'creator' : game.creator.name,
+                    'opponent' : game.opponent.name,
+                    'winner' : winner})
+        return output_data
+
 
     def serialize(self,board):
         "serialize the matrix board into a string format"
         txt  =""
-        for i in range(9):
-            for j in range(9):
+        for i in range(board.shape[0]):
+            for j in range(board.shape[1]):
                 if board[i,j]==1:
                     txt+="w"
                 elif board[i,j]==3:
@@ -143,10 +158,11 @@ class GameConsumer(AsyncWebsocketConsumer):
 
     def deserialize(self,txt):
         "deserialize a string board into a matrix board"
-        board = np.zeros((9,9),dtype=int)
+        n = int(np.sqrt(len(txt)))
+        board = np.zeros((n,n),dtype=int)
         k = 0
-        for i in range(9):
-            for j in range(9):
+        for i in range(n):
+            for j in range(n):
                 if txt[k]=="w":
                     board[i,j]=1
                 elif txt[k]=="W":
@@ -159,8 +175,6 @@ class GameConsumer(AsyncWebsocketConsumer):
                     board[i,j]=-3
                 k+=1
         return board
-
-
 
     @database_sync_to_async
     def post_move(self , event):
@@ -187,43 +201,13 @@ class GameConsumer(AsyncWebsocketConsumer):
                 length = game.length
                 board = self.deserialize(game.state)
                 game_instance = State(n=9,board=board,player = current_turn, length=length)
-                who_won : game_instance.check_end_condition()
-                AI_NAMES = ["AI_Random"]
+                who_won,end_msg = game_instance.check_end_condition()
+                if who_won:
+                    print(end_msg)
+
+                AI_NAMES = ["AI_Random","AI_Dummy","AI_MinMax"]
                 if ((game.creator==user and current_turn_game==0) or (game.opponent == user and current_turn_game)): # user is playing
-                    moved,board,ended,length = self.get_game_update(game_instance,move)
-                    if moved :
-                        board_txt = self.serialize(board)
-                        game.state = board_txt
-                        game.length = length
-                        moves = game.moves+"\n"+move
-                        game.moves = moves
-                        game.last_move= move
-                        game.current_turn = (game.current_turn+1)%2
-                    
-                    if ended:
-                        game.winner = user
-                        game.completed = datetime.now()
-
-                    game.save()
-
-                    winner=""
-                    try:
-                        winner = game.winner.name
-                        if(not len(winner)):
-                            winner = game.winner.username
-                    except:
-                        pass
-
-                    output_data  = json.dumps({
-                    'id':id,
-                    'state': game.state,
-                    'last_move': move,
-                    'current_turn':game.current_turn,
-                    'creator' : game.creator.name,
-                    'opponent' : game.opponent.name,
-                    'winner' : winner})
-                
-                    return output_data
+                    return self.update_game(id,user,game,game_instance,move)
                 
                 elif ((game.opponent.name in AI_NAMES and current_turn_game) or (game.creator.name in AI_NAMES and current_turn_game==0)): # the AI is playing 
                     # Agent = Random('AI',current_turn)
@@ -231,41 +215,12 @@ class GameConsumer(AsyncWebsocketConsumer):
                     Agent = MinMax("AI",current_turn,depth=2)
                     move = Agent.move(game_instance)
                     print(f"The AI agent moved : {move}")
-                    moved,board,ended,length = self.get_game_update(game_instance,move)
-                    if moved :
-                        board_txt = self.serialize(board)
-                        game.state = board_txt
-                        game.length = length
-                        moves = game.moves+"\n"+move
-                        game.moves = moves
-                        game.last_move= move
-                        game.current_turn = (game.current_turn+1)%2
-                    if ended:
-                        game.winner = user
-                        game.completed = datetime.now()
-                    game.save()
-                    winner=""
-                    try:
-                        winner = game.winner.name
-                        if(not len(winner)):
-                            winner = game.winner.username
-                    except:
-                        pass
+                    user_ = game.creator if game.creator.name in AI_NAMES else game.opponent
+                    return self.update_game(id,user_,game,game_instance,move)
 
-                    output_data  = json.dumps({
-                        'id':id,
-                        'state': game.state,
-                        'last_move': move,
-                        'current_turn':game.current_turn,
-                        'creator' : game.creator.name,
-                        'opponent': game.opponent.name,
-                        'winner' : winner})
-
-                    return output_data
-
-            raise Exception(f"user {user.name} tried to make a move in a non existing game!!")    
-        
-        
-        raise Exception("You can't make a move in a non existing game!!")
+            # raise Exception(f"user {user.name} tried to make a non valid move!")    
+            return Response({'Bad Request': 'Invalid data...'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'Bad Request': 'Invalid data...'}, status=status.HTTP_400_BAD_REQUEST)
+        # raise Exception("You can't make a move in a non existing game!!")
         
         

@@ -18,8 +18,7 @@ class Player():
 
 class Human(Player):
     def __init__(self,name,player):
-        self.name = name
-        self.player = player
+        super().__init__(name,player)
 
     def move(self,state):
         move_ = input(f"{self.name} Enter your move : ")
@@ -27,8 +26,14 @@ class Human(Player):
 
 class Agent(Player):
     def __init__(self,name,player):
-        self.name = name
-        self.player = player
+        super().__init__(name,player)
+        self.pieces_indices=None
+
+    def get_pieces(self,state):
+        if self.player: #case the agent is playing with black pieces
+            self.pieces_indices = np.argwhere(state.board<=-1)
+        else :
+            self.pieces_indices = np.argwhere(state.board>=1)
 
     def move(self,state):
         pass
@@ -38,15 +43,12 @@ class Naive(Agent):
     This random agent will take the first available move
     """
     def __init__(self,name,player):
+        super().__init__(name,player)
         self.name = "Naive " + name
-        self.player  = player
-        self.pieces_indices=None
+
     def move(self,state):
         move="_"
-        if self.player: #case the agent is playing with black pieces
-            self.pieces_indices = np.argwhere(state.board<=-1)
-        else :
-            self.pieces_indices = np.argwhere(state.board>=1)
+        self.get_pieces(state)
         for i in range(self.pieces_indices.shape[0]):
             x,y = tuple(self.pieces_indices[i])
             moves,scores = state.available_moves(x,y)
@@ -62,17 +64,13 @@ class Random(Agent):
     This a random agent that chooses a random move from the first available moves.
     """
     def __init__(self,name,player):
+        super().__init__(name,player)
         self.name = "Random " + name
-        self.player  = player
-        self.pieces_indices=None
         self.choices_limit = 5
     def move(self,state):
         move="_"
         dict_ = {}
-        if self.player: #case the agent is playing with black pieces
-            self.pieces_indices = np.argwhere(state.board<=-1)
-        else :
-            self.pieces_indices = np.argwhere(state.board>=1)
+        self.get_pieces(state)
         for i in range(self.pieces_indices.shape[0]):
             x,y = tuple(self.pieces_indices[i])
             moves,scores= state.available_moves(x,y)
@@ -92,20 +90,15 @@ class Dummy(Agent):
     This is a dummy agent it choses the best move available to it in it's turn
     """
     def __init__(self,name,player):
+        super().__init__(name,player)
         self.name = "Dummy " + name
-        self.player  = player
-        self.pieces_indices=None
         self.choices_limit = 40 # could be limited if needed.
     def move(self,state):
         move="_"
         dict_ = {}
-        if self.player: #case the agent is playing with black pieces
-            self.pieces_indices = np.argwhere(state.board<=-1)
-        else :
-            self.pieces_indices = np.argwhere(state.board>=1)
+        self.get_pieces(state)
         for i in range(self.pieces_indices.shape[0]):
             x,y = tuple(self.pieces_indices[i])
-            
             chains = state.get_chain_moves(x,y)
             if len(chains):
                 best_cp_move = max(chains, key=chains.get)
@@ -125,25 +118,20 @@ class MinMax(Agent):
     This is a dummy agent it choses the best move available to it in it's turn
     """
     def __init__(self,name,player,depth = 2):
+        super().__init__(name,player)
         self.name = "Dummy " + name
-        self.player = player
-        self.pieces_indices = None
         self.choices_limit = 5
         self.depth = 2
 
-        
     def move(self,state):
         score = 0
         cur_depth = 1
         maxi_turn = 1
         best_move,best_score = self.minmax(state,score,cur_depth,self.depth,maxi_turn)
-        
         if best_move is None:
-            cprint("ALERT: minmax agent couldn't return a move!")
-        cprint(f"The agent is returning the move : {best_move}")
+            cprint(f"ALERT: {self.name} couldn't return a move!")
         return best_move
     
-
     # this is the strategy of the agent
     def minmax(self,state,score,cur_depth,target_depth,maxi_turn):
         if maxi_turn: # agent turn to maximize
@@ -160,15 +148,12 @@ class MinMax(Agent):
         if cur_depth==target_depth: # base scenario for recursivity
             best_move = None
             best_score = None
-
             for i in range(pieces.shape[0]):
                 x,y = tuple(pieces[i])
                 chains = state.get_chain_moves(x,y)
-                
                 if len(chains):
                     new_move = max(chains, key=chains.get)
                     new_score = chains[new_move]
-                    
                     if  best_score is None or new_score > best_score:
                         best_score = new_score
                         best_move = new_move
@@ -186,24 +171,21 @@ class MinMax(Agent):
             for i in range(pieces.shape[0]):
                 x,y = tuple(pieces[i])
                 chains = state.get_chain_moves(x,y)
-
                 # TODO : check for a way to make it possible to cover more exploration while looking for the best move
                 if len(chains):
                     new_move = max(chains, key=chains.get)
                     new_score = chains[new_move]
-                    
                     if maxi_turn:
                         score_ = score + new_score
                     else:
                         score_ = score - new_score
-
-                    state.move_from_str(new_move)
+                    moved = state.move_from_str(new_move)
+                    if not moved:
+                        print(f"MinMax Agent tried the move: {new_move} but couldn't perform it!")
                     b1_move , b1_score = self.minmax(state,score_,cur_depth+1,target_depth,(maxi_turn+1)%2)
-
                     if best_score is None or b1_score > best_score :
                         best_score = b1_score
                         best_move = new_move
-                    
                     state.set_board(temp_board)
                     state.set_player(player)
                     
