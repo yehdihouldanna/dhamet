@@ -144,7 +144,11 @@ class Cell extends Component {
     if(this.props.value===0)
         { 
             return connectDropTarget(
-                <div className="cell"  onClick = {(e)=>this.props.onClick(e,this.props.i.toString()+this.props.j.toString(),0)}> 
+                <div className={"cell opacity-active-75" + this.props.ex_css_class +(this.props.toggle ? " cell_active" : "")}  onClick = {(e)=>
+                  {
+                    this.props.onClick(e,this.props.i.toString()+this.props.j.toString(),0); 
+                  }
+                    }> 
                   {this.props.i.toString()+this.props.j.toString()}
                     {/* {isOver && <div>Drop Here!</div>} */}
                 </div>
@@ -153,7 +157,7 @@ class Cell extends Component {
         else
         {   
             return connectDropTarget(
-                <div className="cell" >
+                <div className={"cell opacity-active-75"+ this.props.ex_css_class +(this.props.toggle ? " cell_active" : "")} >
                     {this.props.i.toString()+this.props.j.toString()}
                     <Piece 
                         key ={this.props.key}

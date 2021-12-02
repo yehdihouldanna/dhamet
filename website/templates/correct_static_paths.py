@@ -18,7 +18,7 @@ parser.parse_args()
 def replace_patterns_in_line(line):
     insert_static = True
     """ replaces tha pattern in a line"""
-    # line  = re.sub("{% static assets", "{% static assets", line)
+    line  = re.sub("{% static 'assets", "{% static 'assets", line)
 
     start = "{%% static '"
     end = "' %}"

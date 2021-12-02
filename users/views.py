@@ -203,8 +203,6 @@ class UserFiltreFormHelper(FormHelper):
             ),
         ),
     )
-
-
 class UserListView(LoginRequiredMixin, UserPassesTestMixin,
                    PermissionRequiredMixin, FilterView):
     model = User

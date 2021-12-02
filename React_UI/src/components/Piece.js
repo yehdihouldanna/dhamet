@@ -89,14 +89,14 @@ class Piece extends Component {
   }
   onClick_(e,key)
   {
-    if ((this.props.player ===0 && this.props.color==="White") || (this.props.player ===1 && this.props.color==="Black"))
+    if ( (e.detail > 1) || (this.props.player ===0 && this.props.color==="White") || (this.props.player ===1 && this.props.color==="Black"))
     {
       this.props.onClick(e,key,1);
     }
   }
   render() {
     // console.log("the props of the piece are ",this.props);
-    let  class_ = "Piece "+this.props.color +"_"+ this.props.type;
+    let  class_ = "Piece "+this.props.color +"_"+ this.props.type ;
     // Your component receives its own props as usual
     // const { id } = this.props
 

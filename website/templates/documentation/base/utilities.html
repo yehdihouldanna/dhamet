@@ -13,8 +13,7 @@ License: For each use you must have a valid license purchased only from above li
 <html lang="ar" dir="rtl">
 	<!--begin::Head-->
 	<head><base href="../../">
-		<title>قواعد اللعبة</title>
-		{% load static %}
+		<title>Extended Bootstrap Utilities by Keenthemes</title>
 		{% load static %} 
 
         {% csrf_token %} 
@@ -29,16 +28,16 @@ License: For each use you must have a valid license purchased only from above li
 		<meta property="og:url" content="https://keenthemes.com/metronic" />
 		<meta property="og:site_name" content="Keenthemes | Metronic" />
 		<link rel="canonical" href="https://preview.keenthemes.com/metronic8" />
-		<link rel="shortcut icon" href="{% static 'assets/media/logos/favicon.ico'%}" />
+		<link rel="shortcut icon" href="{% static 'assets/media/logos/favicon.ico' %}" />
 		<!--begin::Fonts-->
 		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" />
 		<!--end::Fonts-->
 		<!--begin::Page Vendor Stylesheets(used by this page)-->
-		<link href="{% static 'assets/plugins/custom/prismjs/prismjs.bundle.css'%}" rel="stylesheet" type="text/css" />
+		<link href="{% static 'assets/plugins/custom/prismjs/prismjs.bundle.css' %}" rel="stylesheet" type="text/css" />
 		<!--end::Page Vendor Stylesheets-->
 		<!--begin::Global Stylesheets Bundle(used by all pages)-->
-		<link href="{% static 'assets/plugins/global/plugins.bundle.css'%}" rel="stylesheet" type="text/css" />
-		<link href="{% static 'assets/css/style.bundle.css'%}" rel="stylesheet" type="text/css" />
+		<link href="{% static 'assets/plugins/global/plugins.bundle.css' %}" rel="stylesheet" type="text/css" />
+		<link href="{% static 'assets/css/style.bundle.css' %}" rel="stylesheet" type="text/css" />
 		<!--end::Global Stylesheets Bundle-->
 	</head>
 	<!--end::Head-->
@@ -54,7 +53,7 @@ License: For each use you must have a valid license purchased only from above li
 					<div class="docs-aside-logo flex-column-auto h-75px" id="kt_docs_aside_logo">
 						<!--begin::Link-->
 						<a href="index.html">
-							<img alt="Logo" src="{% static 'assets/media/icons/logo.ico'%}" class="h-25px" />
+							<img alt="Logo" src="{% static 'assets/media/logos/logo-1.svg' %}" class="h-25px" />
 						</a>
 						<!--end::Link-->
 					</div>
@@ -68,7 +67,11 @@ License: For each use you must have a valid license purchased only from above li
 								<div class="menu-item">
 									<h4 class="menu-content text-muted mb-0 fs-7 text-uppercase">Getting Started</h4>
 								</div>
-								
+								<div class="menu-item">
+									<a class="menu-link py-2" href="documentation/getting-started.html">
+										<span class="menu-title">Overview</span>
+									</a>
+								</div>
 								<div data-kt-menu-trigger="click" class="menu-item menu-accordion">
 									<span class="menu-link py-2">
 										<span class="menu-title">Build</span>
@@ -108,7 +111,37 @@ License: For each use you must have a valid license purchased only from above li
 										<span class="menu-title">Customization</span>
 										<span class="menu-arrow"></span>
 									</span>
-									
+									<div class="menu-sub menu-sub-accordion">
+										<div class="menu-item">
+											<a class="menu-link py-2" href="documentation/getting-started/customization/sass.html">
+												<span class="menu-bullet">
+													<span class="bullet bullet-dot"></span>
+												</span>
+												<span class="menu-title">SASS</span>
+											</a>
+										</div>
+										<div class="menu-item">
+											<a class="menu-link py-2" href="documentation/getting-started/customization/javascript.html">
+												<span class="menu-bullet">
+													<span class="bullet bullet-dot"></span>
+												</span>
+												<span class="menu-title">Javascript</span>
+											</a>
+										</div>
+										<div class="menu-item">
+											<a class="menu-link py-2" href="documentation/getting-started/customization/no-jquery.html">
+												<span class="menu-bullet">
+													<span class="bullet bullet-dot"></span>
+												</span>
+												<span class="menu-title">No jQuery</span>
+											</a>
+										</div>
+									</div>
+								</div>
+								<div class="menu-item">
+									<a class="menu-link py-2" href="documentation/getting-started/video-tutorials.html">
+										<span class="menu-title">Video Tutorials</span>
+									</a>
 								</div>
 								
 								<div class="menu-item">
@@ -119,6 +152,42 @@ License: For each use you must have a valid license purchased only from above li
 								
 							
 								
+								<div class="menu-item">
+									<a class="menu-link py-2" href="documentation/getting-started/dark-mode.html">
+										<span class="menu-title">Dark Mode</span>
+									</a>
+								</div>
+								<div class="menu-item">
+									<a class="menu-link py-2" href="documentation/getting-started/rtl.html">
+										<span class="menu-title">RTL Version</span>
+									</a>
+								</div>
+								<div class="menu-item">
+									<a class="menu-link py-2" href="https://preview.keenthemes.com/metronic8/demo6/layout-builder.html" target="blank">
+										<span class="menu-title">Layout Builder</span>
+									</a>
+								</div>
+								<div data-kt-menu-trigger="click" class="menu-item menu-accordion">
+									<span class="menu-link py-2">
+										<span class="menu-title">Server Side Integration</span>
+										<span class="menu-arrow"></span>
+									</span>
+									<div class="menu-sub menu-sub-accordion">
+										<div class="menu-item">
+											<a class="menu-link py-2" href="documentation/getting-started/integration/blazor.html">
+												<span class="menu-bullet">
+													<span class="bullet bullet-dot"></span>
+												</span>
+												<span class="menu-title">Blazor</span>
+											</a>
+										</div>
+									</div>
+								</div>
+								<div class="menu-item">
+									<a class="menu-link py-2" href="documentation/getting-started/updates.html">
+										<span class="menu-title">Updates</span>
+									</a>
+								</div>
 								<div class="menu-item">
 									<a class="menu-link py-2" href="documentation/getting-started/references.html">
 										<span class="menu-title">References</span>
@@ -1326,8 +1395,8 @@ License: For each use you must have a valid license purchased only from above li
 								<!--begin::Logo-->
 								<div class="d-flex d-lg-none align-items-center flex-grow-1 flex-lg-grow-0 me-3 me-lg-15">
 									<a href="index.html">
-										<img alt="Logo" src="{% static 'assets/media/logos/logo-1.svg'%}" class="d-none d-lg-block h-25px" />
-										<img alt="Logo" src="{% static 'assets/media/logos/logo-2.svg'%}" class="d-lg-none h-35px" />
+										<img alt="Logo" src="{% static 'assets/media/logos/logo-1.svg' %}" class="d-none d-lg-block h-25px" />
+										<img alt="Logo" src="{% static 'assets/media/logos/logo-2.svg' %}" class="d-lg-none h-35px" />
 									</a>
 								</div>
 								<!--end::Logo-->
@@ -2548,7 +2617,7 @@ License: For each use you must have a valid license purchased only from above li
 								<li class="menu-item">
 									<!--begin::Menu link-->
 									<a href="https://www.youtube.com/c/KeenThemesTuts/videos" target="_blank" class="menu-link px-3">
-										<img alt="Keenthemes Youtube" src="{% static 'assets/media/svg/social-logos/youtube.svg'%}" class="h-20px" />
+										<img alt="Keenthemes Youtube" src="{% static 'assets/media/svg/social-logos/youtube.svg' %}" class="h-20px" />
 									</a>
 									<!--end::Menu link-->
 								</li>
@@ -2557,7 +2626,7 @@ License: For each use you must have a valid license purchased only from above li
 								<li class="menu-item">
 									<!--begin::Menu link-->
 									<a href="https://github.com/KeenthemesHub" target="_blank" class="menu-link px-3">
-										<img alt="Keenthemes Github" src="{% static 'assets/media/svg/social-logos/github.svg'%}" class="h-20px" />
+										<img alt="Keenthemes Github" src="{% static 'assets/media/svg/social-logos/github.svg' %}" class="h-20px" />
 									</a>
 									<!--end::Menu link-->
 								</li>
@@ -2566,7 +2635,7 @@ License: For each use you must have a valid license purchased only from above li
 								<li class="menu-item">
 									<!--begin::Menu link-->
 									<a href="https://twitter.com/keenthemes" target="_blank" class="menu-link px-3">
-										<img alt="Keenthemes Twitter" src="{% static 'assets/media/svg/social-logos/twitter.svg'%}" class="h-20px" />
+										<img alt="Keenthemes Twitter" src="{% static 'assets/media/svg/social-logos/twitter.svg' %}" class="h-20px" />
 									</a>
 									<!--end::Menu link-->
 								</li>
@@ -2575,7 +2644,7 @@ License: For each use you must have a valid license purchased only from above li
 								<li class="menu-item">
 									<!--begin::Menu link-->
 									<a href="https://www.instagram.com/keenthemes" target="_blank" class="menu-link px-3">
-										<img alt="Keenthemes Instagram" src="{% static 'assets/media/svg/social-logos/instagram.svg'%}" class="h-20px" />
+										<img alt="Keenthemes Instagram" src="{% static 'assets/media/svg/social-logos/instagram.svg' %}" class="h-20px" />
 									</a>
 									<!--end::Menu link-->
 								</li>
@@ -2584,7 +2653,7 @@ License: For each use you must have a valid license purchased only from above li
 								<li class="menu-item">
 									<!--begin::Menu link-->
 									<a href="https://www.facebook.com/keenthemes" target="_blank" class="menu-link px-3">
-										<img alt="Keenthemes Facebook" src="{% static 'assets/media/svg/social-logos/facebook.svg'%}" class="h-20px" />
+										<img alt="Keenthemes Facebook" src="{% static 'assets/media/svg/social-logos/facebook.svg' %}" class="h-20px" />
 									</a>
 									<!--end::Menu link-->
 								</li>
@@ -2593,7 +2662,7 @@ License: For each use you must have a valid license purchased only from above li
 								<li class="menu-item">
 									<!--begin::Menu link-->
 									<a href="https://dribbble.com/keenthemes" target="_blank" class="menu-link px-3">
-										<img alt="Keenthemes Dribbble" src="{% static 'assets/media/svg/social-logos/dribbble.svg'%}" class="h-20px" />
+										<img alt="Keenthemes Dribbble" src="{% static 'assets/media/svg/social-logos/dribbble.svg' %}" class="h-20px" />
 									</a>
 									<!--end::Menu link-->
 								</li>

@@ -9,6 +9,7 @@ from termcolor import cprint
 from .Players import *
 import time
 import os
+import copy
 
 class State():
     """
@@ -17,9 +18,8 @@ class State():
     """
     def __init__(self,n=9,board=None,player =0,length=0):
         self.n = n
-        self.player = 0 # who's turn : 0 for white 1 for black.
         self.length = length
-        self.player = player  # since white always start,we can get player from length.
+        self.player = player   # who's turn : 0 for white 1 for black.
         self.pieces = self.n**2 //2  # number of pieces of each player.
         self.white_score = 40
         self.black_score = 40
@@ -32,6 +32,7 @@ class State():
 
         self.auto_souvle=False  # if a pices have a killing move and it does non killing move it get's killed it self
         # initialising the board matrix
+        self.ai_limit_takes_per_turn = 10
         if board is None:
             self.board = np.zeros((n,n),dtype=int)
             count = 0
@@ -122,7 +123,7 @@ class State():
     def move(self,piece,destination):
         """moves a piece, given its position coordinates and it's destination coordinates"""
         possible_moves,scores = self.available_moves(piece[0],piece[1])
-        print(piece,"->",possible_moves,"\n",scores)
+        # print(piece,"->",possible_moves,"\n",scores)
         if destination not in possible_moves:
             print("Move is invalid !, Try again")
             return False
@@ -162,35 +163,37 @@ class State():
                 self.no_kill_counter=0
 
             return True
-            # else:
-            #     print("This piece is not yours!,Try again!")
-            #     return False
 
-    # def get_chained_kills(self,x,y):
-    #     """this function returns moves and a relative score to each move
-    #      the score is the sum value of the killed pieces during that move.
-    #     """
-    #     Chains = {}
-    #     current_chain = str(x)+str(y)
-    #     current_score = 0
-    #     def helper(self,x,y,current):
-    #         moves,scores = self.available_moves(self,x,y)
-    #         if len(scores) and sum(scores):
-    #             for (mov,score) in zip(moves,scores):
-    #                 if score==1:
-    #                     current_chain+=str(mov[0])+str(mov[1])
-    #                     Chains[current]
-    #                     helper(self,mov[0],mov[1],current)
 
-            
-    #         current = 
-    #         if first:
-    #             moves,scores = self.available_moves(self,x,y)
-    #             for (sc,mov) in zip(moves,scores):
-    #                 if sc ==1:
-    #                     next_chain_moves,next_chain_scores = self.available_moves(self,mov[0],mov[1])
+    def get_chain_moves(self,x,y):
+        # TODO : optimize this function to return only the optimal chained move and reduce the overhead
+        """this function returns moves and a relative score to each move
+        the score is the sum values of the killed pieces during that move.
+        """
+        chains = {}
+        move_str = str(x)+str(y)
+        chains [move_str]=0
+        self.helper_chain_moves(x,y,move_str,chains)
+        del chains[move_str]
+        return chains
 
-    #         pass    
+    def helper_chain_moves(self,x,y,move_str,chains):
+        if len(move_str)>=3*self.ai_limit_takes_per_turn+2:
+            return 
+        else:
+            # print(f"chain move {move_str} Started :")
+            temp_board = np.copy(self.board)
+            current_player = self.player
+            possible_moves,scores = self.available_moves(x,y)
+            for (x_,y_),score in zip(possible_moves,scores):
+                if score :
+                    move = move_str + " " +str(x_)+str(y_)
+                    chains[move] = chains[move_str] + 1
+                    self.move((x,y),(x_,y_))
+                    self.helper_chain_moves(x_,y_,move,chains)
+                    self.set_board(temp_board)
+                    self.set_player(current_player)
+        # print(f"chain move {move_str} exited Ok!")
 
 
     def available_moves(self,x,y):
@@ -353,18 +356,55 @@ class State():
 
     def update(self):
         pass
+    def serialize(self,board):
+        "serialize the matrix board into a string format"
+        txt  =""
+        for i in range(9):
+            for j in range(9):
+                if board[i,j]==1:
+                    txt+="w"
+                elif board[i,j]==3:
+                    txt+="W"
+                elif board[i,j]==0:
+                    txt+="_"
+                elif board[i,j]==-1:
+                    txt+="b"
+                elif board[i,j]==-3:
+                    txt+="B"
+        return txt
+
+    def deserialize(self,txt):
+        "deserialize a string board into a matrix board"
+        board = np.zeros((9,9),dtype=int)
+        k = 0
+        for i in range(9):
+            for j in range(9):
+                if txt[k]=="w":
+                    board[i,j]=1
+                elif txt[k]=="W":
+                    board[i,j]=3
+                elif txt[k]=="_":
+                    board[i,j]=0
+                elif txt[k]=="b":
+                    board[i,j]=-1
+                elif txt[k]=="B":
+                    board[i,j]=-3
+                k+=1
+        return board
 
     def set_board(self,board):
         """this method sets the board to a given state
         mainly used for unit testing."""
+        if type(board) == str :
+            board = self.deserialize(board)
         assert board.shape == (self.n,self.n)
-        self.board = board
+        self.board = np.copy(board)
 
     def set_player(self,player):
         """this method sets the player manually , used for unit testing."""
-        if player.lower() in ["b","black"] or player ==1:
+        if (type(player)==int and player==1) or (type(player)==str and player.lower() in ["b","black"]):
                 self.player = 1
-        elif player.lower() in ["w" , "white"] or player==0:
+        elif (type(player)==int and player==0) or (type(player)==str and player.lower() in ["w" , "white"]):
                 self.player = 0
         else:
             print("Trying to set an Invalid Player! : type '0' for 'White' or '1' for 'Black'")

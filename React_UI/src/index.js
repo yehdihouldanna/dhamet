@@ -11,15 +11,14 @@ try
   game_code = JSON.parse(document.getElementById('game_code').textContent);
 }
 catch (e){console.log("This game page doesn't have an identifier.")}
-
 const client = new WebSocket(
-  'ws://'
-  + window.location.host
-  + '/DhametCode/'
-  + 'move/'
-  + game_code
-  + '/'
-);
+    'ws://'
+    + window.location.host
+    + '/DhametCode/'
+    + 'move/'
+    + game_code
+    + '/'
+  );
 
 ReactDOM.render(
   // <React.StrictMode>

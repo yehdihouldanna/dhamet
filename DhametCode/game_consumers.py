@@ -5,6 +5,7 @@ import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 from .utils.Board import State
+from .utils.Players import Random, Dummy
 from DhametCode.models import Game
 from users.models import User
 from rest_framework.response import Response
@@ -103,12 +104,7 @@ class GameConsumer(AsyncWebsocketConsumer):
         # Send message to WebSocket
         await self.send(text_data = output_data)
 
-    def get_game_update(self,game,current_turn,move):
-        length = game.length
-        board = self.deserialize(game.state)
-        game_instance = State(n=9,board=board,player = current_turn, length=length)
-        # print('the move received is : ',move)
-        # game_instance.show_board(file=sys.stderr)
+    def get_game_update(self,game_instance,move):
         moves = move.split(" ")
         moved = False
         for k in range(len(moves)-1):
@@ -116,7 +112,6 @@ class GameConsumer(AsyncWebsocketConsumer):
             destination = moves[k+1]
             xs,ys = [int(i) for i in source]
             xd,yd = [int(i) for i in destination]
-            # print(f"Moving form {xs}{ys} to {xd}{yd}")
             moved = game_instance.move((xs,ys),(xd,yd))
             if not moved:
                 break
@@ -183,44 +178,92 @@ class GameConsumer(AsyncWebsocketConsumer):
         if id!="":
             queryset = Game.objects.filter(id=id)
             if queryset.exists():
-                # current_turn  = data['current_turn']
+                current_turn_game  = data['current_turn']
                 board_txt = data['state']
                 move = data['last_move']
                 print(f"in the post method move:{move}")
                 game = queryset[0]
                 current_turn = game.current_turn
-                print("first move : current turn is :",current_turn )
-                moved,board,ended,length = self.get_game_update(game,current_turn,move)
-                if moved :
-                    board_txt = self.serialize(board)
-                    game.state = board_txt
-                    game.length = length
-                    moves = game.moves+"\n"+move
-                    game.moves = moves
-                    game.last_move= move
-                    game.current_turn = (game.current_turn+1)%2
+                length = game.length
+                board = self.deserialize(game.state)
+                game_instance = State(n=9,board=board,player = current_turn, length=length)
+                who_won : game_instance.check_end_condition()
+                AI_NAMES = ["AI_Random"]
+                if ((game.creator==user and current_turn_game==0) or (game.opponent == user and current_turn_game)): # user is playing
+                    moved,board,ended,length = self.get_game_update(game_instance,move)
+                    if moved :
+                        board_txt = self.serialize(board)
+                        game.state = board_txt
+                        game.length = length
+                        moves = game.moves+"\n"+move
+                        game.moves = moves
+                        game.last_move= move
+                        game.current_turn = (game.current_turn+1)%2
                     
                     if ended:
-                        game.winner_= user
+                        game.winner = user
                         game.completed = datetime.now()
 
                     game.save()
 
-                winner_=""
+                    winner=""
+                    try:
+                        winner = game.winner.name
+                        if(not len(winner)):
+                            winner = game.winner.username
+                    except:
+                        pass
 
-                try:
-                    winner_ = game.winner.name
-                except:
-                    pass
-
-                output_data  = json.dumps({
+                    output_data  = json.dumps({
                     'id':id,
                     'state': game.state,
                     'last_move': move,
                     'current_turn':game.current_turn,
-                    'winner' : winner_})
+                    'creator' : game.creator.name,
+                    'opponent' : game.opponent.name,
+                    'winner' : winner})
                 
-                return output_data
+                    return output_data
+                
+                elif ((game.opponent.name in AI_NAMES and current_turn_game) or (game.creator.name in AI_NAMES and current_turn_game==0)): # the AI is playing 
+                    # Agent = Random('AI',current_turn)
+                    Agent = Dummy('AI',current_turn)
+                    move = Agent.move(game_instance)
+                    print(f"The AI agent moved : {move}")
+                    moved,board,ended,length = self.get_game_update(game_instance,move)
+                    if moved :
+                        board_txt = self.serialize(board)
+                        game.state = board_txt
+                        game.length = length
+                        moves = game.moves+"\n"+move
+                        game.moves = moves
+                        game.last_move= move
+                        game.current_turn = (game.current_turn+1)%2
+                    if ended:
+                        game.winner = user
+                        game.completed = datetime.now()
+                    game.save()
+                    winner=""
+                    try:
+                        winner = game.winner.name
+                        if(not len(winner)):
+                            winner = game.winner.username
+                    except:
+                        pass
+
+                    output_data  = json.dumps({
+                        'id':id,
+                        'state': game.state,
+                        'last_move': move,
+                        'current_turn':game.current_turn,
+                        'creator' : game.creator.name,
+                        'opponent': game.opponent.name,
+                        'winner' : winner})
+
+                    return output_data
+
+            raise Exception(f"user {user.name} tried to make a move in a non existing game!!")    
+        
         
         raise Exception("You can't make a move in a non existing game!!")
         

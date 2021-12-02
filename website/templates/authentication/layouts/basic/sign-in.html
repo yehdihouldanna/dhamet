@@ -15,7 +15,9 @@ License: For each use you must have a valid license purchased only from above li
 	<head>
 		<title>Dhamet</title>
 		{% load static %}
-		
+		{% load static %} 
+
+        {% csrf_token %} 
  
 		<meta charset="utf-8" />
 		<meta name="description" content="The most advanced Bootstrap Admin Theme on Themeforest trusted by 94,000 beginners and professionals. Multi-demo, Dark Mode, RTL support and complete React, Angular, Vue &amp; Laravel versions. Grab your copy now and get life-time updates for free." />
@@ -42,12 +44,12 @@ License: For each use you must have a valid license purchased only from above li
 		<!--begin::Main-->
 		<div class="d-flex flex-column flex-root">
 			<!--begin::Authentication - Sign-in -->
-			<div class="d-flex flex-column flex-column-fluid bgi-position-y-bottom position-x-center bgi-no-repeat bgi-size-contain bgi-attachment-fixed" style="background-image: url({% static 'assets/media/illustrations/sketchy-1/14.png'%}">
+			<div class="d-flex flex-column flex-column-fluid bgi-position-y-bottom position-x-center bgi-no-repeat bgi-size-contain bgi-attachment-fixed" style="background-image: url('{% static 'assets/media/illustrations/sketchy-1/14.png' %}">
 				<!--begin::Content-->
 				<div class="d-flex flex-center flex-column flex-column-fluid p-10 pb-lg-20 rounded shadow-sm p-10 p-lg-15 mx-auto">
 					<!--begin::Logo-->
 					<a href="index.html" class="mb-12">
-						<img alt="Logo" src="{% static 'assets/media/icons/logo.ico' %}" class="h-40px" />
+						<img alt="Logo" src="{% static 'assests/media/logos/logo-1.svg' %}" class="h-40px" />
 					</a>
 					<!--end::Logo-->
 					<!--begin::Wrapper-->
@@ -61,7 +63,7 @@ License: For each use you must have a valid license purchased only from above li
 								<!--end::Title-->
 								<!--begin::Link-->
 								<div class="text-gray-400 fw-bold fs-4">New Here?
-								<a href="../sign-up.html" class="link-primary fw-bolder">Create an Account</a></div>
+								<a href="authentication/layouts/basic/sign-up.html" class="link-primary fw-bolder">Create an Account</a></div>
 								<!--end::Link-->
 							</div>
 							<!--begin::Heading-->
@@ -106,15 +108,15 @@ License: For each use you must have a valid license purchased only from above li
 								<!--end::Separator-->
 								<!--begin::Google link-->
 								<a href="#" class="btn btn-flex flex-center btn-light btn-lg w-100 mb-5">
-								<img alt="Logo" src="{% static 'assets/media/svg/brand-logos/google-icon.svg'%}" class="h-20px me-3" />Continue with Google</a>
+								<img alt="Logo" src="{% static 'assests/media/svg/brand-logos/google-icon.svg' %}" class="h-20px me-3" />Continue with Google</a>
 								<!--end::Google link-->
 								<!--begin::Google link-->
 								<a href="#" class="btn btn-flex flex-center btn-light btn-lg w-100 mb-5">
-								<img alt="Logo" src="{% static 'assets/media/svg/brand-logos/facebook-4.svg'%}" class="h-20px me-3" />Continue with Facebook</a>
+								<img alt="Logo" src="{% static 'assests/media/svg/brand-logos/facebook-4.svg' %}" class="h-20px me-3" />Continue with Facebook</a>
 								<!--end::Google link-->
 								<!--begin::Google link-->
 								<a href="#" class="btn btn-flex flex-center btn-light btn-lg w-100">
-								<img alt="Logo" src="{% static 'assets/media/svg/brand-logos/apple-black.svg'%}" class="h-20px me-3" />Continue with Apple</a>
+								<img alt="Logo" src="{% static 'assests/media/svg/brand-logos/apple-black.svg' %}" class="h-20px me-3" />Continue with Apple</a>
 								<!--end::Google link-->
 							</div>
 							<!--end::Actions-->
@@ -142,11 +144,11 @@ License: For each use you must have a valid license purchased only from above li
 		
 		<!--begin::Javascript-->
 		<!--begin::Global Javascript Bundle(used by all pages)-->
-		<script src="{% static 'assets/plugins/global/plugins.bundle.js'%}"></script>
-		<script src="{% static 'assets/js/scripts.bundle.js'%}"></script>
+		<script src="{% static 'assests/plugins/global/plugins.bundle.js' %}"></script>
+		<script src="{% static 'assests/js/scripts.bundle.js' %}"></script>
 		<!--end::Global Javascript Bundle-->
 		<!--begin::Page Custom Javascript(used by this page)-->
-		<script src="{% static 'assets/js/custom/authentication/sign-in/general.js'%}"></script>
+		<script src="{% static 'assests/js/custom/authentication/sign-in/general.js' %}"></script>
 		<!--end::Page Custom Javascript-->
 		<!--end::Javascript-->
 	</body>

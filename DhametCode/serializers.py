@@ -19,4 +19,4 @@ class CreateGameSerializer(serializers.ModelSerializer):
 class GameMoveSerializer(serializers.ModelSerializer):
     class Meta:
         model = Game
-        fields = ('id','state','last_move','current_turn','winner')
+        fields = ('id','state','last_move','current_turn','creator','opponent','winner')
