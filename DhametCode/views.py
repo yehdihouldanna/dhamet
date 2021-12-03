@@ -21,6 +21,7 @@ class CreateGameView(generics.ListAPIView):
     queryset = Game.objects.all()
 
     def post(self,request,format = None):
+        
         if not self.request.session.exists(self.request.session.session_key): # check if the session exists
             self.request.session.create()
         # serializer = self.serializer_class(data=request.data)
@@ -35,18 +36,19 @@ class CreateGameView(generics.ListAPIView):
                 user.save()
             
         # if serializer.is_valid(): # needs to be integrated somehow , but for now it causes problem since the id can't be passed blank.
-        if request.data['opponent'] == "AI_Random":
+        AI_NAMES = ["AI_Random","AI_Dummy","AI_MinMax"]
+        if request.data['opponent'] in AI_NAMES:
             try:
-                ai = User.objects.filter(name = "AI_Random")[0]
+                ai = User.objects.filter(name = request.data['opponent'])[0]
             except:
-                ai = User(username = "AI_Random" ,name="AI_Random", phone=000)
+                ai = User(username = request.data['opponent'] ,name=request.data['opponent'], phone=000)
                 ai.save()
             
             game = Game(creator = user , opponent = ai)
             game.save()
             print(f"User : {user.username} Have Created a game vs computer who's id is {game.get_game_code()}")
             return Response(CreateGameSerializer(game).data,status = status.HTTP_201_CREATED)
-        else :
+        else :# Online
             queryset_ = Game.get_available_games()
             if len(queryset_): # if game
                 game = queryset_[0]

@@ -451,7 +451,6 @@ class Play_Game():
                     f.write(move_+"\n")
             self.game.player = not self.game.player
 
-
 if __name__=="__main__":
     Player1 = Human("Yehdhih",0)
     # Player1 = Human("Nevisse",0)

@@ -4025,9 +4025,9 @@ License: For each use you must have a valid license purchased only from above li
 												Play Vs Computer
 											  </button>
 											  <ul class="dropdown-menu dropdown-menu-end">
-												<li><button class="dropdown-item" type="button" onclick="CreateGameRequest()">AI_RANDOM</button></li>
-												<li><button class="dropdown-item" type="button">AI_DUMMY</button></li>
-												<li><button class="dropdown-item" type="button">AI_MINMAX</button></li>
+												<li><button class="dropdown-item" type="button" onclick="CreateGameRequest('AI_Random')">AI_RANDOM</button></li>
+												<li><button class="dropdown-item" type="button" onclick="CreateGameRequest('AI_Dummy')">AI_DUMMY</button></li>
+												<li><button class="dropdown-item" type="button" onclick="CreateGameRequest('AI_MinMax')">AI_MINMAX</button></li>
 											  </ul>
 									</div>
 								</div>
@@ -4039,6 +4039,8 @@ License: For each use you must have a valid license purchased only from above li
 											onclick="CreateGameRequest('Online')">Play Online</button>
 										<script>
 											function CreateGameRequest(type) {
+
+												let AI_NAMES = ["AI_Random","AI_Dummy","AI_MinMax"];
 												if (type==='Online')
 												{
 													console.log("Starting a game online.")
@@ -4066,9 +4068,9 @@ License: For each use you must have a valid license purchased only from above li
 															)
 														})
 												}
-												else if(type === 'AI')
+												else if(AI_NAMES.includes(type))
 												{
-													document.getElementById("opponent").innerHTML+= "AI Random"
+													document.getElementById("opponent").innerHTML+= type
 													console.log("Creating a game vs The Random AI");
 													const requestOptions =
 													{
@@ -4078,9 +4080,10 @@ License: For each use you must have a valid license purchased only from above li
 														body: JSON.stringify({
 															id: "",
 															creator: "",
-															opponent: "AI_Random",
+															opponent: type,
 														})
 													};
+													console.log("A create game request have been sent with : ",requestOptions);
 													fetch('/DhametCode/create-game', requestOptions).
 														then((response) => response.json()).
 														then((data) => {
@@ -4556,7 +4559,7 @@ document.getElementById('btnId').addEventListener('click', firstExample);
 								<img alt="Logo" src="{% static 'assets/media/avatars/150-26.jpg' %}" />	
 							</div>
 							<div class="col px-5">
-								<div class="align-top fw-bolder mb-2 text-dark">{{ user.username}} <img class="w-15px h-15px rounded-1 ms-2" src="{% static 'assets/media/flags/mauritania.svg' %}" alt="" /></div>
+								<div id = "opponent" class="align-top fw-bolder mb-2 text-dark">{{ user.username}} <img class="w-15px h-15px rounded-1 ms-2" src="{% static 'assets/media/flags/mauritania.svg' %}" alt="" /></div>
 								<div style="vertical-align: middle;" class="fw-bolder mb-2 text-dark" >Score:</div>
 								
 							</div>

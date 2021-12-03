@@ -205,15 +205,19 @@ to update the historic of git locally
 
 git fetch --all
 
-and then each contributor will have to pull from his computer to put have his code up to date.
+and then each contributor will have to pull from his computer to update his/her code
 with ```git pull```
 
 if it doesn't work,
 we fetch and manuallly merge with master
-
 
 ```shell
 git fetch --all
 git merge origin/master
 ```
 
+to merge a branch into master :
+
+
+# Global server 
+python .\manage.py runserver 0.0.0.0:8000

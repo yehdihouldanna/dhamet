@@ -25,11 +25,10 @@ SECRET_KEY = '*zfe#)(5+cw7u6!btr^94jz96a6=6ug*c(d-6tbs@^r^6h&0li'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '192.168.100.229']
 
 
 # Application definition
-
 INSTALLED_APPS = [
     'channels', # avoids some probelems by having it first on the apps list.
     'django.contrib.admin',
