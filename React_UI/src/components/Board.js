@@ -347,9 +347,8 @@ class Board extends Component {
 
                 // * If We are playing vs AI then we will send it's request after the players
                 let AI_NAMES = ["AI_Random","AI_Dummy","AI_MinMax"];
-                if( AI_NAMES.includes(this.state.opponent) && this.state.player===1)
+                if( AI_NAMES.includes(me.state.opponent) && me.state.player===1)
                 {
-                    let me = this
                     setTimeout(function () {
                     //*We can change the response time based on the need
                     if (me.state.previous_board != me.state.board_txt) {
