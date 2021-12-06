@@ -42,7 +42,7 @@ class Board extends Component {
       prevent: false,
       MouseOnBoard: true,
     };
-    // Biding Events handlers : 
+    // Biding Events handlers :
     this.handleMove = this.handleMove.bind(this);
     this.handleHover = this.handleHover.bind(this);
     this.handleStartMove = this.handleStartMove.bind(this);
@@ -52,7 +52,7 @@ class Board extends Component {
 
     this.doClickAction = this.doClickAction.bind(this);
     this.doDoubleClickAction = this.doDoubleClickAction.bind(this);
-    // Binding request handlers : 
+    // Binding request handlers :
     this.CreateGameRequest = this.CreateGameRequest.bind(this);
     this.MoveRequest = this.MoveRequest.bind(this);
     this.MoveRequest_ws = this.MoveRequest_ws.bind(this);
@@ -64,7 +64,7 @@ class Board extends Component {
     this.add_one_history_item = this.add_one_history_item.bind(this);
   };
   //------------------------------------------
-  //Utils Methods : 
+  //Utils Methods :
   //------------------------------------------
   serialize() {
     let str = ""
@@ -119,7 +119,7 @@ class Board extends Component {
       if (this.state.board[x][y]*this.state.board[xc][yc]>=1)  // checks if the cellls the two pieces are of the same type
       {this.state.move = key;}
       }
-    if (!this.state.move.slice(-5).includes(key) && this.state.move !== "") 
+    if (!this.state.move.slice(-5).includes(key) && this.state.move !== "")
     { this.state.move += " " + key; }
     console.log("current move : ", this.state.move);
     let game_state = this.state;
@@ -129,7 +129,6 @@ class Board extends Component {
   doDoubleClickAction(key,piece_present) {
     if (this.state.move.length>=5)
     {
-      
       console.log("This condition got invoked!");
       console.log("key: ",key,"Move:",this.state.move);
       // if the user double click his piece and double click on another piece of his
@@ -138,7 +137,7 @@ class Board extends Component {
       let y = Number(this.state.move[len-4])
       let xc = Number(key[0])
       let yc = Number(key[1])
-      
+
       if (this.state.board[x][y]*this.state.board[xc][yc]>=1) // checks if the two cells containt pieces of the same type
       { console.log("The indices we are trying : ",x,y,xc,yc, "are equal")
         this.state.move = ""
@@ -147,15 +146,15 @@ class Board extends Component {
         this.setState(game_state);
         return;}
     }
-    if (!this.state.move.slice(-5).includes(key) && this.state.move !== "") 
+    if (!this.state.move.slice(-5).includes(key) && this.state.move !== "")
     { this.state.move += " " + key;
       let game_state = this.state;
       game_state.move = this.state.move;
       this.setState(game_state);
     }
     this.handleMove();
-    
-    
+
+
   };
   handleClick(e, key,piece_present) {
     if (e.detail > 1) {
@@ -168,7 +167,7 @@ class Board extends Component {
   //-------------------------------------------------
   // Main Handler methods :
   //-------------------------------------------------
-  
+
   handleStartMove(piece_key) {
     this.state.move = piece_key;
     console.log(this.state.move)
@@ -195,11 +194,11 @@ class Board extends Component {
   // Handling Request and getting the reponses from the back end methods :
   //-----------------------------------------------------------------------
   MoveRequest(move_str) {
-    /*This function communicate with the makeGameMove view in the 
+    /*This function communicate with the makeGameMove view in the
       back end to update the board appopriatly after a move it is used
       in games vs AI only as it doesnt require a websocket to play vs AI.
       */
-      
+
       if (move_str.length >= 5) {
       console.log("Trying the move : ", move_str);
       const requestOptions =
@@ -238,15 +237,16 @@ class Board extends Component {
     }
   };
   MoveRequest_ws(move_str) {
-    /*This function communicate with the makeGameMove view in the 
-      this one uses teh websocket*/
+    /**
+     * * This function communicate with the GameMoveConsumer in the backend
+    **/
     console.log("a move request");
     console.log("Code:", this.state.Code);
     if (this.state.Code === "") {
       this.CreateGameRequest();
     }
     else if (move_str.length >= 5) {
-      
+
       console.log("Trying the move : ", move_str);
         this.props.client.send(
         JSON.stringify({
@@ -262,6 +262,7 @@ class Board extends Component {
         {
             let me = this
             setTimeout(function () {
+              //*We can change the response time based on the need
               if (me.state.previous_board != me.state.board_txt) {
                 console.log("The AI request waited for 350 ms !")
                 me.props.client.send(
@@ -338,9 +339,9 @@ class Board extends Component {
                 // console.log("The winner returned is : ",data.winner)
                 console.log("The player now is : ", game_state.player);
                 game_state.board_txt = data.state;
-    
+
                 if (game_state.last_move != data.last_move)
-                { 
+                {
                   game_state.last_move= data.last_move;
                   game_state.move_history_render.push(game_state.last_move);
                   me.setState(game_state);
@@ -363,14 +364,14 @@ class Board extends Component {
                   me.state.creator  = data.creator;
                 }
 
-              
+
 
             }
           };
           this.props.client.onclose = function (e) {
           console.error('Client socket closed unexpectedly');
         };
-      
+
     }
   //----------------------------------------
   // Web Page modifiers :

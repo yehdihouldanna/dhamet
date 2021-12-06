@@ -213,7 +213,10 @@ we fetch and manuallly merge with master
 
 ```shell
 git fetch --all
-git merge origin/master
+git merge -X theirs origin/master
+
+or for more forcing
+git merge -X theirs origin/master
 ```
 
 to merge a branch into master :
@@ -221,3 +224,25 @@ to merge a branch into master :
 
 # Global server 
 python .\manage.py runserver 0.0.0.0:8000
+
+
+
+
+# Online Server Deploy :
+
+digital ocean machine IP adress:
+165.22.85.224
+
+to connect to the digital machine :
+open a git bash : 
+and type the following command:
+ssh  root@165.22.85.224
+ssh  yehdih@165.22.85.224
+
+
+
+https://www.digitalocean.com/community/tutorials/initial-server-setup-with-ubuntu-18-04
+
+https://www.digitalocean.com/community/tutorials/how-to-set-up-django-with-postgres-nginx-and-gunicorn-on-ubuntu-18-04
+
+https://www.digitalocean.com/community/tutorials/how-to-secure-nginx-with-let-s-encrypt-on-ubuntu-18-04
