@@ -3757,9 +3757,8 @@ License: For each use you must have a valid license purchased only from above li
 														<!--end::Avatar-->
 														<!--begin::Username-->
 														<div class="d-flex flex-column">
-															<div class="fw-bolder d-flex align-items-center fs-5">Max Smith
-															<span class="badge badge-light-success fw-bolder fs-8 px-2 py-1 ms-2">Pro</span></div>
-															<a href="#" class="fw-bold text-muted text-hover-primary fs-7">max@kt.com</a>
+															<div class="fw-bolder d-flex align-items-center fs-5">{{users.username}}
+															</div>	
 														</div>
 														<!--end::Username-->
 													</div>
@@ -4025,13 +4024,14 @@ License: For each use you must have a valid license purchased only from above li
 												Play Vs Computer
 											  </button>
 											  <ul class="dropdown-menu dropdown-menu-end">
-												<li><button class="dropdown-item" type="button" onclick="CreateGameRequest('AI_Random')">AI_RANDOM</button></li>
-												<li><button class="dropdown-item" type="button" onclick="CreateGameRequest('AI_Dummy')">AI_DUMMY</button></li>
-												<li><button class="dropdown-item" type="button" onclick="CreateGameRequest('AI_MinMax')">AI_MINMAX</button></li>
+												<li><button class="dropdown-item" type="button" onclick="CreateGameRequest('AI_Random')"><div class="symbol symbol-35px"><img alt="Logo" src="{% static 'assets/media/avatars/150-26.jpg' %}" /></div>AI_RANDOM</button></li>
+												<li><button class="dropdown-item" type="button" onclick="CreateGameRequest('AI_Dummy')"><div class="symbol symbol-35px"><img alt="Logo" src="{% static 'assets/media/logos/femme.jpg' %}" /></div>AI_DUMMY</button></li>
+												<li><button class="dropdown-item" type="button" onclick="CreateGameRequest('AI_MinMax')"><div class="symbol symbol-35px"><img alt="Logo" src="{% static 'assets/media/logos/elkazaz.jpg' %}" /></div>ALkazaz الكزاز</button></li>
+												<li><button class="dropdown-item" type="button" onclick="CreateGameRequest('AI_MinMax')"><div class="symbol symbol-35px"><img alt="Logo" src="{% static 'assets/media/logos/bouamama.jpg' %}" /></div>Bouamama بوعمامة</button></li>
+												<li><button class="dropdown-item" type="button" onclick="CreateGameRequest('AI_MinMax')"><div class="symbol symbol-35px"><img alt="Logo" src="{% static 'assets/media/avatars/150-26.jpg' %}" /></div>Djambaar الجمبار</button></li>
 											  </ul>
 									</div>
-								</div>
-
+								</div>			
 								<div class="col-xl-4">
 									<div class="card card-xl-stretch mb-xl-8" >
 										<button type = "button" id="startbutton"
@@ -4109,17 +4109,19 @@ License: For each use you must have a valid license purchased only from above li
 								<!--begin::List Widget 4-->
 								<div class="card card-xl-stretch mb-xl-8 ">
 									<!--begin::Header-->
-									<div class=" card-header shadow-lg p-3 mb-5 bg-wight rounded">
+									<div class=" card-header shadow-lg p-4 mb-2  ">
+										<div  class="alert alert-dismissible bg-secondary d-flex flex-column flex-sm-row p-5 mb-1">
 										<div class="symbol symbol-50px">
 											<img alt="Logo" src="{% static 'assets/media/avatars/150-26.jpg' %}" />	
 										</div>
-										<div class="col px-5">
+										<div class="col px-6">
 											<div class="align-top fw-bolder mb-2 text-dark">{{ user.username}} <img class="w-15px h-15px rounded-1 ms-2" src="{% static 'assets/media/flags/mauritania.svg' %}" alt="" /></div>
-											<div style="vertical-align: middle;" class="fw-bolder mb-2 text-dark" >Score:</div>
+											<div style="vertical-align: middle;" class="fw-bolder mb-2 text-dark" >Score:1000</div>
 											
 										</div>
-										<div class="pt-4 col-xl-7 fw-bolder mb-2 text-dark">Timer:
-										<div class=" border rounded-pill" id="countdown">
+										</div>
+										<div class="display-4 mb-2 pd-4">
+										<div class=" shadow p-3 mb-5 bg-white rounded" id="countdown">
                                     
 										</div>
 									</div>
@@ -4268,8 +4270,29 @@ document.getElementById('btnId').addEventListener('click', firstExample);
 									<div id="dhamet_container" class="card-body pt-5">
 
 									</div>
+						<div class="row g-5 g-xl-7">
+							<div class="col-xl-12">
+										<!--begin::List Widget 4-->
+								<div class="card card-xl-stretch mb-xl-8  shadow-lg p-3 mb-5 bg-white rounded">
+								<div class="card-header border-2 pt-5 ">
+									<div class="symbol symbol-50px ">
+										<img alt="Logo" src="{% static 'assets/media/avatars/150-26.jpg' %}" />	
+									</div>
+									<div class="col px-5">
+										<div id = "opponent" class="align-top fw-bolder mb-2 text-dark">{{ user.username}} <img class="w-15px h-15px rounded-1 ms-2" src="{% static 'assets/media/flags/mauritania.svg' %}" alt="" /></div>
+										<div style="vertical-align: middle;" class="fw-bolder mb-2 text-dark" >Score:1000</div>
+									
+									</div>		
+									<!--end::Menu 3-->
+									<!--end::Menu-->
+									</div>
+									</div>	
+							</div>
+							<!--end::Container-->
+						</div>
 									<!--end::Body-->
 								</div>
+
 								<!--end::List Widget 4-->
 							</div>
 							<div class="col-xl-3">
@@ -4551,29 +4574,7 @@ document.getElementById('btnId').addEventListener('click', firstExample);
 						
 						</div>
 						<div class="row g-5 g-xl-7">
-						<div class="col-xl-9">
-								<!--begin::List Widget 4-->
-						<div class="card card-xl-stretch mb-xl-8  shadow-lg p-3 mb-5 bg-white rounded">
-						<div class="card-header border-2 pt-5 ">
-							<div class="symbol symbol-50px ">
-								<img alt="Logo" src="{% static 'assets/media/avatars/150-26.jpg' %}" />	
-							</div>
-							<div class="col px-5">
-								<div id = "opponent" class="align-top fw-bolder mb-2 text-dark">{{ user.username}} <img class="w-15px h-15px rounded-1 ms-2" src="{% static 'assets/media/flags/mauritania.svg' %}" alt="" /></div>
-								<div style="vertical-align: middle;" class="fw-bolder mb-2 text-dark" >Score:</div>
-								
-							</div>
-							
 						
-							
-									<!--end::Menu 3-->
-								<!--end::Menu-->
-							</div>
-						
-						
-					</div>
-					<!--end::Container-->
-				</div>
 				<!--end::Content-->
 				<!--begin::Footer-->
 				<div class="footer py-4 d-flex flex-lg-column" id="kt_footer">

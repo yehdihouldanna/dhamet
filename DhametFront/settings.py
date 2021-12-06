@@ -25,7 +25,7 @@ SECRET_KEY = '*zfe#)(5+cw7u6!btr^94jz96a6=6ug*c(d-6tbs@^r^6h&0li'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '165.22.85.224','dhamet.com','192.168.100.229']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '165.22.85.224','www.dhamet.com','dhamet.com','192.168.100.229']
 
 
 # Application definition
