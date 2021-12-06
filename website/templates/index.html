@@ -15,7 +15,7 @@ License: For each use you must have a valid license purchased only from above li
 	<head><base href="">
 		<title>Dhamet</title>
 		{% load static %}
-        {% csrf_token %}  
+        {% csrf_token %}
 		<meta charset="utf-8" />
 		<meta name="description" content="The most advanced Bootstrap Admin Theme on Themeforest trusted by 94,000 beginners and professionals. Multi-demo, Dark Mode, RTL support and complete React, Angular, Vue &amp; Laravel versions. Grab your copy now and get life-time updates for free." />
 		<meta name="keywords" content="Metronic, bootstrap, bootstrap 5, Angular, VueJs, React, Laravel, admin themes, web design, figma, web development, free templates, free admin themes, bootstrap theme, bootstrap template, bootstrap dashboard, bootstrap dak mode, bootstrap button, bootstrap datepicker, bootstrap timepicker, fullcalendar, datatables, flaticon" />
@@ -3101,8 +3101,8 @@ License: For each use you must have a valid license purchased only from above li
 											</div>
 											<!--begin::Menu-->
 											<div class="menu menu-sub menu-sub-dropdown menu-column w-250px w-lg-325px" data-kt-menu="true">
-												<!--begin::Heading-->																								
-												<div class="d-flex flex-column flex-center bgi-no-repeat rounded-top px-9 py-10" style = "background-image: url({% static 'assets/media/misc/pattern-1.jpg' %});" >																											
+												<!--begin::Heading-->
+												<div class="d-flex flex-column flex-center bgi-no-repeat rounded-top px-9 py-10" style = "background-image: url({% static 'assets/media/misc/pattern-1.jpg' %});" >
 													<!--begin::Title-->s
 													<h3 class="text-white fw-bold mb-3">Quick Links</h3>
 													<!--end::Title-->
@@ -3758,7 +3758,7 @@ License: For each use you must have a valid license purchased only from above li
 														<!--begin::Username-->
 														<div class="d-flex flex-column">
 															<div class="fw-bolder d-flex align-items-center fs-5">{{users.username}}
-															</div>	
+															</div>
 														</div>
 														<!--end::Username-->
 													</div>
@@ -4017,7 +4017,7 @@ License: For each use you must have a valid license purchased only from above li
 							<!--begin::Row-->
 							<!--begin::Row-->
 							<div class="row g-5 g-xl-8 p-9" >
-								
+
 								<div class="col-xl-4">
 									<div class="card card-xl-stretch mb-xl-8">
 									<button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
@@ -4031,7 +4031,7 @@ License: For each use you must have a valid license purchased only from above li
 												<li><button class="dropdown-item" type="button" onclick="CreateGameRequest('AI_MinMax')"><div class="symbol symbol-35px"><img alt="Logo" src="{% static 'assets/media/avatars/150-26.jpg' %}" /></div>Djambaar الجمبار</button></li>
 											  </ul>
 									</div>
-								</div>			
+								</div>
 								<div class="col-xl-4">
 									<div class="card card-xl-stretch mb-xl-8" >
 										<button type = "button" id="startbutton"
@@ -4060,7 +4060,7 @@ License: For each use you must have a valid license purchased only from above li
 														then((data) => {
 															console.log("Created successfully an Online game who's code is :", data.id)
 															window.location.replace(
-																"http://"+
+																"https://"+
 																window.location.host
 																+ '/main/game/'
 																+ data.id
@@ -4089,7 +4089,7 @@ License: For each use you must have a valid license purchased only from above li
 														then((data) => {
 															console.log("Created successfully a game VS AI who's code is :", data.id)
 															window.location.replace(
-																"http://"+
+																"https://"+
 																window.location.host
 																+ '/main/game/'
 																+ data.id
@@ -4097,7 +4097,7 @@ License: For each use you must have a valid license purchased only from above li
 															)
 														})
 												}
-												
+
 											};
 										</script>
 									</div>
@@ -4112,17 +4112,17 @@ License: For each use you must have a valid license purchased only from above li
 									<div class=" card-header shadow-lg p-4 mb-2  ">
 										<div  class="alert alert-dismissible bg-secondary d-flex flex-column flex-sm-row p-5 mb-1">
 										<div class="symbol symbol-50px">
-											<img alt="Logo" src="{% static 'assets/media/avatars/150-26.jpg' %}" />	
+											<img alt="Logo" src="{% static 'assets/media/avatars/150-26.jpg' %}" />
 										</div>
 										<div class="col px-6">
 											<div class="align-top fw-bolder mb-2 text-dark">{{ user.username}} <img class="w-15px h-15px rounded-1 ms-2" src="{% static 'assets/media/flags/mauritania.svg' %}" alt="" /></div>
 											<div style="vertical-align: middle;" class="fw-bolder mb-2 text-dark" >Score:1000</div>
-											
+
 										</div>
 										</div>
 										<div class="display-4 mb-2 pd-4">
 										<div class=" shadow p-3 mb-5 bg-white rounded" id="countdown">
-                                    
+
 										</div>
 									</div>
 	<script>
@@ -4135,24 +4135,24 @@ License: For each use you must have a valid license purchased only from above li
 
         var currentDate = new Date().getTime(); //same thing as above
         var timeLeft = yourDateToGo - currentDate; //difference between time you set and now in miliseconds
-        var minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60)); //conversion miliseconds on minutes 
-		
+        var minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60)); //conversion miliseconds on minutes
+
         if (minutes < 10) minutes="0"+minutes;
         var seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);//conversion miliseconds on seconds
         if (seconds < 10) seconds="0"+seconds;
 
-        document.getElementById("countdown").innerHTML =  minutes + "m " + seconds + "s"; // putting number of days, hours, minutes and seconds in div, 
+        document.getElementById("countdown").innerHTML =  minutes + "m " + seconds + "s"; // putting number of days, hours, minutes and seconds in div,
         //which id is countdown
 
         if (timeLeft <= 0) {
           clearInterval(timing);
-          document.getElementById("countdown").innerHTML = "It's over"; //if there's no time left, programm in this 2 lines is clearing interval (nothing is counting now) 
+          document.getElementById("countdown").innerHTML = "It's over"; //if there's no time left, programm in this 2 lines is clearing interval (nothing is counting now)
           //and you see "It's over" instead of time left
         }
-      }, 1000);   
+      }, 1000);
 document.getElementById('btnId').addEventListener('click', firstExample);
 										</script>
-										
+
 										<div class="card-toolbar">
 											<!--begin::Menu-->
 											<button type="button"
@@ -4276,17 +4276,17 @@ document.getElementById('btnId').addEventListener('click', firstExample);
 								<div class="card card-xl-stretch mb-xl-8  shadow-lg p-3 mb-5 bg-white rounded">
 								<div class="card-header border-2 pt-5 ">
 									<div class="symbol symbol-50px ">
-										<img alt="Logo" src="{% static 'assets/media/avatars/150-26.jpg' %}" />	
+										<img alt="Logo" src="{% static 'assets/media/avatars/150-26.jpg' %}" />
 									</div>
 									<div class="col px-5">
 										<div id = "opponent" class="align-top fw-bolder mb-2 text-dark">{{ user.username}} <img class="w-15px h-15px rounded-1 ms-2" src="{% static 'assets/media/flags/mauritania.svg' %}" alt="" /></div>
 										<div style="vertical-align: middle;" class="fw-bolder mb-2 text-dark" >Score:1000</div>
-									
-									</div>		
+
+									</div>
 									<!--end::Menu 3-->
 									<!--end::Menu-->
 									</div>
-									</div>	
+									</div>
 							</div>
 							<!--end::Container-->
 						</div>
@@ -4571,10 +4571,10 @@ document.getElementById('btnId').addEventListener('click', firstExample);
 						</div>
 						<!--end::Row-->
 						<div class="row g-5 g-xl-8">
-						
+
 						</div>
 						<div class="row g-5 g-xl-7">
-						
+
 				<!--end::Content-->
 				<!--begin::Footer-->
 				<div class="footer py-4 d-flex flex-lg-column" id="kt_footer">
@@ -7228,7 +7228,7 @@ document.getElementById('btnId').addEventListener('click', firstExample);
 		<script src="{% static 'assets/js/custom/modals/upgrade-plan.js' %}"></script>
 		<!--end::Page Custom Javascript-->
 		<!--end::Javascript-->
-		
+
 		<!-- <div id="dhamet_container"></div> -->
 		{{ game_code|json_script:"game_code" }}
         <script src = "{% static 'frontend/main.js' %}"></script>

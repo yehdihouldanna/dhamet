@@ -11,4 +11,5 @@
   flex-wrap: wrap;
   flex-direction : horizontal;
   flex-flow : space-between;
+  touch-action: manipulation; /*to disable the double tap zoom on mobile devices*/
 }

@@ -21,7 +21,7 @@ class Board extends Component {
         [ 1,  1,  1,  1,  1,  1,  1,  1,  1],
         [ 1,  1,  1,  1,  1,  1,  1,  1,  1],
         [ 1,  1,  1,  1,  1,  1,  1,  1,  1],
-        [ -1, -1, -1, -1, 0,  1,  1,  1,  1],
+        [-1, -1, -1, -1,  0,  1,  1,  1,  1],
         [-1, -1, -1, -1, -1, -1, -1, -1, -1],
         [-1, -1, -1, -1, -1, -1, -1, -1, -1],
         [-1, -1, -1, -1, -1, -1, -1, -1, -1],
@@ -256,26 +256,7 @@ class Board extends Component {
           'current_turn': this.state.player,
           'winner':"",
         }));
-
       {
-        if( this.state.opponent.includes("AI") )
-        {
-            let me = this
-            setTimeout(function () {
-              //*We can change the response time based on the need
-              if (me.state.previous_board != me.state.board_txt) {
-                console.log("The AI request waited for 350 ms !")
-                me.props.client.send(
-                  JSON.stringify({
-                    'id': me.state.Code,
-                    'state': me.state.board_txt,
-                    'last_move': move_str,
-                    'current_turn': me.state.player,
-                    'winner':"",
-                  }));
-              }
-          }, 350);
-        }
       }
     }
   };
@@ -364,9 +345,27 @@ class Board extends Component {
                   me.state.creator  = data.creator;
                 }
 
-
-
-            }
+                // * If We are playing vs AI then we will send it's request after the players
+                let AI_NAMES = ["AI_Random","AI_Dummy","AI_MinMax"];
+                if( AI_NAMES.includes(this.state.opponent) && this.state.player===1)
+                {
+                    let me = this
+                    setTimeout(function () {
+                    //*We can change the response time based on the need
+                    if (me.state.previous_board != me.state.board_txt) {
+                        console.log("The AI request waited for 350 ms !")
+                        me.props.client.send(
+                        JSON.stringify({
+                            'id': me.state.Code,
+                            'state': me.state.board_txt,
+                            'last_move': "",
+                            'current_turn': me.state.player,
+                            'winner':"",
+                        }));
+                    }
+                        }, 350);
+                    }
+                }
           };
           this.props.client.onclose = function (e) {
           console.error('Client socket closed unexpectedly');

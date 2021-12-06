@@ -6,13 +6,13 @@ import {BrowserRouter as Router} from "react-router-dom";
 import {hashHistory} from "react-router"
 
 let game_code = "";
-try 
+try
 {
   game_code = JSON.parse(document.getElementById('game_code').textContent);
 }
 catch (e){console.log("This game page doesn't have an identifier.")}
 const client = new WebSocket(
-    'ws://'
+    'wss://'
     + window.location.host
     + '/DhametCode/'
     + 'move/'
@@ -24,11 +24,11 @@ ReactDOM.render(
   // <React.StrictMode>
   // <HashRouter>
     // <App/>
-  // </HashRouter> 
+  // </HashRouter>
   <Router history = {hashHistory}>
     <App client={client} game_code={game_code}/>
   </Router>
-    
+
   // </React.StrictMode>
   ,
   document.getElementById('dhamet_container')

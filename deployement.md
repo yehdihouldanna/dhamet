@@ -134,7 +134,7 @@ The **Nginx** config file:
     # this configuration works but doesnt connect sockets.S
     server {
         listen 80;
-        server_name 165.22.85.224;
+        server_name dhamet.com www.dhamet.com 165.22.85.224;
 
         location = /favicon.ico { access_log off; log_not_found off; }
         location /static/ {
@@ -239,7 +239,11 @@ The **Supervisor** Configuration file :
     `systemctl reset-failed servicename.service`
 
 
-- **To start the Nginx :** ``sudo systemctl restart nginx``
+- **To start the Nginx :** 
+
+    -- ``sudo systemctl restart nginx``
+
+    -- ``sudo systemctl reload nginx``
 - **To reload Nginx after a conf change :** `sudo service nginx reload`
 - If nginx service fail to reload  (<span style="color:#e63946">Job for nginx.service failed text</span>)
     then you have to :
