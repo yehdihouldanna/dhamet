@@ -349,7 +349,7 @@ class Board extends Component {
                 let AI_NAMES = ["AI_Random","AI_Dummy","AI_MinMax"];
                 if( AI_NAMES.includes(me.state.opponent) && me.state.player===1)
                 {
-                    setTimeout(function () {
+                    setTimeout(() => {
                     //*We can change the response time based on the need
                     if (me.state.previous_board != me.state.board_txt) {
                         console.log("The AI request waited for 350 ms !")
