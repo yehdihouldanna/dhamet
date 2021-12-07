@@ -15,18 +15,19 @@
 .Black_regular
 {
   /* background-image: url('../images/Black_regular.png'); */
-  background-image: url('../images/BR-1.png');
+  /* background-image: url('../images/BR-1.png'); */
+  background-image: url('../images/regular_0.png');
 }
 .White_regular
 {
   /* background-image: url('../images/White_regular.png'); */
-  background-image: url('../images/LD-2.png');
+  background-image: url('../images/regular_1.png');
 }
 .Black_dhaimat
 {
-  background-image: url('../images/Black_Dhaimat.png');
+  background-image: url('../images/dhaimat_0.png');
 }
 .White_dhaimat
 {
-  background-image: url('../images/White_Dhaimat.png');
+  background-image: url('../images/dhaimat_1.png');
 }
