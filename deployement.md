@@ -204,6 +204,11 @@ The **Supervisor** Configuration file :
         # Make sure to update "DhametFront.asgi" to match your project name
         command=/home/yehdih/dhamet/dhametenv/bin/daphne -u /run/daphne/daphne%(process_num)d.sock --fd 0 --access-log - --proxy-headers DhametFront.asgi:application
 
+        # work too :!
+        # command=/home/yehdih/dhamet/dhametenv/bin/daphne -u /run/daphne/daphne%(process_num)d.sock --fd 0 --access-log - --proxy-headers -e ssl:8001:privateKey=/etc/letsencrypt/live/dhamet.com/privkey.pem:certKey=/etc/letsencrypt/live/dhamet.com/fullchain.pem DhametFront.asgi:application
+
+        #command=/home/yehdih/dhamet/dhametenv/bin/daphne -e ssl:8443:privateKey=/etc/letsencrypt/live/dhamet.com/privkey.pem:certKey=/etc/letsencrypt/live/dhamet.com/fullchain.pem DhametFront.asgi:application -p 8000 -b 0.0.0.0
+
         # Number of processes to startup, roughly the number of CPUs you have
         numprocs=1
 
@@ -279,3 +284,16 @@ check the following files using `sudo vim <LogFilePath>` in order to detect find
 **Daphne process - /var/log/asgi.log**
 ```log
 ```
+
+
+## Some complicated scénarios errors :
+
+- If the deploiment is still new and you changed something in teh react app, and tried to apply with `
+`npm run build`or `npm run dev` but didn't work then there is a high possiblity that the problem is with the node modules and the package-lock.json files what you need to is : 
+
+    Delete the node_modules directory
+    Delete the package-lock.json file
+    Run npm install
+    Run npm start
+    OR
+    ``rm -rf node_modules package-lock.json && npm install && npm start``

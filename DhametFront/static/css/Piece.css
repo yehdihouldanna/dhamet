@@ -4,17 +4,23 @@
   height : 70px;
   display : inline-block;
   position: absolute;
+  -webkit-filter: drop-shadow(3px 3px 3px #222);
+  filter: drop-shadow(3px 3px 3px #222);
   top: 50%;
   left: 50%;
+
   transform: translate(-50%, -50%);
+  touch-action: manipulation; /*to disable the double tap zoom on mobile devices*/
 }
 .Black_regular
 {
-  background-image: url('../images/Black_regular.png');
+  /* background-image: url('../images/Black_regular.png'); */
+  background-image: url('../images/BR-1.png');
 }
 .White_regular
 {
-  background-image: url('../images/White_regular.png');
+  /* background-image: url('../images/White_regular.png'); */
+  background-image: url('../images/LD-2.png');
 }
 .Black_dhaimat
 {
