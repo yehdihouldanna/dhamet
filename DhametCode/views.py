@@ -10,7 +10,26 @@ import sys
 from datetime import datetime
 from .utils.Players import Random
 from users.models import User
+import coloredlogs, logging
 
+# Create a logger object.
+logger = logging.getLogger(__name__)
+# By default the install() function installs a handler on the root logger,
+# this means that log messages from your code and log messages from the
+# libraries that you use will all show up on the terminal.
+coloredlogs.install(level='DEBUG')
+
+# If you don't want to see log messages from libraries, you can pass a
+# specific logger object to the install() function. In this case only log
+# messages originating from that logger will show up on the terminal.
+coloredlogs.install(level='DEBUG', logger=logger)
+
+# # Some examples.
+# logger.debug("this is a debugging message")
+# logger.info("this is an informational message")
+# logger.warning("this is a warning message")
+# logger.error("this is an error message")
+# logger.critical("this is a critical message")
 # Create your views here.
 class GameView(generics.ListAPIView):
     queryset = Game.objects.all()
@@ -28,7 +47,7 @@ class CreateGameView(generics.ListAPIView):
         # Code_ = self.request.session.session_key
         if request.user.is_authenticated:
             user = User.objects.filter(username = request.user.username)[0]
-            print(f"The authenticated user here is {user.username}")
+            logger.debug(f"The authenticated user here is {user.username}")
         else :
             try:
                 user = User.objects.filter(username = "Guest")[0]
@@ -47,7 +66,7 @@ class CreateGameView(generics.ListAPIView):
 
             game = Game(creator = user , opponent = ai)
             game.save()
-            print(f"User : {user.username} Have Created a game vs computer who's id is {game.get_game_code()}")
+            logger.debug(f"User : {user.username} Have Created a game vs computer who's id is {game.get_game_code()}")
             return Response(CreateGameSerializer(game).data,status = status.HTTP_201_CREATED)
         else :# Online
             queryset_ = Game.get_available_games()
@@ -55,12 +74,12 @@ class CreateGameView(generics.ListAPIView):
                 game = queryset_[0]
                 game.opponent = user
                 game.save()
-                print(f"User : {user.username} Have Joined the game {game.get_game_code()} created by {game.creator}")
+                logger.debug(f"User : {user.username} Have Joined the game {game.get_game_code()} created by {game.creator}")
                 return Response(CreateGameSerializer(game).data,status = status.HTTP_202_ACCEPTED)
             else:
                 game = Game(creator = user )
                 game.save()
-                print(f"User : {user.username} Have Created a game who's id is {game.get_game_code()}")
+                logger.debug(f"User : {user.username} Have Created a game who's id is {game.get_game_code()}")
                 return Response(CreateGameSerializer(game).data,status = status.HTTP_201_CREATED)
 
 class GameMoveView(generics.ListAPIView):
@@ -82,7 +101,7 @@ class GameMoveView(generics.ListAPIView):
         if moved:
             ended ,end_msg  = game_instance.check_end_condition()
             if ended :
-                print(end_msg)
+                logger.debug(end_msg)
             game_instance.player = not game_instance.player
             game_instance.length+=1
             return True, game_instance.board,ended,game_instance.length
@@ -147,7 +166,7 @@ class GameMoveView(generics.ListAPIView):
 
                     board_txt =serializer.data.get('state')
                     move = serializer.data.get('last_move')
-                    print(f"in the post method move:{move}")
+                    logger.debug(f"in the post method move:{move}")
                     game = queryset[0]
                     current_turn = game.current_turn
                     length = game.length
@@ -181,7 +200,7 @@ class GameMoveView(generics.ListAPIView):
                     else: # the AI is playing (black)
                         Agent = Random('AI',current_turn)
                         move = Agent.move(game_instance)
-                        print(f"The AI agent moved : {move}")
+                        logger.debug(f"The AI agent moved : {move}")
                         moved,board,ended,length = self.get_game_update(game,game_instance,current_turn,move)
                         if moved :
                             board_txt = self.serialize(board)

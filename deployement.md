@@ -293,7 +293,7 @@ check the following files using `sudo vim <LogFilePath>` in order to detect find
 
     Delete the node_modules directory
     Delete the package-lock.json file
-    Run npm install
-    Run npm start
+    Run ``npm install``
+    Run ``npm start``
     OR
     ``rm -rf node_modules package-lock.json && npm install && npm start``

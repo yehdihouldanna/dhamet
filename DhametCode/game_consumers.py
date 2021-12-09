@@ -11,9 +11,28 @@ from users.models import User
 from rest_framework.response import Response
 from rest_framework import status
 import numpy as np
-import sys
 from datetime import datetime
-from termcolor import cprint
+import coloredlogs, logging
+
+# Create a logger object.
+logger = logging.getLogger(__name__)
+# By default the install() function installs a handler on the root logger,
+# this means that log messages from your code and log messages from the
+# libraries that you use will all show up on the terminal.
+coloredlogs.install(level='DEBUG')
+
+# If you don't want to see log messages from libraries, you can pass a
+# specific logger object to the install() function. In this case only log
+# messages originating from that logger will show up on the terminal.
+coloredlogs.install(level='DEBUG', logger=logger)
+
+# Some examples.
+logger.debug("this is a debugging message")
+logger.info("this is an informational message")
+logger.warning("this is a warning message")
+logger.error("this is an error message")
+logger.critical("this is a critical message")
+
 
 # This is a functional chat conumer could be used later to add a chat functionality.
 class ChatConsumer(AsyncWebsocketConsumer):
@@ -40,9 +59,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)
         tdj = text_data_json
-        print("the received data is : ",text_data_json)
+        logger.debug("the received data is : ",text_data_json)
         message = str(self.user) +" says : "+ tdj['message']+"\n"
-        print(message)
+        logger.debug(message)
         # Send message to room group
         await self.channel_layer.group_send(
             self.room_group_name,
@@ -69,7 +88,7 @@ class GameConsumer(AsyncWebsocketConsumer):
         self.game_code = self.scope['url_route']['kwargs']['game_code']
         self.user = self.scope['user']
         self.game_group_name = f"game_{self.game_code}"
-        print(f"The user {self.user} connected to the channel : {self.game_group_name}")
+        logger.debug(f"The user {self.user} connected to the channel : {self.game_group_name}")
         # Join game group
         await self.channel_layer.group_add(
             self.game_group_name,
@@ -85,9 +104,9 @@ class GameConsumer(AsyncWebsocketConsumer):
     # Receive message from WebSocket
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)
-        print("the received data is : ",text_data_json)
+        logger.debug("the received data is : ",text_data_json)
         message = f" {str(self.user)} is requesting a move : "
-        print(message)
+        logger.debug(message)
         output_data = await self.post_move(text_data_json)
         # Send message to game group
         await self.channel_layer.group_send(
@@ -99,7 +118,7 @@ class GameConsumer(AsyncWebsocketConsumer):
         )
     # Receive message from game group
     async def move_message(self, event):
-        print("entering the move message method")
+        logger.debug("entering the move message method")
         # data = event['data']
         # sender = self.scope["user"].username
         # receiver = self.scope['path'].split('_')[1]
@@ -159,9 +178,9 @@ class GameConsumer(AsyncWebsocketConsumer):
                         'opponent' : game.opponent.username,
                         'winner' : winner})
         if self.ws_first:
-            cprint(f"sending data to the browser : {output_data}",color = "blue" )
+            logger.debug(f"sending data to the browser : {output_data}",color = "blue" )
         else :
-            cprint(f"sending data to the browser : {output_data}",color = "yellow" )
+            logger.debug(f"sending data to the browser : {output_data}",color = "yellow" )
         self.ws_first = not self.ws_first
         return output_data
 
@@ -209,7 +228,7 @@ class GameConsumer(AsyncWebsocketConsumer):
         user = self.scope['user']
         # data = event["data"]
         data = text_data_json
-        print(f"Starting the post_move method with sender : {user.username}\n data : {data}")
+        logger.debug(f"Starting the post_move method with sender : {user.username}\n data : {data}")
         id = data["id"]
         if user.is_authenticated:
             user = User.objects.filter(username = user.username)[0]
@@ -220,7 +239,7 @@ class GameConsumer(AsyncWebsocketConsumer):
             if queryset.exists():
                 current_turn_  = data['current_turn']
                 move = data['last_move']
-                print(f"in the post method move:{move}")
+                logger.debug(f"in the post method move:{move}")
                 game = queryset[0]
                 current_turn = game.current_turn
                 length = game.length
@@ -234,7 +253,7 @@ class GameConsumer(AsyncWebsocketConsumer):
                     # Agent = Dummy('AI',current_turn)
                     Agent = MinMax("AI",current_turn,depth=2)
                     move = Agent.move(game_instance)
-                    print(f"The AI agent moved : {move}")
+                    logger.debug(f"The AI agent moved : {move}")
                     user_ = game.creator if game.creator.username in AI_NAMES else game.opponent
                     return self.update_game(id,user_,game,game_instance,move)
                 elif ((game.creator==user and current_turn==1) or (game.opponent == user and current_turn==0)): # case a user tries a move when it't turn only happens at start when user joins a new game
