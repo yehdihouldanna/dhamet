@@ -12,7 +12,7 @@ try
 }
 catch (e){console.log("This game page doesn't have an identifier.")}
 const client = new WebSocket(
-    'wss://'
+    'ws://'
     + window.location.host
     + '/DhametCode/'
     + 'move/'

@@ -286,10 +286,10 @@ check the following files using `sudo vim <LogFilePath>` in order to detect find
 ```
 
 
-## Some complicated scénarios errors :
+## Some rare scenarios errors :
 
-- If the deploiment is still new and you changed something in teh react app, and tried to apply with `
-`npm run build`or `npm run dev` but didn't work then there is a high possiblity that the problem is with the node modules and the package-lock.json files what you need to is : 
+- If the deploiment is still new and you changed something in the react app on the server, and tried to apply with `
+`npm run build`or `npm run dev` but didn't work then there is a high possiblity that the problem is with the `node_modules` and the `package-lock.json` files what you need to is : 
 
     Delete the node_modules directory
     Delete the package-lock.json file

@@ -116,7 +116,8 @@ class Board extends Component {
       let y = Number(this.state.move[len-1])
       let xc = Number(key[0])
       let yc = Number(key[1])
-      if (this.state.board[x][y]*this.state.board[xc][yc]>=1)  // checks if the cellls the two pieces are of the same type
+
+      if (this.state.board[x][y]*this.state.board[xc][yc]>=1 )  // checks if the cellls the two pieces are of the same type
       {this.state.move = key;}
       }
     if (!this.state.move.slice(-5).includes(key) && this.state.move !== "")
@@ -138,7 +139,7 @@ class Board extends Component {
       let xc = Number(key[0])
       let yc = Number(key[1])
 
-      if (this.state.board[x][y]*this.state.board[xc][yc]>=1) // checks if the two cells containt pieces of the same type
+      if (this.state.board[x][y]*this.state.board[xc][yc]>=1 ) // checks if the two cells containt pieces of the same type
       { console.log("The indices we are trying : ",x,y,xc,yc, "are equal")
         this.state.move = ""
         let game_state = this.state;
@@ -284,7 +285,7 @@ class Board extends Component {
       }).then(() => this.handleMove())
   };
   handleMouseLeave() {
-    console.log("On Mouse Leave got called");
+    // console.log("On Mouse Leave got called");
     this.state.move = "";
     let game_state = this.state;
     game_state.move = this.state.move;
@@ -314,6 +315,7 @@ class Board extends Component {
               me.state.move = "";
             }
             else {
+                let AI_NAMES = ["AI_Random","AI_Dummy","AI_MinMax"];
                 console.log("We received a correct data: ", data);
                 let game_state = me.state;
                 game_state.player = data.current_turn;
@@ -321,9 +323,9 @@ class Board extends Component {
                 console.log("The player now is : ", game_state.player);
                 game_state.board_txt = data.state;
 
-                if (game_state.last_move != data.last_move)
+                if (game_state.last_move != data.last_move )
                 {
-                  game_state.last_move= data.last_move;
+                  game_state.last_move = data.last_move;
                   game_state.move_history_render.push(game_state.last_move);
                   me.setState(game_state);
                   if (game_state.move_history_render.length==2)
@@ -346,7 +348,7 @@ class Board extends Component {
                 }
 
                 // * If We are playing vs AI then we will send it's request after the players
-                let AI_NAMES = ["AI_Random","AI_Dummy","AI_MinMax"];
+                ;
                 if( AI_NAMES.includes(me.state.opponent) && me.state.player===1)
                 {
                     setTimeout(() => {

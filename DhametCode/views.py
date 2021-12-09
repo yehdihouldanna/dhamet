@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from .models import Game 
+from .models import Game
 from rest_framework import generics , status
 from rest_framework.response import Response
 from .serializers import GameSerializer , CreateGameSerializer , GameMoveSerializer
@@ -21,29 +21,30 @@ class CreateGameView(generics.ListAPIView):
     queryset = Game.objects.all()
 
     def post(self,request,format = None):
-        
+
         if not self.request.session.exists(self.request.session.session_key): # check if the session exists
             self.request.session.create()
         # serializer = self.serializer_class(data=request.data)
         # Code_ = self.request.session.session_key
         if request.user.is_authenticated:
-            user = User.objects.filter(name = request.user.name)[0]
-        else : 
+            user = User.objects.filter(username = request.user.username)[0]
+            print(f"The authenticated user here is {user.username}")
+        else :
             try:
-                user = User.objects.filter(name = "Guest")[0]
+                user = User.objects.filter(username = "Guest")[0]
             except:
                 user = User(username= "Guest",name = "Guest",phone=000)
                 user.save()
-            
+
         # if serializer.is_valid(): # needs to be integrated somehow , but for now it causes problem since the id can't be passed blank.
         AI_NAMES = ["AI_Random","AI_Dummy","AI_MinMax"]
         if request.data['opponent'] in AI_NAMES:
             try:
-                ai = User.objects.filter(name = request.data['opponent'])[0]
+                ai = User.objects.filter(username = request.data['opponent'])[0]
             except:
                 ai = User(username = request.data['opponent'] ,name=request.data['opponent'], phone=000)
                 ai.save()
-            
+
             game = Game(creator = user , opponent = ai)
             game.save()
             print(f"User : {user.username} Have Created a game vs computer who's id is {game.get_game_code()}")
@@ -61,7 +62,7 @@ class CreateGameView(generics.ListAPIView):
                 game.save()
                 print(f"User : {user.username} Have Created a game who's id is {game.get_game_code()}")
                 return Response(CreateGameSerializer(game).data,status = status.HTTP_201_CREATED)
-    
+
 class GameMoveView(generics.ListAPIView):
     """The view that process the player's moves sent by the client"""
     serializer_class = GameMoveSerializer
@@ -85,7 +86,7 @@ class GameMoveView(generics.ListAPIView):
             game_instance.player = not game_instance.player
             game_instance.length+=1
             return True, game_instance.board,ended,game_instance.length
-        
+
         return False ,None,None,None
 
     def serialize(self,board):
@@ -133,9 +134,9 @@ class GameMoveView(generics.ListAPIView):
         serializer = self.serializer_class(data= request.data)
 
         if request.user.is_authenticated:
-            user = User.objects.filter(name = request.user.name)
+            user = User.objects.filter(username = request.user.username)
         else:
-            user = User.objects.filter(name = "Guest")
+            user = User.objects.filter(username = "Guest")
 
         if serializer.is_valid():
             id = serializer.data.get('id')
@@ -162,7 +163,7 @@ class GameMoveView(generics.ListAPIView):
                             game.moves = moves
                             game.last_move= move
                             game.current_turn = (game.current_turn+1)%2
-                        
+
                         if ended:
                             game.winner = user
                             game.completed = datetime.now()
@@ -171,7 +172,7 @@ class GameMoveView(generics.ListAPIView):
 
                         winner=""
                         try:
-                            winner = game.winner.name
+                            winner = game.winner.username
                         except:
                             pass
 
@@ -196,13 +197,13 @@ class GameMoveView(generics.ListAPIView):
                         game.save()
                         winner=""
                         try:
-                            winner = game.winner.name
+                            winner = game.winner.username
                         except:
                             pass
                         return Response(GameMoveSerializer(game).data,status = status.HTTP_202_ACCEPTED)
 
-            raise Exception(f"user {user.name} tried to make a move in a non existing game!!")    
-        
+            raise Exception(f"user {user.username} tried to make a move in a non existing game!!")
+
 
 def say_hello(request):
     try :
@@ -216,7 +217,7 @@ def index(request):
     return render(request, 'index.html', {})
 
 def room(request, room_name):
-    return render(request, 'room.html', 
+    return render(request, 'room.html',
     {
         'room_name': room_name,
     })

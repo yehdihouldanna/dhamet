@@ -13,7 +13,7 @@ import os
 class State():
     """
     This class contains the state of the game at a give turn,
-    the main content of this class is the baord vairable which contains 
+    the main content of this class is the baord vairable which contains
     """
     def __init__(self,n=9,board=None,player =0,length=0):
         self.n = n
@@ -23,13 +23,12 @@ class State():
         self.white_score = self.pieces
         self.black_score = self.pieces
         self.game_score = 0
-        self.no_kill_counter = 0 # a counter that helps break the game 
+        self.no_kill_counter = 0 # a counter that helps break the game
                                  # in case of long non killing periods
         self.no_kill_limit = 20
-        self.dhaimat_value = 3 
+        self.dhaimat_value = 3
         self.winner = None  # -1 for black , 0 for draw and 1 for white
         self.souffle = False  # if a pices have a killing move and it does non killing move it get's killed it self سوفلة
-
         # initialising the board matrix
         self.lim_takes = 10  # limits AI takes per turn (improves performance (when the baord contain few Dhaimat pieces))
         if board is None:
@@ -94,7 +93,7 @@ class State():
         for j in range(0,self.n):
             cprint('{0:>3}'.format(f"[{j}]"),color = "yellow",end=" ",file=file)
         print(file=file,flush=True)
-           
+
     def show_score(self):
         cprint('Scores : ',color="yellow",end=" ")
         cprint(f'[white] :{self.white_score}',color = "green",end =" ")
@@ -143,7 +142,7 @@ class State():
                 self.board[destination[0],destination[1]]=-1*self.dhaimat_value
             elif not self.player and destination[0]==self.n-1 :
                 self.board[destination[0],destination[1]]=self.dhaimat_value
-            
+
             if self.souffle and scores[idx] == 0 and 1 in scores: # souvle kills itself
                 self.board[destination[0],destination[1]]=0
             # updating the repeating end_condition.
@@ -170,6 +169,8 @@ class State():
                 break
         return moved
 
+
+
     def get_chain_moves(self,x,y):
         # TODO : optimize this function to return only the optimal chained move and reduce the overhead
         """This function returns all possible moves including the chained ones.
@@ -185,7 +186,7 @@ class State():
 
     def helper_chain_moves(self,x,y,move_str,chains,first_lvl=False):
         if len(move_str)>=3*self.lim_takes+2: # just an overhead reducer could be made false in __init__
-            return 
+            return
         else:
             # print(f"chain move {move_str} Started :")
             temp_board = np.copy(self.board)
@@ -215,7 +216,7 @@ class State():
         possible_moves = []
         scores = []
         # we have two type of nodes : '+' (Plus) and '*' (Star)
-        vectors_up_star = [(1,-1),(1,0),(1,1)] 
+        vectors_up_star = [(1,-1),(1,0),(1,1)]
         vectors_down_star = [(-1,-1),(-1,0),(-1,1)]
         vectors_up_plus = [(1,0)]
         vectors_down_plus = [(-1,0)]
@@ -223,7 +224,7 @@ class State():
 
         valid_index = lambda i,j : i>=0 and i<self.n and j>=0 and j<self.n
         if self.board[x,y]>=1: #  White piece
-            if x%2 == y%2: # case of '*' nodes 
+            if x%2 == y%2: # case of '*' nodes
                 for vec in vectors_up_star + vectors_down_star + vectors_side:
                     x_ = lambda k : x+k*vec[0] # returns the next abscisse
                     y_ = lambda k : y+k*vec[1] # returns the next ordinate
@@ -256,7 +257,7 @@ class State():
 
             else: # case of '+' nodes
                 for vec in vectors_up_plus + vectors_down_plus + vectors_side:
-                    x_ = lambda k : x+k*vec[0] 
+                    x_ = lambda k : x+k*vec[0]
                     y_ = lambda k : y+k*vec[1] # returns the next ordinate
                     if self.board[x,y]==1: # regular white piece
                         if  valid_index(x_(1),y_(1)) and self.board[x_(1),y_(1)]==0 and vec in vectors_up_plus:
@@ -264,10 +265,10 @@ class State():
                             scores.append(0)
                         elif valid_index(x_(1),y_(1)) and np.sign(self.board[x_(1),y_(1)])==-1 and valid_index(x_(2),y_(2)) and self.board[x_(2),y_(2)]==0:
                             possible_moves.append((x_(2),y_(2)))
-                            scores.append(1)  
+                            scores.append(1)
                     else : # White Dhaimat piece:
                         valid = False
-                        k=1 
+                        k=1
                         p=0 # number of pieces already jumped
                         if valid_index(x_(k),y_(k)):
                             valid = True
@@ -285,9 +286,9 @@ class State():
                             valid = valid_index(x_(k),y_(k))
 
         elif self.board[x,y]<=-1: # Black piece
-            if x%2 == y%2: # case of '*' nodes 
+            if x%2 == y%2: # case of '*' nodes
                 for vec in vectors_down_star + vectors_up_star + vectors_side:
-                    x_ = lambda k : x+k*vec[0] 
+                    x_ = lambda k : x+k*vec[0]
                     y_ = lambda k : y+k*vec[1] # returns the next ordinate
                     if self.board[x,y]==-1: # regular balck piece
                         if  valid_index(x_(1),y_(1)) and self.board[x_(1),y_(1)]==0 and vec in vectors_down_star:
@@ -316,7 +317,7 @@ class State():
                             valid = valid_index(x_(k),y_(k))
 
                         valid = False
-                        k=1 
+                        k=1
                         p=0 # number of pieces already jumped
                         if valid_index(x_(k),y_(k)):
                             valid = True
@@ -334,7 +335,7 @@ class State():
                             valid = valid_index(x_(k),y_(k))
             else : # case of '+' nodes
                 for vec in vectors_down_plus + vectors_up_plus + vectors_side:
-                    x_ = lambda k : x+k*vec[0] 
+                    x_ = lambda k : x+k*vec[0]
                     y_ = lambda k : y+k*vec[1]
                     if self.board[x,y]==-1: # regular black piece
                         if  valid_index(x_(1),y_(1)) and self.board[x_(1),y_(1)]==0 and vec in vectors_down_plus:
@@ -473,7 +474,7 @@ if __name__=="__main__":
     match = Play_Game(Player1,Player2,n=9,file_name=file_name,console=True)
     while(not match.game_ended):
         match.turn()
-    
+
 
 
     if save_to_file:

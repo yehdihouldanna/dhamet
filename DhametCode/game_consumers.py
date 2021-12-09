@@ -13,9 +13,11 @@ from rest_framework import status
 import numpy as np
 import sys
 from datetime import datetime
+from termcolor import cprint
 
 # This is a functional chat conumer could be used later to add a chat functionality.
 class ChatConsumer(AsyncWebsocketConsumer):
+
     async def connect(self):
         self.room_name = self.scope['url_route']['kwargs']['room_name']
         self.user = self.scope['user']
@@ -41,7 +43,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
         print("the received data is : ",text_data_json)
         message = str(self.user) +" says : "+ tdj['message']+"\n"
         print(message)
-
         # Send message to room group
         await self.channel_layer.group_send(
             self.room_group_name,
@@ -53,17 +54,22 @@ class ChatConsumer(AsyncWebsocketConsumer):
     # Receive message from room group
     async def chat_message(self, event):
         message = event['message']
-
         # Send message to WebSocket
         await self.send(text_data=json.dumps({
             'message': message
         }))
 
 class GameConsumer(AsyncWebsocketConsumer):
+    def __init__(self):
+        super().__init__()
+        """ Due to some specific problem with the websocket we need to creat some specif variable for this class"""
+        self.ws_first = True
+        self.last_move_data = {}
     async def connect(self):
         self.game_code = self.scope['url_route']['kwargs']['game_code']
         self.user = self.scope['user']
         self.game_group_name = f"game_{self.game_code}"
+        print(f"The user {self.user} connected to the channel : {self.game_group_name}")
         # Join game group
         await self.channel_layer.group_add(
             self.game_group_name,
@@ -76,65 +82,87 @@ class GameConsumer(AsyncWebsocketConsumer):
             self.game_group_name,
             self.channel_name
         )
-
     # Receive message from WebSocket
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)
-        # tdj = text_data_json
         print("the received data is : ",text_data_json)
-        message = "from backend, " + str(self.user) + " moved."
+        message = f" {str(self.user)} is requesting a move : "
         print(message)
+        output_data = await self.post_move(text_data_json)
         # Send message to game group
         await self.channel_layer.group_send(
             self.game_group_name,
             {
                 'type': 'move_message',
-                'data': text_data_json
+                'data': output_data
             }
         )
-
     # Receive message from game group
     async def move_message(self, event):
         print("entering the move message method")
         # data = event['data']
         # sender = self.scope["user"].username
         # receiver = self.scope['path'].split('_')[1]
-        output_data = await self.post_move(event)
+        # output_data = await self.post_move(event)
         # Send message to WebSocket
-        await self.send(text_data = output_data)
+        await self.send(text_data = event['data'])
 
     def update_game(self,id,user,game,game_instance,move):
-        moved = game_instance.move_from_str(move)
-        if moved:
-            game_instance.player = not game_instance.player
-            game_instance.length+=1
-            board_txt = self.serialize(game_instance.board)
-            game.state = board_txt
-            game.length = game_instance.length
-            moves = game.moves+"\n"+move
-            game.moves = moves
-            game.last_move= move
-            game.current_turn = (game.current_turn+1)%2
-        ended,end_msg = game_instance.check_end_condition()
-        if ended:
-            game.winner = user
-            game.completed = datetime.now()
-        game.save()
-        winner=""
-        try:
-            winner = game.winner.name
-            if(not len(winner)):
+        if move =="":
+            winner=""
+            try:
                 winner = game.winner.username
-        except:
-            pass
-        output_data  = json.dumps({
-                    'id':id,
-                    'state': game.state,
-                    'last_move': move,
-                    'current_turn':game.current_turn,
-                    'creator' : game.creator.name,
-                    'opponent' : game.opponent.name,
-                    'winner' : winner})
+            except:
+                pass
+            opponent = ""
+            try:
+                opponent = game.opponent.username
+            except:
+                pass
+            output_data  = json.dumps({
+                        'id':id,
+                        'state': game.state,
+                        'last_move': game.last_move,
+                        'current_turn':game.current_turn,
+                        'creator' : game.creator.username,
+                        'opponent' : opponent,
+                        'winner' : winner})
+
+        else:
+            moved = game_instance.move_from_str(move)
+            if moved:
+                game_instance.player = not game_instance.player
+                game_instance.length+=1
+                board_txt = self.serialize(game_instance.board)
+                game.state = board_txt
+                game.length = game_instance.length
+                moves = game.moves+"\n"+move
+                game.moves = moves
+                game.last_move= move
+                game.current_turn = (game.current_turn+1)%2
+            ended,end_msg = game_instance.check_end_condition()
+            if ended:
+                game.winner = user
+                game.completed = datetime.now()
+            game.save()
+            winner=""
+            try:
+                winner = game.winner.username
+            except:
+                pass
+            output_data  = json.dumps({
+                        'id':id,
+                        'state': game.state,
+                        'last_move': game.last_move,
+                        'current_turn':game.current_turn,
+                        'creator' : game.creator.username,
+                        'opponent' : game.opponent.username,
+                        'winner' : winner})
+        if self.ws_first:
+            cprint(f"sending data to the browser : {output_data}",color = "blue" )
+        else :
+            cprint(f"sending data to the browser : {output_data}",color = "yellow" )
+        self.ws_first = not self.ws_first
         return output_data
 
 
@@ -177,21 +205,20 @@ class GameConsumer(AsyncWebsocketConsumer):
         return board
 
     @database_sync_to_async
-    def post_move(self , event):
+    def post_move(self , text_data_json):
         user = self.scope['user']
-        data = event["data"]
+        # data = event["data"]
+        data = text_data_json
         print(f"Starting the post_move method with sender : {user.username}\n data : {data}")
         id = data["id"]
-
         if user.is_authenticated:
-            user = User.objects.filter(name = user.name)[0]
+            user = User.objects.filter(username = user.username)[0]
         else:
-            user = User.objects.filter(name = "Guest")[0]
-
+            user = User.objects.filter(username = "Guest")[0]
         if id!="":
             queryset = Game.objects.filter(id=id)
             if queryset.exists():
-                current_turn_game  = data['current_turn']
+                current_turn_  = data['current_turn']
                 move = data['last_move']
                 print(f"in the post method move:{move}")
                 game = queryset[0]
@@ -199,23 +226,20 @@ class GameConsumer(AsyncWebsocketConsumer):
                 length = game.length
                 board = self.deserialize(game.state)
                 game_instance = State(n=9,board=board,player = current_turn, length=length)
-                
-                AI_NAMES = ["AI_Random","AI_Dummy","AI_MinMax"]
-                if ((game.creator==user and current_turn_game==0) or (game.opponent == user and current_turn_game)): # user is playing
+                AI_NAMES = set(["AI_Random","AI_Dummy","AI_MinMax"])
+                if ((game.creator==user and current_turn==0) or (game.opponent == user and current_turn)): # user is playing
                     return self.update_game(id,user,game,game_instance,move)
-                
-                elif ((game.opponent.name in AI_NAMES and current_turn_game) or (game.creator.name in AI_NAMES and current_turn_game==0)): # the AI is playing 
+                elif ((game.opponent.username in AI_NAMES and current_turn) or (game.creator.username in AI_NAMES and current_turn==0)): # the AI is playing
                     # Agent = Random('AI',current_turn)
                     # Agent = Dummy('AI',current_turn)
                     Agent = MinMax("AI",current_turn,depth=2)
                     move = Agent.move(game_instance)
                     print(f"The AI agent moved : {move}")
-                    user_ = game.creator if game.creator.name in AI_NAMES else game.opponent
+                    user_ = game.creator if game.creator.username in AI_NAMES else game.opponent
                     return self.update_game(id,user_,game,game_instance,move)
-
-            # raise Exception(f"user {user.name} tried to make a non valid move!")    
+                elif ((game.creator==user and current_turn==1) or (game.opponent == user and current_turn==0)): # case a user tries a move when it't turn only happens at start when user joins a new game
+                    return self.update_game(id,user,game,game_instance,move="")
+            # raise Exception(f"user {user.username} tried to make a non valid move!")
             return Response({'Bad Request': 'Invalid data...'}, status=status.HTTP_400_BAD_REQUEST)
         return Response({'Bad Request': 'Invalid data...'}, status=status.HTTP_400_BAD_REQUEST)
         # raise Exception("You can't make a move in a non existing game!!")
-        
-        
