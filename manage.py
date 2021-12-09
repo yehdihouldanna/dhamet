@@ -2,6 +2,11 @@
 """Django's command-line utility for administrative tasks."""
 import os
 import sys
+import logging
+logging.basicConfig(format = '%(asctime)s %(message)s',
+                    datefmt = '%m/%d/%Y %I:%M:%S %p',
+                    filename = 'example.log',
+                    level=logging.DEBUG)
 
 def main():
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'DhametFront.settings')

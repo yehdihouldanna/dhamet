@@ -198,3 +198,45 @@ STATICFILES_DIRS = [
 
 MEDIA_ROOT = BASE_DIR + '/uploads'
 MEDIA_URL = "/files/"
+
+
+LOGGING = {
+    'version' : 1,
+    'handlers': {
+        'console': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple',
+
+        },
+        'file': {
+            'level': 'INFO',
+            'class': 'django.utils.log.AdminEmailHandler',
+            'filename' : './logs/debug.log',
+            # 'class': 'logging.FileHandler',
+            'class': 'logging.StreamHandler',
+            'formatter': 'default'
+        }
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console','file'],
+            'propagate': True,
+            'level' : 'DEBUG',
+            }
+    },
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
+            'style': '{',
+        },
+        'default': {
+            'format': '{levelname} {asctime} {module} {process:d} {message}',
+            'style': '{',
+        },
+        'simple': {
+            'format': '{levelname} {message}',
+            'style': '{',
+        },
+    },
+}
