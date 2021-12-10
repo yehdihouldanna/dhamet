@@ -2,7 +2,7 @@
 for multiple players to connect to the same game.
 """
 import logging
-import coloredlogs
+# import coloredlogs
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
@@ -17,8 +17,8 @@ from datetime import datetime
 
 
 logging.basicConfig(filename="./logs/debug.log")
-logger = logging.getLogger(__name__)
-coloredlogs.install(level='INFO', logger=logger)
+logger = logging.getLogger(__file__)
+# coloredlogs.install(level='INFO', logger=logger)
 # This is a functional chat conumer could be used later to add a chat functionality.
 class ChatConsumer(AsyncWebsocketConsumer):
 

@@ -1,10 +1,12 @@
 import logging
-import coloredlogs
+# import coloredlogs
 from django.shortcuts import render
 from django.http import HttpResponse
 from .models import Game
 from rest_framework import generics , status
 from rest_framework.response import Response
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from rest_framework.permissions import IsAuthenticated
 from .serializers import GameSerializer , CreateGameSerializer , GameMoveSerializer
 from .utils.Board import State
 import numpy as np
@@ -19,8 +21,8 @@ from django.conf import settings
 
 logging.basicConfig(filename="./logs/debug.log")
 # Create a logger object.
-logger = logging.getLogger(__name__)
-coloredlogs.install(level='INFO', logger=logger)
+logger = logging.getLogger(__file__)
+# coloredlogs.install(level='INFO', logger=logger)
 
 
 # Create your views here.
@@ -31,6 +33,8 @@ class GameView(generics.ListAPIView):
 class CreateGameView(generics.ListAPIView):
     serializer_class = CreateGameSerializer  # a view requires a serializer_class and a queryset attributes
     queryset = Game.objects.all()
+    authentication_classes = [SessionAuthentication, BasicAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def post(self,request,format = None):
 

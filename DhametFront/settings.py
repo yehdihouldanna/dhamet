@@ -37,6 +37,9 @@ INSTALLED_APPS = [
     "allauth",
     "allauth.account",
     'allauth.socialaccount',
+    "allauth.socialaccount.providers.github", # new
+    "allauth.socialaccount.providers.twitter", # new
+
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
@@ -80,7 +83,7 @@ AUTH_USER_MODEL = 'users.User'
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 SITE_ID = 1
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
-
+ACCOUNT_LOGOUT_ON_GET = True
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -168,6 +171,12 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ]
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
@@ -213,16 +222,20 @@ LOGGING = {
             'level': 'INFO',
             'class': 'django.utils.log.AdminEmailHandler',
             'filename' : './logs/debug.log',
-            # 'class': 'logging.FileHandler',
-            'class': 'logging.StreamHandler',
+            'class': 'logging.FileHandler',
             'formatter': 'default'
         }
     },
     'loggers': {
+        'root': {
+            'handlers': ['file'],
+            'propagate': True,
+            'level' : 'INFO',
+            },
         'django': {
             'handlers': ['console','file'],
             'propagate': True,
-            'level' : 'DEBUG',
+            'level' : 'INFO',
             }
     },
     'formatters': {

@@ -6,6 +6,11 @@ from django.utils.translation import gettext_lazy as _
 
 from django.utils.translation import ugettext as _
 
+
+from django.db.models.signals import pre_save
+from django.dispatch import receiver
+from django.template.defaultfilters import slugify
+
 # http://xml.coverpages.org/country3166.html
 COUNTRIES = (
     ('AD', _('Andorra')),
@@ -262,13 +267,23 @@ class CountryField(models.CharField):
 class User(AbstractUser):
     """Default user for Project."""
 
+    id = models.AutoField(primary_key=True)
     #: First and last name do not cover name patterns around the globe
     name = CharField(_("Name of User"), blank=True, max_length=255)
     phone = models.CharField(verbose_name=_("Phone"), max_length=20, blank=False)
     avatar_url = models.CharField("avatar_url" , blank=True,max_length=255)
     country = CountryField(default = "ZZ", blank = False)
 
+    @receiver(pre_save)
+    def my_callback(sender, instance, *args, **kwargs):
+        try :
+            instance.name = instance.username
+        except :
+            pass
+
+
     def __str__(self):
+        if self.name: return f"{self.name}"
         return f"{self.username}: {self.phone}"
 
     class Meta:

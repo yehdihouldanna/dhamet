@@ -19,7 +19,7 @@ from django.contrib.auth.hashers import (
 )
 from django.utils.translation import gettext, gettext_lazy as _
 
- 
+
 
 User = get_user_model()
 
@@ -128,7 +128,7 @@ class UserUpdateForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.helper = UserUpdateFormHelper() 
+        self.helper = UserUpdateFormHelper()
 
 
 class UserCreateForm(forms.ModelForm):
@@ -150,7 +150,7 @@ class UserCreateForm(forms.ModelForm):
         widget=forms.PasswordInput(attrs={'autocomplete': 'new-password'}),
         strip=False,
         help_text=_("Enter the same password as before, for verification."),
-    ) 
+    )
     class Meta:
         model = User
         fields = ("username", 'groups')
@@ -158,7 +158,7 @@ class UserCreateForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.helper = UserCreateFormHelper() 
+        self.helper = UserCreateFormHelper()
 
         if self._meta.model.USERNAME_FIELD in self.fields:
             self.fields[self._meta.model.USERNAME_FIELD].widget.attrs['autofocus'] = True
@@ -212,7 +212,7 @@ class UserPasswordUpdateForm(forms.ModelForm):
         strip=False,
         help_text=_("Enter the same password as before, for verification."),
     )
- 
+
     class Meta:
         model = User
         fields = ()
