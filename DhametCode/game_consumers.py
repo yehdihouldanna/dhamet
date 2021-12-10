@@ -163,9 +163,15 @@ class GameConsumer(AsyncWebsocketConsumer):
                         'opponent' : game.opponent.username,
                         'winner' : winner})
         if self.ws_first:
+<<<<<<< 273090e0a02f36d73a1507773843e36fc850afdd
             logger.info(f"sending data to the browser : {output_data}" )
         else :
             logger.info(f"sending data to the browser : {output_data}" )
+=======
+            logger.debug(f"sending data to the browser : {output_data}")
+        else :
+            logger.debug(f"sending data to the browser : {output_data}" )
+>>>>>>> Reverting to a functionnig configuration
         self.ws_first = not self.ws_first
         return output_data
 
