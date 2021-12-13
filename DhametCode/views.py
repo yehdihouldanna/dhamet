@@ -14,15 +14,12 @@ import sys
 from datetime import datetime
 from .utils.Players import Random
 from users.models import User
-import coloredlogs, logging
+import logging
 from django.conf import settings
 
 
-
-logging.basicConfig(filename="./logs/debug.log")
 # Create a logger object.
-logger = logging.getLogger(__file__)
-# coloredlogs.install(level='INFO', logger=logger)
+logger = logging.getLogger('root')
 
 
 # Create your views here.
@@ -44,7 +41,7 @@ class CreateGameView(generics.ListAPIView):
         # Code_ = self.request.session.session_key
         if request.user.is_authenticated:
             user = User.objects.filter(username = request.user.username)[0]
-            logger.info(f"The authenticated user here is {user.username}")
+            logger.info(f"['f': post]['user': {user.username}]")
         else :
             try:
                 user = User.objects.filter(username = "Guest")[0]
@@ -63,7 +60,7 @@ class CreateGameView(generics.ListAPIView):
 
             game = Game(creator = user , opponent = ai)
             game.save()
-            logger.info(f"User : {user.username} Have Created a game vs computer who's id is {game.get_game_code()}")
+            logger.info(f"['f': post]['user': {user.username}]['Game_VS_AI_id:{game.get_game_code()}]")
             return Response(CreateGameSerializer(game).data,status = status.HTTP_201_CREATED)
         else :# Online
             queryset_ = Game.get_available_games()
@@ -71,12 +68,12 @@ class CreateGameView(generics.ListAPIView):
                 game = queryset_[0]
                 game.opponent = user
                 game.save()
-                logger.info(f"User : {user.username} Have Joined the game {game.get_game_code()} created by {game.creator}")
+                logger.info(f"['f': post]['user': {user.username}]['Game_Joined_id:{game.get_game_code()}]['creator': {game.creator}]")
                 return Response(CreateGameSerializer(game).data,status = status.HTTP_202_ACCEPTED)
             else:
                 game = Game(creator = user )
                 game.save()
-                logger.info(f"User : {user.username} Have Created a game who's id is {game.get_game_code()}")
+                logger.info(f"['f': post]['user': {user.username}]['Game_Live_Created_id': {game.get_game_code()}]")
                 return Response(CreateGameSerializer(game).data,status = status.HTTP_201_CREATED)
 
 class GameMoveView(generics.ListAPIView):
