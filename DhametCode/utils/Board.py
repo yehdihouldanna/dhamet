@@ -39,6 +39,8 @@ class State():
             self.board[middle,middle]=0
             self.board[middle,middle+1:]=1
             self.board[middle+1:]=-1
+        elif type(board)==str:
+            self.board = self.deserialize(board)
         else:
             self.board = np.copy(board)
 

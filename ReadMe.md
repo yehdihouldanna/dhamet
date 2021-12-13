@@ -240,7 +240,6 @@ ssh  root@165.22.85.224
 ssh  yehdih@165.22.85.224
 
 
-
 https://www.digitalocean.com/community/tutorials/initial-server-setup-with-ubuntu-18-04
 
 https://www.digitalocean.com/community/tutorials/how-to-set-up-django-with-postgres-nginx-and-gunicorn-on-ubuntu-18-04

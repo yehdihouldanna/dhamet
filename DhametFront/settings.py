@@ -49,7 +49,7 @@ INSTALLED_APPS = [
     'React_UI',
     'website',
 
-    'debug_toolbar',
+    # 'debug_toolbar',
     'rest_framework',
     "rest_framework.authtoken",
     "users.apps.UsersConfig",
@@ -93,7 +93,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
+    # 'debug_toolbar.middleware.DebugToolbarMiddleware',
 
     'corsheaders.middleware.CorsMiddleware',
 ]
