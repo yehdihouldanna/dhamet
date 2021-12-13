@@ -1,7 +1,7 @@
 .Piece
 {
-  width : 70px;
-  height : 70px;
+  width : 32px;
+  height : 32px;
   display : inline-block;
   position: absolute;
   -webkit-filter: drop-shadow(3px 3px 3px #222);
@@ -15,18 +15,21 @@
 .Black_regular
 {
   /* background-image: url('../images/Black_regular.png'); */
-  background-image: url('../images/BR-1.png');
+  /* background-image: url('../images/BR-1.png'); */
+  background-image: url('../images/regular_0_32.png');
+  /* background-image: url('../images/regular_0_v2.png'); */
 }
 .White_regular
 {
   /* background-image: url('../images/White_regular.png'); */
-  background-image: url('../images/LD-2.png');
+  background-image: url('../images/regular_1_32.png');
 }
 .Black_dhaimat
 {
-  background-image: url('../images/Black_Dhaimat.png');
+  background-image: url('../images/dhaimat_0.png');
+  /* background-image: url('../images/dhaimat_0_v2.png'); */
 }
 .White_dhaimat
 {
-  background-image: url('../images/White_Dhaimat.png');
+  background-image: url('../images/dhaimat_1.png');
 }

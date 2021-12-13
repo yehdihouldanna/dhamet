@@ -270,7 +270,7 @@ class User(AbstractUser):
     #: First and last name do not cover name patterns around the globe
     name = CharField(_("Name of User"), blank=True, max_length=255)
     phone = models.CharField(verbose_name=_("Phone"), max_length=20, blank=False)
-    avatar_url = models.CharField("avatar_url" , blank=True,max_length=255)
+    avatar_url = models.CharField(default = DEFAULT_AVATAR , blank=True,max_length=255)
     country = CountryField(default = "ZZ", blank = False)
 
     @receiver(pre_save)

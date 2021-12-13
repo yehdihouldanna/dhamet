@@ -3,13 +3,17 @@
   /* background-image: url('../images/zamma.png'); */
   /* width : 775px;
   height: 775px; */
-  background-image: url('../images/zamma757.jpg');
-  padding : 4px;
-  width : 757px;
-  height: 757px;
+  background-image: url('../images/zamma_360.jpg');
+  /* padding : 4px; */
+  width : 360px;
+  height: 360px;
+  position:relative ;
   display:inline-block;
   flex-wrap: wrap;
   flex-direction : horizontal;
   flex-flow : space-between;
   touch-action: manipulation; /*to disable the double tap zoom on mobile devices*/
+}
+#dhamet_container{
+  text-align: center;
 }

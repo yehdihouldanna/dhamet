@@ -49,7 +49,7 @@ INSTALLED_APPS = [
     'React_UI',
     'website',
 
-    # 'debug_toolbar',
+    'debug_toolbar',
     'rest_framework',
     "rest_framework.authtoken",
     "users.apps.UsersConfig",
@@ -93,7 +93,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    # 'debug_toolbar.middleware.DebugToolbarMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
 
     'corsheaders.middleware.CorsMiddleware',
 ]
@@ -133,7 +133,6 @@ WSGI_APPLICATION = 'DhametFront.wsgi.application'
 ASGI_APPLICATION = 'DhametFront.asgi.application'
 CHANNEL_LAYERS = {
     'default': {
-        # 'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
             "hosts": [('127.0.0.1', 6379)],
@@ -193,7 +192,7 @@ USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/2.2/howto/static-files/
+# https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
 
@@ -236,7 +235,11 @@ LOGGING = {
             'handlers': ['console','file'],
             'propagate': True,
             'level' : 'INFO',
-            }
+            },
+        'daphne': {
+            'handlers': ['console',],
+            'level': 'INFO'
+            },
     },
     'formatters': {
         'verbose': {
