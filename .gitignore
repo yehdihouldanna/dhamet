@@ -89,3 +89,7 @@ deployement.md
 .env
 db.sqlite3
 dump.rdb
+
+# npm files
+/React_UI/node_modules
+/React_UI/package-lock.json
