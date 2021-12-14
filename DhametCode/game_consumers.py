@@ -16,10 +16,8 @@ from datetime import datetime
 
 
 logger = logging.getLogger('root')
-
 # This is a functional chat conumer could be used later to add a chat functionality.
 class ChatConsumer(AsyncWebsocketConsumer):
-
     async def connect(self):
         self.room_name = self.scope['url_route']['kwargs']['room_name']
         self.user = self.scope['user']
@@ -106,13 +104,17 @@ class GameConsumer(AsyncWebsocketConsumer):
     def update_game(self,id,user,game,game_instance,move):
         if move =="":
             winner=""
+            winner_score = ""
             try:
                 winner = game.winner.username
+                winner_score = game.winner.score
             except:
                 pass
             opponent = ""
+            opponent_score = ""
             try:
                 opponent = game.opponent.username
+                opponent_score = game.opponent.score
             except:
                 pass
             output_data  = json.dumps({
@@ -121,9 +123,12 @@ class GameConsumer(AsyncWebsocketConsumer):
                         'last_move': game.last_move,
                         'current_turn':game.current_turn,
                         'creator' : game.creator.username,
+                        'creator_score' : game.creator.score,
                         'opponent' : opponent,
-                        'winner' : winner})
-
+                        'opponent_score' : opponent_score,
+                        'winner' : winner,
+                        'winner_score' : winner_score,
+                        })
         else:
             moved = game_instance.move_from_str(move)
             if moved:
@@ -142,8 +147,10 @@ class GameConsumer(AsyncWebsocketConsumer):
                 game.completed = datetime.now()
             game.save()
             winner=""
+            winner_score=""
             try:
                 winner = game.winner.username
+                winner_score = game.winner.score
             except:
                 pass
             output_data  = json.dumps({
@@ -153,7 +160,11 @@ class GameConsumer(AsyncWebsocketConsumer):
                         'current_turn':game.current_turn,
                         'creator' : game.creator.username,
                         'opponent' : game.opponent.username,
-                        'winner' : winner})
+                        'opponent_score' : game.opponent.score,
+                        'winner' : winner,
+                        'winner_score' : winner_score,
+                        'winner' : winner
+                        })
         return output_data
 
     @database_sync_to_async

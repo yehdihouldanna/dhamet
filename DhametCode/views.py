@@ -16,6 +16,7 @@ from .utils.Players import Random
 from users.models import User
 import logging
 from django.conf import settings
+import json
 
 
 # Create a logger object.
@@ -217,6 +218,13 @@ class GameMoveView(generics.ListAPIView):
 
             raise Exception(f"user {user.username} tried to make a move in a non existing game!!")
 
+
+def get_username(request):
+    if request.user.username:
+        # return Response({'username' :request.user.username},status = status.HTTP_200_OK)
+        return HttpResponse(json.dumps({'username' :request.user.username}), content_type="application/json",status = status.HTTP_200_OK)
+    else:
+        return Response({'Bad Request': 'Invalid data...'}, status=status.HTTP_400_BAD_REQUEST)
 
 def say_hello(request):
     try :

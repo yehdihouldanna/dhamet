@@ -205,7 +205,7 @@ STATICFILES_DIRS = [
 ]
 
 MEDIA_ROOT = BASE_DIR + '/uploads'
-MEDIA_URL = "/files/"
+MEDIA_URL = "/uploads/"
 
 
 LOGGING = {

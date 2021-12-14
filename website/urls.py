@@ -1,11 +1,11 @@
 from django.urls import path, re_path
-from .views import   Intro_Fr, game, main, regles_Ar, regles_Fr,sign_in, docs_Ar,docs_Fr, Intro_Ar, sign_up
+from .views import  jouer_f, Intro_Fr, game, main, regles_Ar, regles_Fr,sign_in, docs_Ar,docs_Fr, Intro_Ar, sign_up
 
-urlpatterns = [           
+urlpatterns = [
     path('',main),
 
 
-    #TODO correct the urls in the html file 
+    #TODO correct the urls in the html file
     path('jouer.html',game),
 
     path('authentication/layouts/basic/sign-in.html/',sign_in),
@@ -20,8 +20,11 @@ urlpatterns = [
     path('documentation/base/utilities.html',regles_Ar),
     path('documentation/base/utilities_Fr.html',regles_Fr),
 
-    
-    
+    # path('jeu.html',jouer_f),
+
+
+
+
     path('sign-in',sign_in),
     # re_path(r'(?P<game_code>\w+)/$',main),
     # path('*.html/',main),
@@ -30,4 +33,4 @@ urlpatterns = [
     path('game/',main),
     # re_path(r'game/?([A-Z])\w+',main),
     re_path(r'game/(?P<game_code>\w+)/$',main),
-] 
+]

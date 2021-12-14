@@ -2,8 +2,9 @@ from django.urls import path
 from . import views
 
  # app name 'DhametCode/' will be routed to the included path.
-# URLConf         
+# URLConf
 urlpatterns = [
+    path('username',views.get_username),
     path('hello/',views.say_hello),
     path('game' , views.GameView.as_view()),
     # path('<str:game_name>' , views.GameView.as_view() , name="game",),
