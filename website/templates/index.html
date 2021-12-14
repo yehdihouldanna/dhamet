@@ -1594,87 +1594,109 @@ License: For each use you must have a valid license purchased only from above li
 						<!--begin::Row-->
 									<h1  class="p-4" style="text-align: center;">Jouer Vs l'ordinateur</h1>
 									
-									<div class="p-6">
+									<!--begin::Row-->
+							<div class="row g-5 g-xl-8">
+								<div class="col-xl-4">
+									<!--begin::Statistics Widget 5-->
 									
-									<button class=" p-4 m-2  bg-light bg-opacity-50 rounded-3 " type="button"
-												onclick="CreateGameRequest('AI_Random')" style="width: 180px ; height: 150px;">
-												<div  class=" ">
-												<div class="symbol symbol-35px p-0 ">
+									<a href="#" class="card bg-danger hoverable card-xl-stretch mb-xl-8">
+										<!--begin::Body-->
+										<div class="">
+												<div class="symbol symbol-50px symbol-2by3" >
+													<img alt="Logo" src="{% static 'assets/media/avatars/150-26.jpg' %}"style="width: 204px;height: 100px;" />
+												</div>
+										<div class="text-black fw-bolder fs-2 p-0 mt-5 m-4"> AI_Random</div>
+										<div class="fw-bold text-black m-4">Score:1000</div>
+									
+											
+										</div>
+										<!--end::Body-->
+									</a>
+									<!--end::Statistics Widget 5-->
+								</div>
+								<div class="col-xl-4">
+									<!--begin::Statistics Widget 5-->
+									<a href="#" class="card bg-primary hoverable card-xl-stretch mb-xl-8">
+										<!--begin::Body-->
+										<div class="card-body">
+												<div class="symbol symbol-50px symbol-2by3 ">
+													<img alt="Logo" src="{% static 'assets/media/logos/femme.jpg' %}" />
+												</div>
+											<!--end::Svg Icon-->
+											<div class="text-white fw-bolder fs-2 mb-2 mt-5"> AI_DUMMY</div>
+											<div class="fw-bold text-white"> Score :1500</div>
+										</div>
+										<!--end::Body-->
+									</a>
+									<!--end::Statistics Widget 5-->
+								</div>
+								<div class="col-xl-4">
+									<!--begin::Statistics Widget 5-->
+									<a href="#" class="card bg-success hoverable card-xl-stretch mb-5 mb-xl-8">
+										<!--begin::Body-->
+										<div class="card-body">
+												<div class="symbol symbol-50px symbol-2by3">
+													<img alt="Logo" src="{% static 'assets/media/logos/elkazaz.jpg' %}" />
+												</div>
+											<!--end::Svg Icon-->
+											<div class="text-white fw-bolder fs-2 mb-2 mt-5">ALkazaz الكزاز</div>
+											<div class="fw-bold text-white">Score:2000</div>
+										</div>
+										<!--end::Body-->
+									</a>
+									<!--end::Statistics Widget 5-->
+								</div>
+							</div>
+							<!--begin::Row-->
+							<div class="row g-5 g-xl-8">
+								<div class="col-xl-4">
+									<!--begin::Statistics Widget 5-->
+									<a href="#" class="card bg-danger hoverable card-xl-stretch mb-xl-8">
+										<!--begin::Body-->
+										<div class="card-body">
+												<div class="symbol symbol-50px symbol-2by3 ">
+													<img alt="Logo" src="{% static 'assets/media/logos/bouamama.jpg' %}" />
+												</div>
+											<div class="text-white fw-bolder fs-2 mb-2 mt-5">Bouamama بوعمامة</div>
+											<div class="fw-bold text-white">Score:2500</div>
+										</div>
+										<!--end::Body-->
+									</a>
+									<!--end::Statistics Widget 5-->
+								</div>
+								<div class="col-xl-4">
+									<!--begin::Statistics Widget 5-->
+									<a href="#" class="card bg-primary hoverable card-xl-stretch mb-xl-8">
+										<!--begin::Body-->
+										<div class="card-body">
+												<div class="symbol symbol-50px symbol-2by3">
 													<img alt="Logo" src="{% static 'assets/media/avatars/150-26.jpg' %}" />
 												</div>
-												<div class="col px-6">
-													<div class="align-top fw-bolder mb-0 text-dark"> AI_Random</div>
-													<div style="vertical-align: middle;" class="fw-bolder mb-0 text-dark" >Score:1000</div>
-
-												</div>
-											</div>
-											</button>
-										<button class=" m-2 bg-light bg-opacity-50 rounded-3 " type="button"
-										onclick="window.location.href='jeu.html'" style="width: 180px ; height: 150px;">
-												<div  class="  ">
-													<div class="symbol symbol-35px ">
-														<img alt="Logo" src="{% static 'assets/media/logos/femme.jpg' %}" />
-													</div>
-													<div class="col px-6">
-														<div class="align-top fw-bolder mb-0 text-dark"> AI_DUMMY</div>
-														<div style="vertical-align: middle;" class="fw-bolder mb-0 text-dark" >Score:1500</div>
-
-													</div>
-												</div></button>
-										<button class="m-2 bg-light bg-opacity-50 rounded-3 " type="button"
-												onclick="CreateGameRequest('AI_MinMax')"  style="width: 180px ; height: 150px;">
-												<div  class="  ">
-													<div class="symbol symbol-35px ">
-														<img alt="Logo" src="{% static 'assets/media/logos/elkazaz.jpg' %}" />
-													</div>
-													<div class="col px-6">
-														<div class="align-top fw-bolder mb-0 text-dark"> ALkazaz الكزاز</div>
-														<div style="vertical-align: middle;" class="fw-bolder mb-0 text-dark" >Score:2000</div>
-
-													</div>
-												</div></button>
-												</div>
-												<div class="p-6">
-										<button class="  m-2 bg-light bg-opacity-50 rounded-3 " type="button"
-												onclick="CreateGameRequest('AI_MinMax')"  style="width: 180px ; height: 150px;">
-												<div  class="">
-													<div class="symbol symbol-35px ">
-														<img alt="Logo" src="{% static 'assets/media/logos/bouamama.jpg' %}" />
-													</div>
-													<div class="col px-6">
-														<div class="align-top fw-bolder mb-0 text-dark"> Bouamama بوعمامة</div>
-														<div style="vertical-align: middle;" class="fw-bolder mb-0 text-dark" >Score:2500</div>
-
-													</div>
-												</div></button>
-										<button class=" m-2 bg-light bg-opacity-50 rounded-3 " type="button"
-												onclick="CreateGameRequest('AI_MinMax')"  style="width: 180px ; height: 150px;">
-												<div  class="">
-													<div class="symbol symbol-35px ">
-														<img alt="Logo" src="{% static 'assets/media/avatars/150-26.jpg' %}" />
-													</div>
-													<div class="col px-6">
-														<div class="align-top fw-bolder mb-0 text-dark"> Djambaar الجمبار</div>
-														<div style="vertical-align: middle;" class="fw-bolder mb-0 text-dark" >Score:3000</div>
-
-													</div>
-												</div></button>
-										<button class="bg-light bg-opacity-50 rounded-3 m-2" type="button"
-												onclick="CreateGameRequest('AI_MinMax')"  style="width: 180px ; height: 150px;">
-												<div  class=" d ">
-													<div class="symbol symbol-35px ">
-														<img alt="Logo" src="{% static 'assets/media/avatars/150-26.jpg' %}" />
-													</div>
-													<div class="col px-6">
-														<div class="align-top fw-bolder mb-0 text-dark"> Djambaar الجمبار</div>
-														<div style="vertical-align: middle;" class="fw-bolder mb-0 text-dark" >Score:3000</div>
-
-													</div>
-												</div></button>
-												
-										
-									
+											<!--end::Svg Icon-->
+											<div class="text-white fw-bolder fs-2 mb-2 mt-5">Djambaar الجمبار</div>
+											<div class="fw-bold text-white">Score:3000</div>
+										</div>
+										<!--end::Body-->
+									</a>
+									<!--end::Statistics Widget 5-->
 								</div>
+								<div class="col-xl-4">
+									<!--begin::Statistics Widget 5-->
+									<a href="#" class="card bg-success hoverable card-xl-stretch mb-5 mb-xl-8">
+										<!--begin::Body-->
+										<div class="card-body">
+												<div class="symbol symbol-50px symbol-2by3 ">
+													<img alt="Logo" src="{% static 'assets/media/avatars/150-26.jpg' %}" />
+												</div>
+											<div class="text-white fw-bolder fs-2 mb-2 mt-5">Djambaar الجمبار</div>
+											<div class="fw-bold text-white">Score:3000</div>
+										</div>
+										<!--end::Body-->
+									</a>
+									<!--end::Statistics Widget 5-->
+								</div>
+							</div>
+							<!--end::Row-->
 								
 							
 								
