@@ -1288,7 +1288,153 @@ License: For each use you must have a valid license purchased only from above li
 					<!--begin::Container-->
 					<div id="kt_content_container" class="container-xxl">
 						<!--begin::Row-->
-					
+						<!--begin::Row-->
+						<div class="row g-5 g-xl-6 p-9">
+							<div class="col-xl-3"></div>
+							<div class="col-xl-3">
+								<div class="">
+									<button type="button" class="btn btn-primary dropdown-toggle"
+										data-bs-toggle="dropdown" aria-expanded="false" >
+										Jouer Vs l'ordinateur
+									</button>
+									<ul class="dropdown-menu dropdown-menu-end">
+										<li><button class="dropdown-item alert alert-primary p-0" type="button"
+												onclick="CreateGameRequest('AI_Random')">
+												<div  class=" d-flex flex-column flex-sm-row flex-column p-0 ">
+												<div class="symbol symbol-35px p-0 ">
+													<img alt="Logo" src="{% static 'assets/media/avatars/150-26.jpg' %}" />
+												</div>
+												<div class="col px-6">
+													<div class="align-top fw-bolder mb-0 text-dark"> AI_Random</div>
+													<div style="vertical-align: middle;" class="fw-bolder mb-0 text-dark" >Score:1000</div>
+
+												</div>
+											</div>
+											</button></li>
+										<li><button class="dropdown-item alert alert-info p-0 " type="button"
+												onclick="CreateGameRequest('AI_Dummy')">
+												<div  class=" d-flex flex-column flex-sm-row flex-column ">
+													<div class="symbol symbol-35px ">
+														<img alt="Logo" src="{% static 'assets/media/logos/femme.jpg' %}" />
+													</div>
+													<div class="col px-6">
+														<div class="align-top fw-bolder mb-0 text-dark"> AI_DUMMY</div>
+														<div style="vertical-align: middle;" class="fw-bolder mb-0 text-dark" >Score:1500</div>
+
+													</div>
+												</div></button></li>
+										<li><button class="dropdown-item alert alert-danger p-0" type="button"
+												onclick="CreateGameRequest('AI_MinMax')">
+												<div  class=" d-flex flex-column flex-sm-row flex-column ">
+													<div class="symbol symbol-35px ">
+														<img alt="Logo" src="{% static 'assets/media/logos/elkazaz.jpg' %}" />
+													</div>
+													<div class="col px-6">
+														<div class="align-top fw-bolder mb-0 text-dark"> ALkazaz الكزاز</div>
+														<div style="vertical-align: middle;" class="fw-bolder mb-0 text-dark" >Score:2000</div>
+
+													</div>
+												</div></button></li>
+										<li><button class="dropdown-item alert alert-warning p-0" type="button"
+												onclick="CreateGameRequest('AI_MinMax')">
+												<div  class=" d-flex flex-column flex-sm-row flex-column ">
+													<div class="symbol symbol-35px ">
+														<img alt="Logo" src="{% static 'assets/media/logos/bouamama.jpg' %}" />
+													</div>
+													<div class="col px-6">
+														<div class="align-top fw-bolder mb-0 text-dark"> Bouamama بوعمامة</div>
+														<div style="vertical-align: middle;" class="fw-bolder mb-0 text-dark" >Score:2500</div>
+
+													</div>
+												</div></button></li>
+										<li><button class="dropdown-item alert alert-success p-0" type="button"
+												onclick="CreateGameRequest('AI_MinMax')">
+												<div  class=" d-flex flex-column flex-sm-row flex-column ">
+													<div class="symbol symbol-35px ">
+														<img alt="Logo" src="{% static 'assets/media/avatars/150-26.jpg' %}" />
+													</div>
+													<div class="col px-6">
+														<div class="align-top fw-bolder mb-0 text-dark"> Djambaar الجمبار</div>
+														<div style="vertical-align: middle;" class="fw-bolder mb-0 text-dark" >Score:3000</div>
+
+													</div>
+												</div></button></li>
+									</ul>
+								</div>
+								
+							</div>
+								<div class="col-xl-3">
+									<div class="" >
+										<button type = "button" id="startbutton"
+											class="btn btn-primary px-8" type="button"
+											onclick="CreateGameRequest('Online')" style="text-align: center;">Jouer en ligne</button>
+										<script>
+											function CreateGameRequest(type) {
+
+												let AI_NAMES = ["AI_Random","AI_Dummy","AI_MinMax"];
+												if (type==='Online')
+												{
+													console.log("Starting a game online.")
+													const requestOptions =
+													{
+														method: 'POST',
+														headers: { 'Content-Type': 'application/json',
+																	"X-CSRFToken": '{{ csrf_token }}' },
+														body: JSON.stringify({
+															id: "",
+															creator: "",
+															opponent: "",
+														})
+													};
+													fetch('/DhametCode/create-game', requestOptions).
+														then((response) => response.json()).
+														then((data) => {
+															console.log("Created successfully an Online game who's code is :", data.id)
+															window.location.replace(
+																"http://"+
+																window.location.host
+																+ '/main/game/'
+																+ data.id
+																+'/'
+															)
+														})
+												}
+												else if(AI_NAMES.includes(type))
+												{
+													document.getElementById("opponent").innerHTML+= type
+													console.log("Creating a game vs The Random AI");
+													const requestOptions =
+													{
+														method: 'POST',
+														headers: { 'Content-Type': 'application/json',
+																	"X-CSRFToken": '{{ csrf_token }}' },
+														body: JSON.stringify({
+															id: "",
+															creator: "",
+															opponent: type,
+														})
+													};
+													console.log("A create game request have been sent with : ",requestOptions);
+													fetch('/DhametCode/create-game', requestOptions).
+														then((response) => response.json()).
+														then((data) => {
+															console.log("Created successfully a game VS AI who's code is :", data.id)
+															window.location.replace(
+																"http://"+
+																window.location.host
+																+ '/main/game/'
+																+ data.id
+																+'/'
+															)
+														})
+												}
+
+											};
+										</script>
+									</div>
+								</div>
+							</div>
+							<!--begin::Row-->
 						<div class="row g-5 g-xl-7">
 							<div class="col-xl-3">
 								<!--begin::List Widget 5-->
@@ -1301,7 +1447,7 @@ License: For each use you must have a valid license purchased only from above li
 										<div class="card-title">
 											<!--begin::User-->
 											<div class="d-flex justify-content-center flex-column me-3">
-												<a href="#" class="fs-4 fw-bolder text-gray-900 text-hover-primary me-1 mb-2 lh-1">Discusion Ouvert</a>
+												<a href="#" class="fs-4 fw-bolder text-gray-900 text-hover-primary me-1 mb-2 lh-1">Brian Cox</a>
 												<!--begin::Info-->
 												<div class="mb-0 lh-1">
 													<span class="badge badge-success badge-circle w-10px h-10px me-1"></span>
@@ -1586,104 +1732,160 @@ License: For each use you must have a valid license purchased only from above li
 									<!--end::Messenger-->
 									</div>
 									</div>
-							<div class="col-xl-7">
+							<div class="col-xl-6">
 								
 								<!--begin::List Widget 4-->
 						<div class="card" >
 						
-						<!--begin::Row-->
-									<h1  class="p-4" style="text-align: center;">Jouer Vs l'ordinateur</h1>
-									
-									<div class="p-6">
-									
-									<button class=" p-4 m-2  bg-light bg-opacity-50 rounded-3 " type="button"
-												onclick="CreateGameRequest('AI_Random')" style="width: 180px ; height: 150px;">
-												<div  class=" ">
-												<div class="symbol symbol-35px p-0 ">
-													<img alt="Logo" src="{% static 'assets/media/avatars/150-26.jpg' %}" />
-												</div>
-												<div class="col px-6">
-													<div class="align-top fw-bolder mb-0 text-dark"> AI_Random</div>
-													<div style="vertical-align: middle;" class="fw-bolder mb-0 text-dark" >Score:1000</div>
+									<!--begin::Header-->
+						<div class=" d-flex justify-content-center" style="width: 500px; height: 50px;">
+												<!--begin::List Widget 4-->
+								
+									<div class="p-0 mb-0 m-0" >
+									<div  class="alert alert-dismissible  d-flex flex-column flex-sm-row p-0 m-0 " style="background-color: rgb(156,108,20);">
+										<div class="symbol symbol-50px mb-0 ">
+											<img alt="Logo" src="{% static 'assets/media/avatars/150-26.jpg' %}" />
+										</div>
+										<div class="col px-5">
+											<div id = "opponent" class="align-top fw-bolder mb-2" style="color: white;">{{ user.username}} <img class="w-15px h-15px rounded-1 ms-2" src="{% static 'assets/media/flags/mauritania.svg' %}" alt="" /></div>
+											<div style="vertical-align: middle; color: white;" class="fw-bolder mb-2">Score:1000</div>
 
-												</div>
-											</div>
-											</button>
-										<button class=" m-2 bg-light bg-opacity-50 rounded-3 " type="button"
-										onclick="window.location.href='jeu.html'" style="width: 180px ; height: 150px;">
-												<div  class="  ">
-													<div class="symbol symbol-35px ">
-														<img alt="Logo" src="{% static 'assets/media/logos/femme.jpg' %}" />
-													</div>
-													<div class="col px-6">
-														<div class="align-top fw-bolder mb-0 text-dark"> AI_DUMMY</div>
-														<div style="vertical-align: middle;" class="fw-bolder mb-0 text-dark" >Score:1500</div>
-
-													</div>
-												</div></button>
-										<button class="m-2 bg-light bg-opacity-50 rounded-3 " type="button"
-												onclick="CreateGameRequest('AI_MinMax')"  style="width: 180px ; height: 150px;">
-												<div  class="  ">
-													<div class="symbol symbol-35px ">
-														<img alt="Logo" src="{% static 'assets/media/logos/elkazaz.jpg' %}" />
-													</div>
-													<div class="col px-6">
-														<div class="align-top fw-bolder mb-0 text-dark"> ALkazaz الكزاز</div>
-														<div style="vertical-align: middle;" class="fw-bolder mb-0 text-dark" >Score:2000</div>
-
-													</div>
-												</div></button>
-												</div>
-												<div class="p-6">
-										<button class="  m-2 bg-light bg-opacity-50 rounded-3 " type="button"
-												onclick="CreateGameRequest('AI_MinMax')"  style="width: 180px ; height: 150px;">
-												<div  class="">
-													<div class="symbol symbol-35px ">
-														<img alt="Logo" src="{% static 'assets/media/logos/bouamama.jpg' %}" />
-													</div>
-													<div class="col px-6">
-														<div class="align-top fw-bolder mb-0 text-dark"> Bouamama بوعمامة</div>
-														<div style="vertical-align: middle;" class="fw-bolder mb-0 text-dark" >Score:2500</div>
-
-													</div>
-												</div></button>
-										<button class=" m-2 bg-light bg-opacity-50 rounded-3 " type="button"
-												onclick="CreateGameRequest('AI_MinMax')"  style="width: 180px ; height: 150px;">
-												<div  class="">
-													<div class="symbol symbol-35px ">
-														<img alt="Logo" src="{% static 'assets/media/avatars/150-26.jpg' %}" />
-													</div>
-													<div class="col px-6">
-														<div class="align-top fw-bolder mb-0 text-dark"> Djambaar الجمبار</div>
-														<div style="vertical-align: middle;" class="fw-bolder mb-0 text-dark" >Score:3000</div>
-
-													</div>
-												</div></button>
-										<button class="bg-light bg-opacity-50 rounded-3 m-2" type="button"
-												onclick="CreateGameRequest('AI_MinMax')"  style="width: 180px ; height: 150px;">
-												<div  class=" d ">
-													<div class="symbol symbol-35px ">
-														<img alt="Logo" src="{% static 'assets/media/avatars/150-26.jpg' %}" />
-													</div>
-													<div class="col px-6">
-														<div class="align-top fw-bolder mb-0 text-dark"> Djambaar الجمبار</div>
-														<div style="vertical-align: middle;" class="fw-bolder mb-0 text-dark" >Score:3000</div>
-
-													</div>
-												</div></button>
-												
-										
+										</div>
+									</div>
+										<!--end::Menu 3-->
+										<!--end::Menu-->
 									
 								</div>
-								
-							
-								
-							
-							<!--begin::Row-->			
-									
+								<div class=" symbol-group symbol-hover  m-0 mb-0 px-4">
+									<div class="symbol symbol-30px symbol-circle">
+										<div class="symbol-label" style="background-image:url({% static 'assets/media/avatars/regular_1.png' %})"></div>
+									</div>
+									<div class="symbol symbol-30px symbol-circle">
+										<div class="symbol-label" style="background-image:url({% static 'assets/media/avatars/regular_1.png' %})"></div>
+									</div>
+									<div class="symbol symbol-30px symbol-circle">
+										<div class="symbol-label" style="background-image:url({% static 'assets/media/avatars/regular_1.png' %})"></div>
+									</div>
+									<div class="symbol symbol-circle symbol-30px">
+										<div class="symbol-label fs-8 fw-bold bg-primary text-inverse-primary">+3</div>
+									</div>
+								</div>
+
+									<div class="m-0 mb-1">
+									<div class="p-0 mb-1 m-0">
+									<div class=" mb-0 pd-0" style="font-size:xx-large;color:white;width: 167px; height:96.75px;">
+										<div class=" shadow p-0 mb-0 rounded d-flex flex-column flex-sm-row p-0 " id="countdown" style="background-color: rgb(156,108,20)" ></div>
+									</div>
+									</div>
+									</div>
+										<script>
+										var yourDateToGo = new Date(); //here you're making new Date object
+										yourDateToGo.setDate(yourDateToGo.getDate() + 1); //your're setting date in this object 1 day more from now
+										//you can change number of days to go by putting any number in place of 1
+
+										var timing = setInterval( // you're making an interval - a thing, that is updating content after number of miliseconds, that you're writing after comma as second parameter
+										function () {
+
+											var currentDate = new Date().getTime(); //same thing as above
+											var timeLeft = yourDateToGo - currentDate; //difference between time you set and now in miliseconds
+											var minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60)); //conversion miliseconds on minutes
+
+											if (minutes < 10) minutes="0"+minutes;
+											var seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);//conversion miliseconds on seconds
+											if (seconds < 10) seconds="0"+seconds;
+											let clock_icon = "<span><i class='far fa-clock fa-sm'></i></span>"
+											document.getElementById("countdown").innerHTML =clock_icon+ " "+  minutes + "m " + seconds + "s"; // putting number of days, hours, minutes and seconds in div,
+											//which id is countdown
+
+											if (timeLeft <= 0) {
+											clearInterval(timing);
+											document.getElementById("countdown").innerHTML = "It's over"; //if there's no time left, programm in this 2 lines is clearing interval (nothing is counting now)
+											//and you see "It's over" instead of time left
+											}
+										}, 1000);
+																			</script>
+
+						</div>
+									<!--end::Header-->
+									<!--begin::Body-->
+									<div id="dhamet_container" class="card-body pt-5">
+									</div>
+
 <!--end::chat -->
 
-					
+					<!--begin::Header-->
+		<div class=" d-flex justify-content-center " style="width: 500px; height: px;">
+								<!--begin::List Widget 4-->
+								<div class="  m-0 mb-0" >
+									<div class="p-0 mb-0 m-0">
+									<div  class="alert alert-dismissible  d-flex flex-column flex-sm-row p-0 " style="background-color:  rgb(76,52,36);">
+										<div class="symbol symbol-50px ">
+											<img alt="Logo" src="{% static 'assets/media/avatars/150-26.jpg' %}" />
+										</div>
+										<div class="col px-5">
+											<div id = "opponent" class="align-top fw-bolder mb-2" style="color: white;">{{ user.username}} <img class="w-15px h-15px rounded-1 ms-2" src="{% static 'assets/media/flags/mauritania.svg' %}" alt="" /></div>
+											<div style="vertical-align: middle; color: white;" class="fw-bolder mb-2">Score:1000</div>
+
+										</div>
+									</div>
+										<!--end::Menu 3-->
+										<!--end::Menu-->
+									</div>
+								</div>
+		<div class=" symbol-group symbol-hover  m-0 mb-0 px-4">
+
+    <div class="symbol symbol-30px symbol-circle">
+        <div class="symbol-label" style="background-image:url({% static 'assets/media/avatars/regular_0.png' %})"></div>
+    </div>
+    <div class="symbol symbol-30px symbol-circle">
+        <div class="symbol-label" style="background-image:url({% static 'assets/media/avatars/regular_0.png' %})"></div>
+    </div>
+    <div class="symbol symbol-30px symbol-circle">
+        <div class="symbol-label" style="background-image:url({% static 'assets/media/avatars/regular_0.png' %})"></div>
+    </div>
+    <div class="symbol symbol-circle symbol-30px">
+        <div class="symbol-label fs-8 fw-bold bg-primary text-inverse-primary">+3</div>
+    </div>
+</div>
+
+		<div class="m-0 mb-1">
+			<div class="p-0 mb-1 m-0">
+			<div class=" mb-0 pd-0" style="font-size:xx-large; color:white;width: 167px; height: 96.75px;">
+				<div class=" shadow p-0 mb-0 rounded d-flex flex-column flex-sm-row p-0 " id="timer" style="background-color: rgb(76,52,36);" ></div>
+			</div>
+			</div>
+			</div>
+				<script>
+				var yourDateToGo = new Date(); //here you're making new Date object
+				yourDateToGo.setDate(yourDateToGo.getDate() + 1); //your're setting date in this object 1 day more from now
+				//you can change number of days to go by putting any number in place of 1
+
+				var timing = setInterval( // you're making an interval - a thing, that is updating content after number of miliseconds, that you're writing after comma as second parameter
+				function () {
+
+					var currentDate = new Date().getTime(); //same thing as above
+					var timeLeft = yourDateToGo - currentDate; //difference between time you set and now in miliseconds
+					var minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60)); //conversion miliseconds on minutes
+
+					if (minutes < 10) minutes="0"+minutes;
+					var seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);//conversion miliseconds on seconds
+					if (seconds < 10) seconds="0"+seconds;
+					let clock_icon = "<span><i class='far fa-clock fa-sm'></i></span>"
+					document.getElementById("timer").innerHTML =clock_icon+ " "+  minutes + "m " + seconds + "s"; // putting number of days, hours, minutes and seconds in div,
+					//which id is countdown
+
+					if (timeLeft <= 0) {
+					clearInterval(timing);
+					document.getElementById("timer").innerHTML = "It's over"; //if there's no time left, programm in this 2 lines is clearing interval (nothing is counting now)
+					//and you see "It's over" instead of time left
+					}
+				}, 1000);
+													</script>
+
+
+</div>
+
+			<!--end::Header-->
 									<!--end::Body-->
 								</div>
 
@@ -2735,7 +2937,7 @@ License: For each use you must have a valid license purchased only from above li
 				<div class="card-title">
 					<!--begin::User-->
 					<div class="d-flex justify-content-center flex-column me-3">
-						<a href="#" class="fs-4 fw-bolder text-gray-900 text-hover-primary me-1 mb-2 lh-1">Discussion Ouvert</a>
+						<a href="#" class="fs-4 fw-bolder text-gray-900 text-hover-primary me-1 mb-2 lh-1">Brian Cox</a>
 						<!--begin::Info-->
 						<div class="mb-0 lh-1">
 							<span class="badge badge-success badge-circle w-10px h-10px me-1"></span>

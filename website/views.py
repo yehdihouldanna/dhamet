@@ -48,6 +48,9 @@ def Intro_Ar(request):
 def Intro_Fr(request):
     return render(request,"documentation/getting-started/build/gulp_Fr.html")
 
+def jouer_f(request):
+     return render(request,"jeu.html")
+
 
 
 

@@ -1,5 +1,5 @@
 from django.urls import path, re_path
-from .views import   Intro_Fr, game, main, regles_Ar, regles_Fr,sign_in, docs_Ar,docs_Fr, Intro_Ar, sign_up
+from .views import  jouer_f, Intro_Fr, game, main, regles_Ar, regles_Fr,sign_in, docs_Ar,docs_Fr, Intro_Ar, sign_up
 
 urlpatterns = [           
     path('',main),
@@ -19,6 +19,9 @@ urlpatterns = [
 
     path('documentation/base/utilities.html',regles_Ar),
     path('documentation/base/utilities_Fr.html',regles_Fr),
+
+    path('jeu.html',jouer_f),
+
 
     
     
