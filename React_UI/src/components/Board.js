@@ -382,7 +382,10 @@ class Board extends Component {
                     document.getElementById("player1_name").innerHTML       = data.opponent;
                     document.getElementById("player1_score").innerHTML = data.opponent_score;
                     document.getElementById("player1").style.backgroundColor  = "rgb(156,108,20)";
+                    document.getElementById("timer_p1").style.backgroundColor = "rgb(156,108,20)";
+
                     document.getElementById("player2").style.backgroundColor  = "rgb(76,52,36)";
+                    document.getElementById("timer_P2").style.backgroundColor = "rgb(76,52,36)";
                   }
                   else if (data.creator === me.state.username)
                   {
@@ -390,8 +393,12 @@ class Board extends Component {
                     document.getElementById("player1_score").innerHTML = data.creator_score;
                     document.getElementById("player2_name").innerHTML       = data.opponent;
                     document.getElementById("player2_score").innerHTML = data.opponent_score;
+
                     document.getElementById("player1").style.backgroundColor  = "rgb(76,52,36)";
+                    document.getElementById("timer_p1").style.backgroundColor = "rgb(76,52,36)";
+
                     document.getElementById("player2").style.backgroundColor  = "rgb(156,108,20)";
+                    document.getElementById("timer_p2").style.backgroundColor =  "rgb(156,108,20)";
                   }
                 }
 

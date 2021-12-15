@@ -1774,7 +1774,7 @@ License: For each use you must have a valid license purchased only from above li
 									<div class="m-0 mb-1">
 									<div class="p-0 mb-1 m-0">
 									<div class=" mb-0 pd-0" style="font-size:xx-large;color:white;width: 167px; height:96.75px;">
-										<div class=" shadow p-0 mb-0 rounded d-flex flex-column flex-sm-row p-0 " id="countdown" style="background-color: rgb(156,108,20)" ></div>
+										<div class=" shadow p-0 mb-0 rounded d-flex flex-column flex-sm-row p-0 " id="timer_p2" style="background-color: rgb(156,108,20)" ></div>
 									</div>
 									</div>
 									</div>
@@ -1794,12 +1794,12 @@ License: For each use you must have a valid license purchased only from above li
 											var seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);//conversion miliseconds on seconds
 											if (seconds < 10) seconds="0"+seconds;
 											let clock_icon = "<span><i class='far fa-clock fa-sm'></i></span>"
-											document.getElementById("countdown").innerHTML =clock_icon+ " "+  minutes + "m " + seconds + "s"; // putting number of days, hours, minutes and seconds in div,
-											//which id is countdown
+											document.getElementById("timer_p2").innerHTML =clock_icon+ " "+  minutes + "m " + seconds + "s"; // putting number of days, hours, minutes and seconds in div,
+											//which id is timer_p2
 
 											if (timeLeft <= 0) {
 											clearInterval(timing);
-											document.getElementById("countdown").innerHTML = "It's over"; //if there's no time left, programm in this 2 lines is clearing interval (nothing is counting now)
+											document.getElementById("timer_p2").innerHTML = "It's over"; //if there's no time left, programm in this 2 lines is clearing interval (nothing is counting now)
 											//and you see "It's over" instead of time left
 											}
 										}, 1000);
@@ -1851,7 +1851,7 @@ License: For each use you must have a valid license purchased only from above li
 		<div class="m-0 mb-1">
 			<div class="p-0 mb-1 m-0">
 			<div class=" mb-0 pd-0" style="font-size:xx-large; color:white;width: 167px; height: 96.75px;">
-				<div class=" shadow p-0 mb-0 rounded d-flex flex-column flex-sm-row p-0 " id="timer" style="background-color: rgb(76,52,36);" ></div>
+				<div class=" shadow p-0 mb-0 rounded d-flex flex-column flex-sm-row p-0 " id="timer_p1" style="background-color: rgb(76,52,36);" ></div>
 			</div>
 			</div>
 			</div>
@@ -1871,12 +1871,12 @@ License: For each use you must have a valid license purchased only from above li
 					var seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);//conversion miliseconds on seconds
 					if (seconds < 10) seconds="0"+seconds;
 					let clock_icon = "<span><i class='far fa-clock fa-sm'></i></span>"
-					document.getElementById("timer").innerHTML =clock_icon+ " "+  minutes + "m " + seconds + "s"; // putting number of days, hours, minutes and seconds in div,
+					document.getElementById("timer_p1").innerHTML =clock_icon+ " "+  minutes + "m " + seconds + "s"; // putting number of days, hours, minutes and seconds in div,
 					//which id is countdown
 
 					if (timeLeft <= 0) {
 					clearInterval(timing);
-					document.getElementById("timer").innerHTML = "It's over"; //if there's no time left, programm in this 2 lines is clearing interval (nothing is counting now)
+					document.getElementById("timer_p1").innerHTML = "It's over"; //if there's no time left, programm in this 2 lines is clearing interval (nothing is counting now)
 					//and you see "It's over" instead of time left
 					}
 				}, 1000);
@@ -2022,8 +2022,9 @@ License: For each use you must have a valid license purchased only from above li
 									<!--begin::Body-->
 									<div class="card-body pt-5">
 										<!--begin::Timeline-->
-										<div class="scroll-y me-n5 pe-5" data-kt-element="messages" data-kt-scroll="true" data-kt-scroll-activate="true" data-kt-scroll-height="auto" data-kt-scroll-dependencies="#kt_drawer_chat_messenger_header, #kt_drawer_chat_messenger_footer" data-kt-scroll-wrappers="#kt_drawer_chat_messenger_body" data-kt-scroll-offset="0px"></div>
-										<div id="MovesContainer" class="timeline-label">
+										<div class="scroll h-450px scroll-y" >
+										<div id="MovesContainer" class="timeline-label card card-xl-stretch">
+                                        </div>
 
 										</div>
 										<!--end::Timeline-->
