@@ -8,8 +8,8 @@ urlpatterns = [
     #TODO correct the urls in the html file
     path('jouer.html',game),
 
-    path('authentication/layouts/basic/sign-in.html/',sign_in),
-    path('authentication/layouts/basic/sign-up.html',sign_up),
+    # path('authentication/layouts/basic/sign-in.html/',sign_in),
+    # path('authentication/layouts/basic/sign-up.html',sign_up),
 
     path('documentation/getting-started_Fr.html',docs_Fr),
     path('documentation/getting-started_Ar.html',docs_Ar),

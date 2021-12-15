@@ -3,14 +3,12 @@
 // All rights reserved.
 // Code made by : Yehdhih ANNA (TheLuckyMagician).
 //------------------------------------------------
-
 //@ts-check
 import '/static/css/Board.css';
 import Cell from './Cell';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import React, { Component, useReducer } from 'react';
-
 
 class Board extends Component {
   constructor(props) {
@@ -170,7 +168,6 @@ class Board extends Component {
   //-------------------------------------------------
   // Main Handler methods :
   //-------------------------------------------------
-
   handleStartMove(piece_key) {
     this.state.move = piece_key;
     console.log(this.state.move)
@@ -240,9 +237,7 @@ class Board extends Component {
     }
   };
   MoveRequest_ws(move_str) {
-    /**
-     * * This function communicate with the GameMoveConsumer in the backend
-    **/
+    // * This function communicate with the GameMoveConsumer in the backend
     console.log("a move request");
     console.log("Code:", this.state.Code);
     if (this.state.Code === "") {
@@ -263,6 +258,39 @@ class Board extends Component {
       }
     }
   };
+  CreateFakeOpponent()
+  {
+    // creates a game with a fake opponenet if the player waited so long, without another human joining his game
+    let thisTimeout = setTimeout(function() {myFunction();}, 1000);
+    if ((this.state.opponent == "")) {myFunction();}
+    let me = this;
+    function myFunction() {
+        clearTimeout(thisTimeout);
+        let me = this;
+
+        const requestOptions =
+        {method: 'POST',
+            headers: { 'Content-Type': 'application/json',
+                        "X-CSRFToken":document.getElementsByName('csrfmiddlewaretoken')[0].value },
+            body: JSON.stringify({
+                'id':me.state.id,
+                'creator':me.state.creator,
+                'opponent':"",
+                'allow_fake':true,
+            })
+        };
+        fetch('/DhametCode/create-game', requestOptions).
+            then((response) => response.json()).
+            then((data) => {
+                if (typeof data["Bad Request"] !="undefined") {console.log("['f': CreateFakeOpponent] : Invalid Data : Ignored!");}
+                else {
+                    console.log("['f': CreateFakeOpponent]['data': ",data,"]");
+                    me.state.opponent = data.opponent;
+                }
+            });
+
+        }
+    }
   CreateGameRequest(name) {
     console.log("Starting a game vs another local player.")
     const requestOptions =
@@ -339,7 +367,7 @@ class Board extends Component {
         let me = this;
           this.props.client.onmessage = function (e) {
             const data = JSON.parse(e.data);
-            var moved = false;
+            let moved = false;
             if (typeof data["Bad Request"] != "undefined") {
               console.log("Invalid Move : Ignored!");
               me.state.move = "";
@@ -385,7 +413,7 @@ class Board extends Component {
                     document.getElementById("timer_p1").style.backgroundColor = "rgb(156,108,20)";
 
                     document.getElementById("player2").style.backgroundColor  = "rgb(76,52,36)";
-                    document.getElementById("timer_P2").style.backgroundColor = "rgb(76,52,36)";
+                    document.getElementById("timer_p2").style.backgroundColor = "rgb(76,52,36)";
                   }
                   else if (data.creator === me.state.username)
                   {
@@ -434,31 +462,29 @@ class Board extends Component {
     console.log("Adding a history item")
     // colors: [blue:"text_primary",yellow: "text-warning",red:"text-danger",green:"text_success"]
     let time_line_item = document.createElement("div");
-      // mb for margin bottom
-      time_line_item.classList.add("timeline-item","mb-2");
+    time_line_item.classList.add("timeline-item","mb-2");
 
-      let time_label = document.createElement("div");
-      time_label.classList.add("timeline-label", "fw-bolder", "text-gray-800", "fs-6");
-      var today = new Date();
-      // var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
-      var time = today.getMinutes() + ":" + today.getSeconds();
-      time_label.innerHTML = time;
-      let badge = document.createElement("div");
-      badge.classList.add("timeline-badge");
-      let icon = document.createElement("i");
-      let icon_class = "text-"+color;
-      icon.classList.add("fa", "fa-genderless", icon_class ,"fs-1");
-      badge.appendChild(icon)
+    let time_label = document.createElement("div");
+    time_label.classList.add("timeline-label", "fw-bolder", "text-gray-800", "fs-6");
+    var today = new Date();
+    let time = document.getElementById("timer_p1").innerHTML;
+    // var time = today.getMinutes() + ":" + today.getSeconds();
+    time_label.innerHTML = time;
+    let badge = document.createElement("div");
+    badge.classList.add("timeline-badge");
+    let icon = document.createElement("i");
+    let icon_class = "text-"+color;
+    icon.classList.add("fa", "fa-genderless", icon_class ,"fs-1");
+    badge.appendChild(icon)
 
-      let move_div = document.createElement("div");
-      move_div.classList.add("fw-mormal", "timeline-content", "text-muted", "ps-3");
-      move_div.innerHTML=content;
+    let move_div = document.createElement("div");
+    move_div.classList.add("fw-mormal", "timeline-content", "text-muted", "ps-3");
+    move_div.innerHTML=content;
 
-      time_line_item.appendChild(time_label);
-      time_line_item.appendChild(badge);
-      time_line_item.appendChild(move_div);
-
-      document.getElementById("MovesContainer").appendChild(time_line_item);
+    time_line_item.appendChild(time_label);
+    time_line_item.appendChild(badge);
+    time_line_item.appendChild(move_div);
+    document.getElementById("MovesContainer").appendChild(time_line_item);
   }
   update_moves_time_line()
   {
@@ -472,7 +498,6 @@ class Board extends Component {
     let Cells = [];
     let { board } = this.state;
     let len = board.length;
-
     if(this.state.opponent === this.state.username)
     {
         for (let i = 0; i < len; i++) {

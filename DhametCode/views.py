@@ -1,5 +1,4 @@
 import logging
-# import coloredlogs
 from django.shortcuts import render
 from django.http import HttpResponse
 from .models import Game
@@ -18,10 +17,8 @@ import logging
 from django.conf import settings
 import json
 
-
 # Create a logger object.
 logger = logging.getLogger('root')
-
 
 # Create your views here.
 class GameView(generics.ListAPIView):
@@ -35,11 +32,8 @@ class CreateGameView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
 
     def post(self,request,format = None):
-
         if not self.request.session.exists(self.request.session.session_key): # check if the session exists
             self.request.session.create()
-        # serializer = self.serializer_class(data=request.data)
-        # Code_ = self.request.session.session_key
         if request.user.is_authenticated:
             user = User.objects.filter(username = request.user.username)[0]
             logger.info(f"['f': post]['user': {user.username}]")
@@ -50,15 +44,18 @@ class CreateGameView(generics.ListAPIView):
                 user = User(username= "Guest",name = "Guest",phone=000)
                 user.save()
 
-        # if serializer.is_valid(): # needs to be integrated somehow , but for now it causes problem since the id can't be passed blank.
-        AI_NAMES = ["AI_Random","AI_Dummy","AI_MinMax"]
-        if request.data['opponent'] in AI_NAMES:
+        AI_NAMES  = ["AI_Random","AI_Dummy","AI_MinMax"]
+
+        BOT_NAMES = ["Mohamed","Mariem","Sidi","أحمد","Khadijetou",
+                     "Cheikh","Zeinebou","Vatimetou","Brahim","Mamadou",
+                     "Oumar","Amadou","Abdellahi","Fatma","Moussa","Aly","Samba"]
+
+        if request.data['opponent'] in AI_NAMES or request.data['opponent'] in BOT_NAMES:
             try:
                 ai = User.objects.filter(username = request.data['opponent'])[0]
             except:
-                ai = User(username = request.data['opponent'] ,name=request.data['opponent'], phone=000)
+                ai = User(username = request.data['opponent'] ,name = request.data['opponent'], phone=000)
                 ai.save()
-
             game = Game(creator = user , opponent = ai)
             game.save()
             logger.info(f"['f': post]['user': {user.username}]['Game_VS_AI_id:{game.get_game_code()}]")
@@ -239,6 +236,4 @@ def index(request):
 
 def room(request, room_name):
     return render(request, 'room.html',
-    {
-        'room_name': room_name,
-    })
+    {'room_name': room_name,})
