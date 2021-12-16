@@ -222,6 +222,7 @@ git merge -X theirs origin/master
 to merge a branch into master :
 
 
+
 # Global server 
 python .\manage.py runserver 0.0.0.0:8000
 
@@ -245,3 +246,11 @@ https://www.digitalocean.com/community/tutorials/initial-server-setup-with-ubunt
 https://www.digitalocean.com/community/tutorials/how-to-set-up-django-with-postgres-nginx-and-gunicorn-on-ubuntu-18-04
 
 https://www.digitalocean.com/community/tutorials/how-to-secure-nginx-with-let-s-encrypt-on-ubuntu-18-04
+
+   ╭───────────────────────────────────────────────────────────────╮
+   │                                                               │
+   │      This is a cool ASCII art container that I found          │
+   │               and wanted to keep                              │
+   │                                                               │
+   │                                                               │
+   ╰───────────────────────────────────────────────────────────────╯

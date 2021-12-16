@@ -3,14 +3,12 @@
 // All rights reserved.
 // Code made by : Yehdhih ANNA (TheLuckyMagician).
 //------------------------------------------------
-
 //@ts-check
 import '/static/css/Board.css';
 import Cell from './Cell';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
-import React, { Component } from 'react';
-
+import React, { Component, useReducer } from 'react';
 
 class Board extends Component {
   constructor(props) {
@@ -41,6 +39,7 @@ class Board extends Component {
       delay: 200,
       prevent: false,
       MouseOnBoard: true,
+      username : "",
     };
     // Biding Events handlers :
     this.handleMove = this.handleMove.bind(this);
@@ -56,6 +55,7 @@ class Board extends Component {
     this.CreateGameRequest = this.CreateGameRequest.bind(this);
     this.MoveRequest = this.MoveRequest.bind(this);
     this.MoveRequest_ws = this.MoveRequest_ws.bind(this);
+    this.getUserNameRequest = this.getUserNameRequest.bind(this);
     // Binding extra util methods
     this.serialize = this.serialize.bind(this);
     this.deserialize = this.deserialize.bind(this);
@@ -168,7 +168,6 @@ class Board extends Component {
   //-------------------------------------------------
   // Main Handler methods :
   //-------------------------------------------------
-
   handleStartMove(piece_key) {
     this.state.move = piece_key;
     console.log(this.state.move)
@@ -238,9 +237,7 @@ class Board extends Component {
     }
   };
   MoveRequest_ws(move_str) {
-    /**
-     * * This function communicate with the GameMoveConsumer in the backend
-    **/
+    // * This function communicate with the GameMoveConsumer in the backend
     console.log("a move request");
     console.log("Code:", this.state.Code);
     if (this.state.Code === "") {
@@ -261,6 +258,39 @@ class Board extends Component {
       }
     }
   };
+  CreateFakeOpponent()
+  {
+    // creates a game with a fake opponenet if the player waited so long, without another human joining his game
+    let thisTimeout = setTimeout(function() {myFunction();}, 1000);
+    if ((this.state.opponent == "")) {myFunction();}
+    let me = this;
+    function myFunction() {
+        clearTimeout(thisTimeout);
+        let me = this;
+
+        const requestOptions =
+        {method: 'POST',
+            headers: { 'Content-Type': 'application/json',
+                        "X-CSRFToken":document.getElementsByName('csrfmiddlewaretoken')[0].value },
+            body: JSON.stringify({
+                'id':me.state.id,
+                'creator':me.state.creator,
+                'opponent':"",
+                'allow_fake':true,
+            })
+        };
+        fetch('/DhametCode/create-game', requestOptions).
+            then((response) => response.json()).
+            then((data) => {
+                if (typeof data["Bad Request"] !="undefined") {console.log("['f': CreateFakeOpponent] : Invalid Data : Ignored!");}
+                else {
+                    console.log("['f': CreateFakeOpponent]['data': ",data,"]");
+                    me.state.opponent = data.opponent;
+                }
+            });
+
+        }
+    }
   CreateGameRequest(name) {
     console.log("Starting a game vs another local player.")
     const requestOptions =
@@ -291,8 +321,33 @@ class Board extends Component {
     game_state.move = this.state.move;
     this.setState(game_state);
   }
+  getUserNameRequest()
+  {
+    let me = this;
+    let username = "Guest";
+    console.log("Getting Current usename for the GameApp");
+    const requestOptions =
+    {method: 'POST',
+        headers: { 'Content-Type': 'application/json',
+                      // @ts-ignore
+                      "X-CSRFToken":document.getElementsByName('csrfmiddlewaretoken')[0].value },
+        body: JSON.stringify({'username': ""})
+    };
+    fetch('/DhametCode/username', requestOptions).
+        then((response) => response.json()).
+        then((data) => {
+            if (typeof data["Bad Request"] !="undefined") {console.log("Invalid Data : Ignored!");}
+            else {username = data.username;
+                // console.log("['f': fetch]['user': ",username,"]");
+                me.state.username = username;
+            }
+        });
+    // console.log("['f': getUserNameRequest]['user': ",username,"]");
+    // console.log("['_': state]['user': ",this.state.username,"]");
+  }
   // Componenets Native methods :
   componentWillMount() {
+        this.getUserNameRequest();
         this.props.client.onopen = () => {
           console.log('A new client Connected');
           this.props.client.send(
@@ -301,15 +356,18 @@ class Board extends Component {
               'state': this.state.board_txt,
               'last_move': this.state.move,
               'current_turn': this.state.player,
-              'creator' : this.state.creator,
+              'creator': this.state.creator,
+              'creator_score': "",
               'opponent' : this.state.opponent,
-              'winner':this.state.winner,
+              'opponent_score': "",
+              'winner': this.state.winner,
+              'winner_score': "",
             }));
         };
         let me = this;
           this.props.client.onmessage = function (e) {
             const data = JSON.parse(e.data);
-            var moved = false;
+            let moved = false;
             if (typeof data["Bad Request"] != "undefined") {
               console.log("Invalid Move : Ignored!");
               me.state.move = "";
@@ -322,7 +380,6 @@ class Board extends Component {
                 // console.log("The winner returned is : ",data.winner)
                 console.log("The player now is : ", game_state.player);
                 game_state.board_txt = data.state;
-
                 if (game_state.last_move != data.last_move )
                 {
                   game_state.last_move = data.last_move;
@@ -338,21 +395,46 @@ class Board extends Component {
                 me.state.move = "";
                 if (data.winner!==null && data.winner!=="")
                 {// TODO : change this to a better thing.
-                    alert(data.winner+" Won the game!");
+                    alert(data.winner + " Won the game!");
                     me.state.winner = data.winner
                 }
-                if (data.opponent!== me.state.opponent)
+                if (data.opponent !== me.state.opponent)
                 {
-                  me.state.opponent = data.opponent;
-                  me.state.creator  = data.creator;
+                    me.state.opponent = data.opponent;
+                    me.state.creator  = data.creator;
+                    console.log("['f': move]['state' : ",me.state,"]");
+                  if (data.opponent === me.state.username)
+                  {
+                    document.getElementById("player2_name").innerHTML       = data.creator;
+                    document.getElementById("player2_score").innerHTML = data.creator_score;
+                    document.getElementById("player1_name").innerHTML       = data.opponent;
+                    document.getElementById("player1_score").innerHTML = data.opponent_score;
+                    document.getElementById("player1").style.backgroundColor  = "rgb(156,108,20)";
+                    document.getElementById("timer_p1").style.backgroundColor = "rgb(156,108,20)";
+
+                    document.getElementById("player2").style.backgroundColor  = "rgb(76,52,36)";
+                    document.getElementById("timer_p2").style.backgroundColor = "rgb(76,52,36)";
+                  }
+                  else if (data.creator === me.state.username)
+                  {
+                    document.getElementById("player1_name").innerHTML       = data.creator;
+                    document.getElementById("player1_score").innerHTML = data.creator_score;
+                    document.getElementById("player2_name").innerHTML       = data.opponent;
+                    document.getElementById("player2_score").innerHTML = data.opponent_score;
+
+                    document.getElementById("player1").style.backgroundColor  = "rgb(76,52,36)";
+                    document.getElementById("timer_p1").style.backgroundColor = "rgb(76,52,36)";
+
+                    document.getElementById("player2").style.backgroundColor  = "rgb(156,108,20)";
+                    document.getElementById("timer_p2").style.backgroundColor =  "rgb(156,108,20)";
+                  }
                 }
 
-                // * If We are playing vs AI then we will send it's request after the players
-                ;
+                // * If We are playing vs AI then we will send it's request after the player's
                 if( AI_NAMES.includes(me.state.opponent) && me.state.player===1)
                 {
                     setTimeout(() => {
-                    //*We can change the response time based on the need
+                    // * We can change the response time based on the need
                     if (me.state.previous_board != me.state.board_txt) {
                         console.log("The AI request waited for 350 ms !")
                         me.props.client.send(
@@ -371,7 +453,6 @@ class Board extends Component {
           this.props.client.onclose = function (e) {
           console.error('Client socket closed unexpectedly');
         };
-
     }
   //----------------------------------------
   // Web Page modifiers :
@@ -381,31 +462,29 @@ class Board extends Component {
     console.log("Adding a history item")
     // colors: [blue:"text_primary",yellow: "text-warning",red:"text-danger",green:"text_success"]
     let time_line_item = document.createElement("div");
-      // mb for margin bottom
-      time_line_item.classList.add("timeline-item","mb-2");
+    time_line_item.classList.add("timeline-item","mb-2");
 
-      let time_label = document.createElement("div");
-      time_label.classList.add("timeline-label", "fw-bolder", "text-gray-800", "fs-6");
-      var today = new Date();
-      // var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
-      var time = today.getMinutes() + ":" + today.getSeconds();
-      time_label.innerHTML = time;
-      let badge = document.createElement("div");
-      badge.classList.add("timeline-badge");
-      let icon = document.createElement("i");
-      let icon_class = "text-"+color;
-      icon.classList.add("fa", "fa-genderless", icon_class ,"fs-1");
-      badge.appendChild(icon)
+    let time_label = document.createElement("div");
+    time_label.classList.add("timeline-label", "fw-bolder", "text-gray-800", "fs-6");
+    var today = new Date();
+    let time = document.getElementById("timer_p1").innerHTML;
+    // var time = today.getMinutes() + ":" + today.getSeconds();
+    time_label.innerHTML = time;
+    let badge = document.createElement("div");
+    badge.classList.add("timeline-badge");
+    let icon = document.createElement("i");
+    let icon_class = "text-"+color;
+    icon.classList.add("fa", "fa-genderless", icon_class ,"fs-1");
+    badge.appendChild(icon)
 
-      let move_div = document.createElement("div");
-      move_div.classList.add("fw-mormal", "timeline-content", "text-muted", "ps-3");
-      move_div.innerHTML=content;
+    let move_div = document.createElement("div");
+    move_div.classList.add("fw-mormal", "timeline-content", "text-muted", "ps-3");
+    move_div.innerHTML=content;
 
-      time_line_item.appendChild(time_label);
-      time_line_item.appendChild(badge);
-      time_line_item.appendChild(move_div);
-
-      document.getElementById("MovesContainer").appendChild(time_line_item);
+    time_line_item.appendChild(time_label);
+    time_line_item.appendChild(badge);
+    time_line_item.appendChild(move_div);
+    document.getElementById("MovesContainer").appendChild(time_line_item);
   }
   update_moves_time_line()
   {
@@ -419,44 +498,68 @@ class Board extends Component {
     let Cells = [];
     let { board } = this.state;
     let len = board.length;
-    for (let i = len - 1; i >= 0; i--) {
-      for (let j = 0; j < len; j++) {
-        let key = i.toString() + j.toString();
-        let ex_css_class="";
-        if (this.state.last_move.includes(key))
-        {
-          ex_css_class = " highlight_last_move";
+    if(this.state.opponent === this.state.username)
+    {
+        for (let i = 0; i < len; i++) {
+            for (let j = 0; j < len; j++) {
+              let key = i.toString() + j.toString();
+              let ex_css_class="";
+              if (this.state.last_move.includes(key))
+              {
+                ex_css_class = " highlight_last_move";
+              }
+              Cells.push(
+                <Cell
+                  key={key}
+                  i={i}
+                  j={j}
+                  value={board[i][j]}
+                  player={this.state.player}
+                  move={this.state.move}
+                  onMove={this.handleMove}
+                  onHover={this.handleHover}
+                  onStartMove={this.handleStartMove}
+                  onClick={this.handleClick}
+                  ex_css_class ={ex_css_class}
+                  toggle = {this.state.move.includes(key)}
+                >
+                </Cell>
+              );
+            }
+          }
+    }
+    else
+    {
+
+        for (let i = len - 1; i >= 0; i--) {
+          for (let j = 0; j < len; j++) {
+            let key = i.toString() + j.toString();
+            let ex_css_class="";
+            if (this.state.last_move.includes(key))
+            {
+              ex_css_class = " highlight_last_move";
+            }
+            Cells.push(
+              <Cell
+                key={key}
+                i={i}
+                j={j}
+                value={board[i][j]}
+                player={this.state.player}
+                move={this.state.move}
+                onMove={this.handleMove}
+                onHover={this.handleHover}
+                onStartMove={this.handleStartMove}
+                onClick={this.handleClick}
+                ex_css_class ={ex_css_class}
+                toggle = {this.state.move.includes(key)}
+              >
+              </Cell>
+            );
+          }
         }
-        Cells.push(
-          <Cell
-            key={key}
-            i={i}
-            j={j}
-            value={board[i][j]}
-            player={this.state.player}
-            move={this.state.move}
-            onMove={this.handleMove}
-            onHover={this.handleHover}
-            onStartMove={this.handleStartMove}
-            onClick={this.handleClick}
-            ex_css_class ={ex_css_class}
-            toggle = {this.state.move.includes(key)}
-          >
-          </Cell>
-        );
-      }
     }
-    try {
-      if(this.state.player)
-      {
-        document.getElementById("current_turn").innerHTML ="<span class='bullet bullet-dot bg-dark h-30px w-30px me-5'></span> Black's turn to play.";
-      }
-      else
-      {
-        document.getElementById("current_turn").innerHTML ="<span class='bullet bullet-dot bg-secondary h-30px w-30px me-5'></span> White's turn to play.";
-      }
-    }
-    catch {}
+
     return (
       <DndProvider backend={HTML5Backend}>
         <div id="board"  onMouseLeave={this.handleMouseLeave}>

@@ -4,17 +4,18 @@ from termcolor import cprint
 
 def main(request,*args,**kwargs):
     # return render(request, 'index.html', {})
-
     outputs = {}
-    print(f"The request path is  {request.path[6:-1]}")
+    # print(f"The request path is  {request.path[6:-1]}")
     if ".html" in request.path :
-        cprint("condition  verified [_/]" , color ="green")
+        # cprint("condition  verified [_/]" , color ="green")
         return render(request,request.path[6:-1],outputs)
 
     if len(kwargs):
         outputs = {'game_code': kwargs['game_code']}
-    return render(request,"index.html",outputs)
-    
+        return render(request,"jeu.html",outputs)
+    else:
+        return render(request,"index.html")
+
 
 def game(request):
     return render(request,"jouer.html")
@@ -31,18 +32,18 @@ def sign_up(request):
 
 def docs_Fr(request):
     return render(request,"documentation/getting-started_Fr.html")
-    
+
 def docs_Ar(request):
     return render(request,"documentation/getting-started_Ar.html")
 
 
 def regles_Ar(request):
     return render(request,"documentation/base/utilities.html")
-   
+
 def regles_Fr(request):
     return render(request,"documentation/base/utilities_Fr.html")
 
-   
+
 def Intro_Ar(request):
     return render(request,"documentation/getting-started/build/gulp.html")
 def Intro_Fr(request):
@@ -54,4 +55,3 @@ def jouer_f(request):
 
 
 
-    
