@@ -182,6 +182,11 @@ class GameConsumer(AsyncWebsocketConsumer):
             queryset = Game.objects.filter(id=id)
             if queryset.exists():
                 current_turn_  = data['current_turn']
+                tier = 0
+                try :
+                    tier = int(data["tier"])
+                except:
+                    pass
                 move = data['last_move']
                 logger.info(f"['f': post_move]['move': {move}]")
                 game = queryset[0]
@@ -190,9 +195,11 @@ class GameConsumer(AsyncWebsocketConsumer):
                 board = game.state
                 game_instance = State(n=9,board=board,player = current_turn, length=length)
                 AI_NAMES = set(["AI_Random","AI_Dummy","AI_MinMax"])
-                if ((game.creator==user and current_turn==0) or (game.opponent == user and current_turn)): # user is playing
+                BOT_NAMES= ["Med10","Mariem","Sidi","احمد","Khadijetou","Cheikh","Vatimetou","ابراهيم",
+                      "Mamadou","Oumar","Amadou","3abdellahi","Va6me","Moussa","Aly","Samba"]
+                if ((game.creator==user and current_turn==0) or (game.opponent == user and current_turn)): # * user is playing
                     return self.update_game(id,user,game,game_instance,move)
-                elif ((game.opponent.username in AI_NAMES and current_turn) or (game.creator.username in AI_NAMES and current_turn==0)): # the AI is playing
+                elif ((game.opponent.username in AI_NAMES and current_turn) or (game.creator.username in AI_NAMES and current_turn==0)): # * the AI is playing
                     # Agent = Random('AI',current_turn)
                     # Agent = Dummy('AI',current_turn)
                     Agent = MinMax("AI",current_turn,depth=2)
@@ -200,7 +207,22 @@ class GameConsumer(AsyncWebsocketConsumer):
                     logger.info(f"['f': post_move]['AI_move': {move}]")
                     user_ = game.creator if game.creator.username in AI_NAMES else game.opponent
                     return self.update_game(id,user_,game,game_instance,move)
-                elif ((game.creator==user and current_turn==1) or (game.opponent == user and current_turn==0)): # case a user tries a move when it't turn only happens at start when user joins a new game
+
+                elif (tier and current_turn==1):
+                    if tier ==1:
+                        Agent = Random("",current_turn)
+                    elif tier==2:
+                        Agent = Dummy("",current_turn)
+                    elif tier ==3: # can be used for ML agent
+                        Agent = MinMax("",current_turn,depth=2)
+                    else: # just in order to prevent erros
+                        Agent = MinMax("_________",current_turn,depth=2)
+                    move = Agent.move(game_instance)
+                    logger.debug(f"['f': post_move]['AI_move': {move}]")
+                    user_ = game.creator if game.creator.username in BOT_NAMES else game.opponent
+                    return self.update_game(id,user_,game,game_instance,move)
+
+                elif ((game.creator==user and current_turn==1) or (game.opponent == user and current_turn==0)): #* case a user tries a move when it't turn only happens at start when user joins a new game
                     return self.update_game(id,user,game,game_instance,move="")
             # raise Exception(f"user {user.username} tried to make a non valid move!")
             return Response({'Bad Request': 'Invalid data...'}, status=status.HTTP_400_BAD_REQUEST)

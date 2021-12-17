@@ -40,7 +40,16 @@ class Board extends Component {
       prevent: false,
       MouseOnBoard: true,
       username : "",
+      tier: null,
     };
+    this.AI_NAMES  = ["AI_Random","AI_Dummy","AI_MinMax"];
+
+
+    this.BOT_NAMES = ["Med10","Mariem","Sidi","احمد","Khadijetou","Cheikh","Vatimetou","ابراهيم",
+                      "Mamadou","Oumar","Amadou","3abdellahi","Va6me","Moussa","Aly","Samba"];
+    //* Tiers are the difficulty level, for now we have 3 tiers, 3 :AI_MinMax, 2 : Dummy, 1 : Random
+    this.Tiers = [3,2,3,2,1,2,3,1,1,2,3,3,1,1,3,2];
+
     // Biding Events handlers :
     this.handleMove = this.handleMove.bind(this);
     this.handleHover = this.handleHover.bind(this);
@@ -53,6 +62,7 @@ class Board extends Component {
     this.doDoubleClickAction = this.doDoubleClickAction.bind(this);
     // Binding request handlers :
     this.CreateGameRequest = this.CreateGameRequest.bind(this);
+    this.CreateFakeOpponent = this.CreateFakeOpponent.bind(this);
     this.MoveRequest = this.MoveRequest.bind(this);
     this.MoveRequest_ws = this.MoveRequest_ws.bind(this);
     this.getUserNameRequest = this.getUserNameRequest.bind(this);
@@ -154,8 +164,6 @@ class Board extends Component {
       this.setState(game_state);
     }
     this.handleMove();
-
-
   };
   handleClick(e, key,piece_present) {
     if (e.detail > 1) {
@@ -237,9 +245,8 @@ class Board extends Component {
     }
   };
   MoveRequest_ws(move_str) {
+    console.log("🚀 ~ file: Board.js ~ line 248 ~ Board ~ MoveRequest_ws")
     // * This function communicate with the GameMoveConsumer in the backend
-    console.log("a move request");
-    console.log("Code:", this.state.Code);
     if (this.state.Code === "") {
       this.CreateGameRequest();
     }
@@ -261,34 +268,42 @@ class Board extends Component {
   CreateFakeOpponent()
   {
     // creates a game with a fake opponenet if the player waited so long, without another human joining his game
-    let thisTimeout = setTimeout(function() {myFunction();}, 1000);
-    if ((this.state.opponent == "")) {myFunction();}
     let me = this;
-    function myFunction() {
-        clearTimeout(thisTimeout);
-        let me = this;
+    let thisTimeout = setTimeout(() =>{
+        console.log("🚀 ~ Waited 10s, Launching a fake opponent request")
+        if ((me.state.opponent === ""))
+            {CallFakeOpponent(me);}
+        else
+            { console.log("🚀 ~ file: Board.js ~ line 279 ~ Board ~ thisTimeout ~ Opponent does exist no need for fake")}
+    }, 10000);
 
+    function CallFakeOpponent(me) {
+        clearTimeout(thisTimeout);
+        console.log("🚀 ~ file: Board.js ~ line 285 ~ Board ~ CallFakeOpponent ~ 'Launched the request for fake opponenet'")
+        let idx = Math.floor(Math.random() * me.BOT_NAMES.length);
         const requestOptions =
         {method: 'POST',
             headers: { 'Content-Type': 'application/json',
+                        // @ts-ignore
                         "X-CSRFToken":document.getElementsByName('csrfmiddlewaretoken')[0].value },
             body: JSON.stringify({
                 'id':me.state.id,
                 'creator':me.state.creator,
-                'opponent':"",
+                'opponent':me.BOT_NAMES[idx],
                 'allow_fake':true,
             })
         };
         fetch('/DhametCode/create-game', requestOptions).
             then((response) => response.json()).
             then((data) => {
-                if (typeof data["Bad Request"] !="undefined") {console.log("['f': CreateFakeOpponent] : Invalid Data : Ignored!");}
+                if (typeof data["Bad Request"] !="undefined")
+                {}
                 else {
-                    console.log("['f': CreateFakeOpponent]['data': ",data,"]");
+                    console.log("🚀 ~ file: Board.js ~ line 295 ~ Board ~ then ~ data", data)
                     me.state.opponent = data.opponent;
+                    me.state.tier = me.Tiers[idx];
                 }
             });
-
         }
     }
   CreateGameRequest(name) {
@@ -338,16 +353,15 @@ class Board extends Component {
         then((data) => {
             if (typeof data["Bad Request"] !="undefined") {console.log("Invalid Data : Ignored!");}
             else {username = data.username;
-                // console.log("['f': fetch]['user': ",username,"]");
                 me.state.username = username;
+                // console.log("🚀 ~ file: Board.js ~ line 351 ~ Board ~ then ~ username", username)
             }
         });
-    // console.log("['f': getUserNameRequest]['user': ",username,"]");
-    // console.log("['_': state]['user': ",this.state.username,"]");
   }
-  // Componenets Native methods :
+  // Component's Native methods :
   componentWillMount() {
         this.getUserNameRequest();
+        this.CreateFakeOpponent();
         this.props.client.onopen = () => {
           console.log('A new client Connected');
           this.props.client.send(
@@ -366,18 +380,17 @@ class Board extends Component {
         };
         let me = this;
           this.props.client.onmessage = function (e) {
+            //* Take a cup of tea if you want to follow this function :)
             const data = JSON.parse(e.data);
             let moved = false;
             if (typeof data["Bad Request"] != "undefined") {
               console.log("Invalid Move : Ignored!");
               me.state.move = "";
             }
-            else {
-                let AI_NAMES = ["AI_Random","AI_Dummy","AI_MinMax"];
+            else { // *server returned a valid move :
                 console.log("We received a correct data: ", data);
                 let game_state = me.state;
                 game_state.player = data.current_turn;
-                // console.log("The winner returned is : ",data.winner)
                 console.log("The player now is : ", game_state.player);
                 game_state.board_txt = data.state;
                 if (game_state.last_move != data.last_move )
@@ -393,27 +406,31 @@ class Board extends Component {
                   me.deserialize(data.state);
                 }
                 me.state.move = "";
+
                 if (data.winner!==null && data.winner!=="")
-                {// TODO : change this to a better thing.
+                {
+                    // TODO : change this to a better thing.
                     alert(data.winner + " Won the game!");
                     me.state.winner = data.winner
                 }
+
                 if (data.opponent !== me.state.opponent)
                 {
                     me.state.opponent = data.opponent;
                     me.state.creator  = data.creator;
-                    console.log("['f': move]['state' : ",me.state,"]");
+                    console.log("🚀 ~ file: Board.js ~ line 425 ~ Board ~ componentWillMount ~ state", me.state)
                   if (data.opponent === me.state.username)
                   {
                     document.getElementById("player2_name").innerHTML       = data.creator;
                     document.getElementById("player2_score").innerHTML = data.creator_score;
                     document.getElementById("player1_name").innerHTML       = data.opponent;
                     document.getElementById("player1_score").innerHTML = data.opponent_score;
-                    document.getElementById("player1").style.backgroundColor  = "rgb(156,108,20)";
-                    document.getElementById("timer_p1").style.backgroundColor = "rgb(156,108,20)";
 
+                    document.getElementById("player1").style.backgroundColor  = "rgb(156,108,20)";
                     document.getElementById("player2").style.backgroundColor  = "rgb(76,52,36)";
-                    document.getElementById("timer_p2").style.backgroundColor = "rgb(76,52,36)";
+
+                    // document.getElementById("timer_p1").style.backgroundColor = "rgb(156,108,20)";
+                    // document.getElementById("timer_p2").style.backgroundColor = "rgb(76,52,36)";
                   }
                   else if (data.creator === me.state.username)
                   {
@@ -423,15 +440,15 @@ class Board extends Component {
                     document.getElementById("player2_score").innerHTML = data.opponent_score;
 
                     document.getElementById("player1").style.backgroundColor  = "rgb(76,52,36)";
-                    document.getElementById("timer_p1").style.backgroundColor = "rgb(76,52,36)";
-
                     document.getElementById("player2").style.backgroundColor  = "rgb(156,108,20)";
-                    document.getElementById("timer_p2").style.backgroundColor =  "rgb(156,108,20)";
+
+                    // document.getElementById("timer_p1").style.backgroundColor = "rgb(76,52,36)";
+                    // document.getElementById("timer_p2").style.backgroundColor =  "rgb(156,108,20)";
                   }
                 }
 
                 // * If We are playing vs AI then we will send it's request after the player's
-                if( AI_NAMES.includes(me.state.opponent) && me.state.player===1)
+                if( me.AI_NAMES.includes(me.state.opponent) && me.state.player===1)
                 {
                     setTimeout(() => {
                     // * We can change the response time based on the need
@@ -448,11 +465,33 @@ class Board extends Component {
                     }
                         }, 350);
                     }
+
+                // * If the player is playing vs a Bot
+                if( me.state.tier!==null && me.state.player===1)
+                {
+                    let delay = 350 + Math.floor(Math.random() * 10000) // randomizing the time of the response
+                    setTimeout(() => {
+                    // * We can change the response time based on the need
+                    if (me.state.previous_board != me.state.board_txt) {
+                        console.log("The AI request waited for 350 ms !")
+                        me.props.client.send(
+                        JSON.stringify({
+                            'id': me.state.Code,
+                            'state': me.state.board_txt,
+                            'last_move': "",
+                            'current_turn': me.state.player,
+                            'winner':"",
+                            'tier':me.state.tier,
+                        }));
+                    }
+                        }, delay);
+                    }
                 }
           };
           this.props.client.onclose = function (e) {
-          console.error('Client socket closed unexpectedly');
+            console.error('Client socket closed unexpectedly');
         };
+
     }
   //----------------------------------------
   // Web Page modifiers :
@@ -466,9 +505,10 @@ class Board extends Component {
 
     let time_label = document.createElement("div");
     time_label.classList.add("timeline-label", "fw-bolder", "text-gray-800", "fs-6");
-    var today = new Date();
-    let time = document.getElementById("timer_p1").innerHTML;
-    // var time = today.getMinutes() + ":" + today.getSeconds();
+    let today = new Date();
+    let min = today.getMinutes() ? "" + today.getMinutes(): "0" + today.getMinutes();
+    let sec = today.getSeconds() ? "" +today.getSeconds(): "0" + today.getSeconds();
+    let time = min + ":" + sec;
     time_label.innerHTML = time;
     let badge = document.createElement("div");
     badge.classList.add("timeline-badge");

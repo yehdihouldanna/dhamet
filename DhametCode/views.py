@@ -9,7 +9,6 @@ from rest_framework.permissions import IsAuthenticated
 from .serializers import GameSerializer , CreateGameSerializer , GameMoveSerializer
 from .utils.Board import State
 import numpy as np
-import sys
 from datetime import datetime
 from .utils.Players import Random
 from users.models import User
@@ -26,7 +25,7 @@ class GameView(generics.ListAPIView):
     serializer_class = GameSerializer
 
 class CreateGameView(generics.ListAPIView):
-    serializer_class = CreateGameSerializer  # a view requires a serializer_class and a queryset attributes
+    serializer_class = CreateGameSerializer  # A view requires a serializer_class and a queryset attributes
     queryset = Game.objects.all()
     authentication_classes = [SessionAuthentication, BasicAuthentication]
     permission_classes = [IsAuthenticated]
@@ -45,12 +44,10 @@ class CreateGameView(generics.ListAPIView):
                 user.save()
 
         AI_NAMES  = ["AI_Random","AI_Dummy","AI_MinMax"]
+        BOT_NAMES = ["Med10","Mariem","Sidi","احمد","Khadijetou","Cheikh","Vatimetou","ابراهيم",
+                     "Mamadou","Oumar","Amadou","3abdellahi","Va6me","Moussa","Aly","Samba"]
 
-        BOT_NAMES = ["Mohamed","Mariem","Sidi","أحمد","Khadijetou",
-                     "Cheikh","Zeinebou","Vatimetou","Brahim","Mamadou",
-                     "Oumar","Amadou","Abdellahi","Fatma","Moussa","Aly","Samba"]
-
-        if request.data['opponent'] in AI_NAMES or request.data['opponent'] in BOT_NAMES:
+        if request.data['opponent'] in AI_NAMES :
             try:
                 ai = User.objects.filter(username = request.data['opponent'])[0]
             except:
@@ -60,7 +57,27 @@ class CreateGameView(generics.ListAPIView):
             game.save()
             logger.info(f"['f': post]['user': {user.username}]['Game_VS_AI_id:{game.get_game_code()}]")
             return Response(CreateGameSerializer(game).data,status = status.HTTP_201_CREATED)
-        else :# Online
+
+        elif request.data['allow_fake'] == True and request.data['opponent'] in BOT_NAMES : # Online  Vs Fake Opponent
+            try:
+                bot = User.objects.filter(username = request.data['opponent'], is_fake=True)[0]
+            except:
+                bot = User(username = request.data['opponent'] ,name = request.data['opponent'], phone=000 , is_fake=True)
+                bot.save()
+            queryset_ = Game.get_available_games(user = user)
+            if len(queryset_): # if game
+                game = queryset_[0]
+                game.opponent = bot
+                game.save()
+                logger.info(f"['f': post]['bot': {bot.username}]['Game_Joined_id:{game.get_game_code()}]['creator': {game.creator}]")
+                return Response(CreateGameSerializer(game).data,status = status.HTTP_202_ACCEPTED)
+            else:
+                game = Game(creator = user )
+                game.save()
+                logger.info(f"['f': post]['user': {user.username}]['Game_Live_Created_id': {game.get_game_code()}]")
+                return Response(CreateGameSerializer(game).data,status = status.HTTP_201_CREATED)
+
+        else:     # Online VS a real person
             queryset_ = Game.get_available_games()
             if len(queryset_): # if game
                 game = queryset_[0]
@@ -218,7 +235,6 @@ class GameMoveView(generics.ListAPIView):
 
 def get_username(request):
     if request.user.username:
-        # return Response({'username' :request.user.username},status = status.HTTP_200_OK)
         return HttpResponse(json.dumps({'username' :request.user.username}), content_type="application/json",status = status.HTTP_200_OK)
     else:
         return Response({'Bad Request': 'Invalid data...'}, status=status.HTTP_400_BAD_REQUEST)

@@ -1394,6 +1394,7 @@
                                                         id: "",
                                                         creator: "",
                                                         opponent: "",
+                                                        allow_fake: false,
                                                     })
                                                 };
                                                 fetch('/DhametCode/create-game', requestOptions).
@@ -1423,6 +1424,7 @@
                                                         id: "",
                                                         creator: "",
                                                         opponent: type,
+                                                        allow_fake: false,
                                                     })
                                                 };
                                                 console.log("A create game request have been sent with : ", requestOptions);
