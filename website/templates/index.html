@@ -1290,25 +1290,24 @@ License: For each use you must have a valid license purchased only from above li
 						<!--begin::Row-->
 					
 						<div class="row g-5 g-xl-7">
-							<div class="col-xl-1">
 							
 							<div class="col-xl-6 ">
 								
 								<!--begin::List Widget 4-->
-						<div class="card card-xl-stretch mb-xl-8 bg-dark" >
+						<div class="card card-xl-stretch mb-xl-8 " >
 						
 						<!--begin::Row-->
-									<h1  class="p-4 m-0 mb-0 text-white" style="text-align: center;" >Jouer Vs l'ordinateur</h1>
+									<h1  class="p-4 m-0 mb-0 text-dark" style="text-align: center;" >Jouer Vs l'ordinateur</h1>
 									<!--begin::Quick links-->
 									<div class="separator my-5 mb-4"></div>
 							
 									<!--end::Quick links-->
 									
 									<!--begin::Row-->
-							<div class=" p-4 row g-5 g-xl-8 justify-content-center ">
+							<div class=" p-4 row g-5 g-xl-8 justify-content-center zoom ">
 								<div class="col-xl-4 mw-125px m-2">
 									<!--begin::Statistics Widget 5-->
-									<a href="#"  onclick="CreateGameRequest('AI_Random')" class="card bg-success hoverable mb-xl-8 w-125px" >
+									<a href="#"  onclick="CreateGameRequest('AI_Random')" class="card bg-primary hoverable mb-xl-8 w-125px" >
 										<div class="symbol symbol-125px ">
 											<img alt="Logo" src="{% static 'assets/media/avatars/150-26.jpg' %}" />
 										</div>
@@ -1327,7 +1326,7 @@ License: For each use you must have a valid license purchased only from above li
 								
 								<div class="col-xl-4 mw-125px m-2">
 									<!--begin::Statistics Widget 5-->
-									<a href ="#" onclick="CreateGameRequest('AI_Dummy')" class="card bg-danger hoverable  mb-xl-8 w-125px">
+									<a href ="#" onclick="CreateGameRequest('AI_Dummy')" class="card bg-primary hoverable  mb-xl-8 w-125px">
 										<div class="symbol symbol-125px ">
 											<img alt="Logo" src="{% static 'assets/media/logos/femme.jpg' %}" />
 										</div>
@@ -1341,13 +1340,10 @@ License: For each use you must have a valid license purchased only from above li
 									</a>
 									<!--end::Statistics Widget 5-->
 								</div>	
-							</div>
-							<script>
-								function CreateGameRequest(type) {
 						
 								<div class=" m-2 col-xl-4 mw-125px">
 									<!--begin::Statistics Widget 5-->
-									<a href="#"  onclick="CreateGameRequest('AI_MinMax')" class="card bg-success hoverable  mb-xl-8 w-125px" >
+									<a href="#"  onclick="CreateGameRequest('AI_MinMax')" class="card bg-primary hoverable  mb-xl-8 w-125px" >
 										<div class="symbol symbol-125px ">
 											<img alt="Logo" src="{% static 'assets/media/logos/bouamama.jpg' %}" />
 										</div>
@@ -1363,10 +1359,10 @@ License: For each use you must have a valid license purchased only from above li
 								</div>
 								
 								
-								<div class="row g-5 g-xl-8 p-4 justify-content-center">
+								<div class="row g-5 g-xl-8 p-4 justify-content-center zoom">
 									<div class="col-xl-4 mw-125px m-2">
 										<!--begin::Statistics Widget 5-->
-										<a href="#"  onclick="CreateGameRequest('AI_MinMax')" class="card bg-success hoverable mb-xl-8 w-125px" >
+										<a href="#"  onclick="CreateGameRequest('AI_MinMax')" class="card bg-primary hoverable mb-xl-8 w-125px" >
 											<div class="symbol symbol-125px ">
 												<img alt="Logo" src="{% static 'assets/media/avatars/150-26.jpg' %}" />
 											</div>
@@ -1382,7 +1378,7 @@ License: For each use you must have a valid license purchased only from above li
 									</div>
 									<div class="col-xl-4 mw-125px m-2">
 										<!--begin::Statistics Widget 5-->
-										<a href="#" onclick="CreateGameRequest('AI_MinMax')" class="card bg-danger hoverable  mb-xl-8 w-125px" >
+										<a href="#" onclick="CreateGameRequest('AI_MinMax')" class="card bg-primary hoverable  mb-xl-8 w-125px" >
 											<div class="symbol symbol-125px">
 												<img alt="Logo" src="{% static 'assets/media/logos/elkazaz.jpg' %}" />
 											</div>
@@ -1398,7 +1394,7 @@ License: For each use you must have a valid license purchased only from above li
 									</div>
 								<div class="col-xl-4 mw-125px m-2">
 									<!--begin::Statistics Widget 5-->
-									<a href="#"  onclick="CreateGameRequest('AI_MinMax')" class="card bg-success hoverable mb-xl-8 w-125px" >
+									<a href="#"  onclick="CreateGameRequest('AI_MinMax')" class="card bg-primary hoverable mb-xl-8 w-125px" >
 										<div class="symbol symbol-125px ">
 											<img alt="Logo" src="{% static 'assets/media/avatars/150-26.jpg' %}" />
 										</div>
@@ -1414,72 +1410,6 @@ License: For each use you must have a valid license purchased only from above li
 								</div>
 							</div>
 							<!--end::Row-->			
-							<script>
-								function CreateGameRequest(type) {
-
-									let AI_NAMES = ["AI_Random","AI_Dummy","AI_MinMax"];
-									if (type==='Online')
-									{
-										console.log("Starting a game online.")
-										const requestOptions =
-										{
-											method: 'POST',
-											headers: { 'Content-Type': 'application/json',
-														"X-CSRFToken": '{{ csrf_token }}' },
-											body: JSON.stringify({
-												id: "",
-												creator: "",
-												opponent: "",
-											})
-										};
-										fetch('/DhametCode/create-game', requestOptions).
-											then((response) => response.json()).
-											then((data) => {
-												console.log("Created successfully an Online game who's code is :", data.id)
-												window.location.replace(
-													"http://"+
-													window.location.host
-													+ '/main/game/'
-													+ data.id
-													+'/'
-												)
-											})
-									}
-									else if(AI_NAMES.includes(type))
-									{
-										// document.getElementById("player2_name").innerHTML+= type
-										console.log("Creating a game vs The Random AI");
-										const requestOptions =
-										{
-											method: 'POST',
-											headers: { 'Content-Type': 'application/json',
-														"X-CSRFToken": '{{ csrf_token }}' },
-											body: JSON.stringify({
-												id: "",
-												creator: "",
-												opponent: type,
-											})
-										};
-										console.log("A create game request have been sent with : ",requestOptions);
-										fetch('/DhametCode/create-game', requestOptions).
-											then((response) => response.json()).
-											then((data) => {
-												console.log("Created successfully a game VS AI who's code is :", data.id)
-												window.location.replace(
-													"http://"+
-													window.location.host
-													+ '/main/game/'
-													+ data.id
-													+'/'
-												)
-											})
-									}
-
-								};
-							</script>
-							
-								
-							
 							<!--begin::Row-->			
 									
 <!--end::chat -->
@@ -1492,20 +1422,33 @@ License: For each use you must have a valid license purchased only from above li
 							</div>
 										
 							<div class=" col-xl-6">
-								<div class="card card-xl-stretch mb-xl-8 bg-dark" >
-						
+								<div class="card card-xl-stretch mb-xl-8 " >
+									
+						<style>
+							
+							.zoom div a {
+	-webkit-transform: scale(1);
+	transform: scale(1);
+	-webkit-transition: .2s ease-in-out;
+	transition: .2s ease-in-out;
+}
+.zoom div:hover a {
+	-webkit-transform: scale(1.2);
+	transform: scale(1.2);
+}
+						</style>
 									<!--begin::Row-->
-												<h1  class="p-4 m-0 mb-0 text-white" style="text-align: center;" >Jouer En ligne</h1>
+												<h1  class="p-4 m-0 mb-0 text-dark" style="text-align: center;" >Jouer En ligne</h1>
 												<!--begin::Quick links-->
 												<div class="separator my-5 mb-4"></div>
 										
 												<!--end::Quick links-->
 												
 												<!--begin::Row-->
-										<div class=" p-4 row g-5 g-xl-8 justify-content-center">
+										<div class=" p-4 row g-5 g-xl-8 justify-content-center zoom">
 											<div class="col-xl-4 mw-125px m-2">
 												<!--begin::Statistics Widget 5-->
-												<a href="#" class="card bg-success hoverable mb-xl-8 w-125px" >
+												<a href="#"  class="card bg-success hoverable mb-xl-8 w-125px " >
 													<div class="symbol  symbol-125px ">
 													<div class="symbol-label lh-xxl fs-5 fw-bold text-success"> <i class="bi bi-person-circle text-success m-2"></i>{{ user.username }} </div>
 													<span class="symbol-badge badge badge-circle bg-success start-0 m-3"><i class="bi bi-bookmark-check-fill text-success fs-2x mb-0"></i></span>	
@@ -1536,16 +1479,13 @@ License: For each use you must have a valid license purchased only from above li
 												</a>
 												<!--end::Statistics Widget 5-->
 											</div>
-											
-										</div>
 											<!--begin::Row-->
-										<div class="row g-5 g-xl-8 p-4 justify-content-center ">
 											<div class=" m-2 col-xl-4 mw-125px">
 												<!--begin::Statistics Widget 5-->
 												<a href="#" class="card bg-success hoverable  mb-xl-8 w-125px" >
 													<div class="symbol  symbol-125px ">
-														<div class="symbol-label lh-xxl fs-5 fw-bold text-primary"> <i class="bi bi-person-circle text-primary m-2"></i>{{ user.username }} </div>
-														<span class="symbol-badge badge badge-circle bg-primary start-0 m-3"><i class="bi bi-bookmark-check-fill text-primary fs-2x mb-0"></i></span>
+														<div class="symbol-label lh-xxl fs-5 fw-bold text-success"> <i class="bi bi-person-circle text-success m-2"></i>{{ user.username }} </div>
+														<span class="symbol-badge badge badge-circle bg-success start-0 m-3"><i class="bi bi-bookmark-check-fill text-success fs-2x mb-0"></i></span>
 														</div>
 													<!--begin::Body-->
 													<div style="text-align: center;">	
@@ -1557,13 +1497,13 @@ License: For each use you must have a valid license purchased only from above li
 											</div>
 										</div>	
 											
-										<div class="row g-5 g-xl-8 p-4 justify-content-center ">
+										<div class="row g-5 g-xl-8 p-4 justify-content-center zoom ">
 											<div class="col-xl-4 mw-125px m-2">
 												<!--begin::Statistics Widget 5-->
-												<a href="#" class="card bg-primary hoverable mb-xl-8 w-125px" >
+												<a href="#" class="card bg-success hoverable mb-xl-8 w-125px" >
 													<div class="symbol  symbol-125px ">
-														<div class="symbol-label lh-xxl fs-5 fw-bold text-primary"> <i class="bi bi-person-circle text-primary m-2"></i>{{ user.username }} </div>
-														<span class="symbol-badge badge badge-circle bg-primary start-0 m-3"><i class="bi bi-bookmark-check-fill text-primary fs-2x mb-0"></i></span>	
+														<div class="symbol-label lh-xxl fs-5 fw-bold text-success"> <i class="bi bi-person-circle text-success m-2"></i>{{ user.username }} </div>
+														<span class="symbol-badge badge badge-circle bg-success start-0 m-3"><i class="bi bi-bookmark-check-fill text-success fs-2x mb-0"></i></span>	
 														</div>
 													<!--begin::Body-->
 													<div style="text-align: center;">
@@ -1611,18 +1551,7 @@ License: For each use you must have a valid license purchased only from above li
 												</a>
 												<!--end::Statistics Widget 5-->
 											</div>
-											<div class="col-xl-4 mw-125px m-2">
-												<!--begin::Statistics Widget 5-->
-												<div class="symbol  symbol-125px ">
-													<div class="symbol-label lh-xxl fs-5 fw-bold text-black">	
-													</div>
-													<div style="text-align: center;">	
-														<div class="text-white fw-bolder fs-2 ">Nouveau jeu</div>
-													</div>
-												
-											</div>
 											
-										</div>
 										<!--end::Row-->
 										<script>
 											function CreateGameRequest(type) {
@@ -1698,7 +1627,9 @@ License: For each use you must have a valid license purchased only from above li
 												<!--end::Body-->
 											</div>
 
-						</div></div>
+						
+					</div>
+				</div>
 
 					</div>
 					</div>
@@ -2569,7 +2500,7 @@ License: For each use you must have a valid license purchased only from above li
 							<div class="d-flex align-items-center mb-2">
 								<!--begin::Avatar-->
 								<div class="symbol symbol-35px symbol-circle">
-									<img alt="Pic" src="{% static 'assets/media/avatars/150-15.jpg' %}" />
+									<img alt="Pic" src="assets/media/avatars/150-15.jpg" />
 								</div>
 								<!--end::Avatar-->
 								<!--begin::Details-->
@@ -2601,7 +2532,7 @@ License: For each use you must have a valid license purchased only from above li
 								<!--end::Details-->
 								<!--begin::Avatar-->
 								<div class="symbol symbol-35px symbol-circle">
-									<img alt="Pic" src="{% static 'assets/media/avatars/150-26.jpg' %}" />
+									<img alt="Pic" src="assets/media/avatars/150-26.jpg" />
 								</div>
 								<!--end::Avatar-->
 							</div>
@@ -2621,7 +2552,7 @@ License: For each use you must have a valid license purchased only from above li
 							<div class="d-flex align-items-center mb-2">
 								<!--begin::Avatar-->
 								<div class="symbol symbol-35px symbol-circle">
-									<img alt="Pic" src="{% static 'assets/media/avatars/150-15.jpg' %}" />
+									<img alt="Pic" src="assets/media/avatars/150-15.jpg" />
 								</div>
 								<!--end::Avatar-->
 								<!--begin::Details-->
@@ -2653,7 +2584,7 @@ License: For each use you must have a valid license purchased only from above li
 								<!--end::Details-->
 								<!--begin::Avatar-->
 								<div class="symbol symbol-35px symbol-circle">
-									<img alt="Pic" src="{% static 'assets/media/avatars/150-26.jpg' %}" />
+									<img alt="Pic" src="assets/media/avatars/150-26.jpg" />
 								</div>
 								<!--end::Avatar-->
 							</div>
@@ -2673,7 +2604,7 @@ License: For each use you must have a valid license purchased only from above li
 							<div class="d-flex align-items-center mb-2">
 								<!--begin::Avatar-->
 								<div class="symbol symbol-35px symbol-circle">
-									<img alt="Pic" src="{% static 'assets/media/avatars/150-15.jpg' %}" />
+									<img alt="Pic" src="assets/media/avatars/150-15.jpg" />
 								</div>
 								<!--end::Avatar-->
 								<!--begin::Details-->
@@ -2706,7 +2637,7 @@ License: For each use you must have a valid license purchased only from above li
 								<!--end::Details-->
 								<!--begin::Avatar-->
 								<div class="symbol symbol-35px symbol-circle">
-									<img alt="Pic" src="{% static 'assets/media/avatars/150-26.jpg' %}" />
+									<img alt="Pic" src="assets/media/avatars/150-26.jpg" />
 								</div>
 								<!--end::Avatar-->
 							</div>
@@ -2726,7 +2657,7 @@ License: For each use you must have a valid license purchased only from above li
 							<div class="d-flex align-items-center mb-2">
 								<!--begin::Avatar-->
 								<div class="symbol symbol-35px symbol-circle">
-									<img alt="Pic" src="{% static 'assets/media/avatars/150-15.jpg' %}" />
+									<img alt="Pic" src="assets/media/avatars/150-15.jpg" />
 								</div>
 								<!--end::Avatar-->
 								<!--begin::Details-->
@@ -2758,7 +2689,7 @@ License: For each use you must have a valid license purchased only from above li
 								<!--end::Details-->
 								<!--begin::Avatar-->
 								<div class="symbol symbol-35px symbol-circle">
-									<img alt="Pic" src="{% static 'assets/media/avatars/150-26.jpg' %}" />
+									<img alt="Pic" src="assets/media/avatars/150-26.jpg" />
 								</div>
 								<!--end::Avatar-->
 							</div>
@@ -2778,7 +2709,7 @@ License: For each use you must have a valid license purchased only from above li
 							<div class="d-flex align-items-center mb-2">
 								<!--begin::Avatar-->
 								<div class="symbol symbol-35px symbol-circle">
-									<img alt="Pic" src="{% static 'assets/media/avatars/150-15.jpg' %}" />
+									<img alt="Pic" src="assets/media/avatars/150-15.jpg" />
 								</div>
 								<!--end::Avatar-->
 								<!--begin::Details-->
