@@ -8,7 +8,6 @@
   filter: drop-shadow(3px 3px 3px #222);
   top: 50%;
   left: 50%;
-
   transform: translate(-50%, -50%);
   touch-action: manipulation; /*to disable the double tap zoom on mobile devices*/
 }
@@ -17,6 +16,7 @@
   /* background-image: url('../images/Black_regular.png'); */
   /* background-image: url('../images/BR-1.png'); */
   background-image: url('../images/regular_0_32.png');
+  
   /* background-image: url('../images/regular_0_v2.png'); */
 }
 .White_regular
