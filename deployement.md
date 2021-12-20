@@ -46,6 +46,7 @@ pip3 install django-crispy-forms
 pip install django-filter
 pip install numpy
 pip install termcolor
+pip install --upgrade sentry-sdk
 ```
 ### adding exceptions to the firewall:
 - add 8000 to exception in the firewall:

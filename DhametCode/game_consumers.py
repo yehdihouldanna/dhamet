@@ -100,7 +100,7 @@ class GameConsumer(AsyncWebsocketConsumer):
         )
     # Receive message from game group
     async def move_message(self, event):
-        logger.info("['f': move_message]")
+        # logger.info("['f': move_message]")
         # data = event['data']
         # sender = self.scope["user"].username
         # receiver = self.scope['path'].split('_')[1]
@@ -191,7 +191,7 @@ class GameConsumer(AsyncWebsocketConsumer):
         user = self.scope['user']
         # data = event["data"]
         data = text_data_json
-        logger.info(f"['f': post_move]['user ': {user.username}]['data':{data}]")
+        # logger.info(f"['f': post_move]['user ': {user.username}]['data':{data}]")
         id = data["id"]
         if user.is_authenticated:
             user = User.objects.filter(username = user.username)[0]

@@ -131,20 +131,20 @@ class MinMax(Agent):
         if best_move is None:
             cprint(f"ALERT: {self.name} couldn't return a move!")
         return best_move
-    
+
     # this is the strategy of the agent
     def minmax(self,state,score,cur_depth,target_depth,maxi_turn):
         if maxi_turn: # agent turn to maximize
-            if self.player : 
+            if self.player :
                 pieces = np.argwhere(state.board<=-1)
             else :
                 pieces = np.argwhere(state.board>=1)
         else: # agent adversary turn to minimize
-            if not self.player : 
+            if not self.player :
                 pieces = np.argwhere(state.board<=-1)
             else :
                 pieces = np.argwhere(state.board>=1)
-            
+
         if cur_depth==target_depth: # base scenario for recursivity
             best_move = None
             best_score = None
@@ -157,8 +157,10 @@ class MinMax(Agent):
                     if  best_score is None or new_score > best_score:
                         best_score = new_score
                         best_move = new_move
-                    
-            if maxi_turn:
+
+            if best_move is None:
+                return "",score
+            elif maxi_turn:
                 return best_move, score + best_score
             else:
                 return best_move, score - best_score
@@ -166,6 +168,7 @@ class MinMax(Agent):
         else: # recursive call scenario
             temp_board = np.copy(state.board)
             player = state.player
+            last_player = state.last_player
             best_move = None
             best_score = None
             for i in range(pieces.shape[0]):
@@ -199,9 +202,10 @@ class MinMax(Agent):
 
                     state.set_board(temp_board)
                     state.set_player(player)
+                    state.set_last_player(last_player)
             return best_move,best_score
-            
-            
+
+
 
 
 
