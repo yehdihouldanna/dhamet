@@ -18,6 +18,7 @@ from datetime import datetime
 logger = logging.getLogger('root')
 # This is a functional chat conumer could be used later to add a chat functionality.
 class ChatConsumer(AsyncWebsocketConsumer):
+
     async def connect(self):
         self.room_name = self.scope['url_route']['kwargs']['room_name']
         self.user = self.scope['user']
@@ -57,7 +58,13 @@ class ChatConsumer(AsyncWebsocketConsumer):
             'message': message
         }))
 
+
+AI_NAMES = set(["AI_Random","AI_Dummy","AI_MinMax"])
+BOT_NAMES= ["Med10","Mariem","Sidi","احمد","Khadijetou","Cheikh","Vatimetou","ابراهيم",
+            "Mamadou","Oumar","Amadou","3abdellahi","Va6me","Moussa","Aly","Samba"]
+
 class GameConsumer(AsyncWebsocketConsumer):
+    # TODO : Migrate the code to the model file (to follow the norm : FAT models skinny views)
     def __init__(self):
         super().__init__()
     async def connect(self):
@@ -117,6 +124,12 @@ class GameConsumer(AsyncWebsocketConsumer):
                 opponent_score = game.opponent.score
             except:
                 pass
+            tier = 0
+            try:
+                if game.opponent.is_fake:
+                    tier = game.opponent.tier
+            except:
+                pass
             output_data  = json.dumps({
                         'id':id,
                         'state': game.state,
@@ -128,6 +141,7 @@ class GameConsumer(AsyncWebsocketConsumer):
                         'opponent_score' : opponent_score,
                         'winner' : winner,
                         'winner_score' : winner_score,
+                        'tier' : tier,
                         })
         else:
             moved = game_instance.move_from_str(move)
@@ -153,6 +167,10 @@ class GameConsumer(AsyncWebsocketConsumer):
                 winner_score = game.winner.score
             except:
                 pass
+            if game.opponent.is_fake:
+                tier = game.opponent.tier
+            else:
+                tier=0
             output_data  = json.dumps({
                         'id':id,
                         'state': game.state,
@@ -161,6 +179,7 @@ class GameConsumer(AsyncWebsocketConsumer):
                         'creator' : game.creator.username,
                         'opponent' : game.opponent.username,
                         'opponent_score' : game.opponent.score,
+                        'tier' : tier,
                         'winner' : winner,
                         'winner_score' : winner_score,
                         'winner' : winner
@@ -188,15 +207,13 @@ class GameConsumer(AsyncWebsocketConsumer):
                 except:
                     pass
                 move = data['last_move']
-                logger.info(f"['f': post_move]['move': {move}]")
+                # logger.info(f"['f': post_move]['move': {move}]")
                 game = queryset[0]
                 current_turn = game.current_turn
                 length = game.length
                 board = game.state
                 game_instance = State(n=9,board=board,player = current_turn, length=length)
-                AI_NAMES = set(["AI_Random","AI_Dummy","AI_MinMax"])
-                BOT_NAMES= ["Med10","Mariem","Sidi","احمد","Khadijetou","Cheikh","Vatimetou","ابراهيم",
-                      "Mamadou","Oumar","Amadou","3abdellahi","Va6me","Moussa","Aly","Samba"]
+
                 if ((game.creator==user and current_turn==0) or (game.opponent == user and current_turn)): # * user is playing
                     return self.update_game(id,user,game,game_instance,move)
                 elif ((game.opponent.username in AI_NAMES and current_turn) or (game.creator.username in AI_NAMES and current_turn==0)): # * the AI is playing
@@ -208,7 +225,7 @@ class GameConsumer(AsyncWebsocketConsumer):
                     user_ = game.creator if game.creator.username in AI_NAMES else game.opponent
                     return self.update_game(id,user_,game,game_instance,move)
 
-                elif (tier and current_turn==1):
+                elif (tier and current_turn==1 ):
                     if tier ==1:
                         Agent = Random("",current_turn)
                     elif tier==2:
@@ -216,7 +233,7 @@ class GameConsumer(AsyncWebsocketConsumer):
                     elif tier ==3: # can be used for ML agent
                         Agent = MinMax("",current_turn,depth=2)
                     else: # just in order to prevent erros
-                        Agent = MinMax("_________",current_turn,depth=2)
+                        Agent = MinMax("________",current_turn,depth=2)
                     move = Agent.move(game_instance)
                     logger.debug(f"['f': post_move]['AI_move': {move}]")
                     user_ = game.creator if game.creator.username in BOT_NAMES else game.opponent

@@ -47,7 +47,7 @@ const CellTarget = {
     //             "Mouse : (",Mouse.x,",",Mouse.y,")",
     //             "HoverRadius : ",Allowed_radius
     //             );
-    
+
     // Only perform the move when the mouse is in the inner allowed area of the hover elsewise just exit function by return
     // Dragging downwards
     if (Mouse.y<hoverBoundingRect.top || Mouse.y>hoverBoundingRect.bottom) {
@@ -73,18 +73,18 @@ const CellTarget = {
     if (monitor.didDrop()) {
       // If you want, you can check whether some nested
       // target already handled drop
-      return 
+      return
       // return props.onMove([item.i,item.j],[props.i,props.j]);
     }
     // Obtain the dragged item
     const item = monitor.getItem()
     // You can do something with it
     // ChessActions.movePiece(item.fromPosition, props.position)
-    
+
     // You can also do nothing and return a drop result,
     // which will be available as monitor.getDropResult()
     // in the drag source's endDrag() method
-    
+
     // console.log("we are about to call onMove method with the params , ",item,[props.i,props.j]);
 
     // return props.onMove([item.i,item.j],[props.i,props.j]);
@@ -132,7 +132,7 @@ class Cell extends Component {
   //   console.log(this.props);
   //   this.props.onStartMove(piece_key);
   // }
-  
+
   render() {
     // console.log("the props of the cell are : ", this.props);
     // Your component receives its own props as usual
@@ -140,28 +140,28 @@ class Cell extends Component {
     // These props are injected by React DnD,
     // as defined by your `collect` function above:
     const { isOver, canDrop, connectDropTarget ,item } = this.props
-    
+
     if(this.props.value===0)
-        { 
+        {
             return connectDropTarget(
                 <div className={"cell opacity-active-75" + this.props.ex_css_class +(this.props.toggle ? " cell_active" : "")}  onClick = {(e)=>
                   {
-                    this.props.onClick(e,this.props.i.toString()+this.props.j.toString(),0); 
+                    this.props.onClick(e,this.props.i.toString()+this.props.j.toString(),0);
                   }
-                    }> 
+                    }>
                   {this.props.i.toString()+this.props.j.toString()}
                     {/* {isOver && <div>Drop Here!</div>} */}
                 </div>
             );
         }
         else
-        {   
+        {
             return connectDropTarget(
                 <div className={"cell opacity-active-75"+ this.props.ex_css_class +(this.props.toggle ? " cell_active" : "")} >
                     {this.props.i.toString()+this.props.j.toString()}
-                    <Piece 
+                    <Piece
                         key ={this.props.key}
-                        type={Math.abs(this.props.value)===1 ? "regular" : "dhaimat"} 
+                        type={Math.abs(this.props.value)===1 ? "regular" : "dhaimat"}
                         color={this.props.value<0 ? "Black":"White"}
                         i={this.props.i}
                         j={this.props.j}

@@ -63,7 +63,6 @@ class Board extends Component {
     // Binding request handlers :
     this.CreateGameRequest = this.CreateGameRequest.bind(this);
     this.CreateFakeOpponent = this.CreateFakeOpponent.bind(this);
-    this.MoveRequest = this.MoveRequest.bind(this);
     this.MoveRequest_ws = this.MoveRequest_ws.bind(this);
     this.getUserNameRequest = this.getUserNameRequest.bind(this);
     // Binding extra util methods
@@ -73,9 +72,9 @@ class Board extends Component {
     this.update_moves_time_line = this.update_moves_time_line.bind(this);
     this.add_one_history_item = this.add_one_history_item.bind(this);
   };
-  //------------------------------------------
-  //Utils Methods :
-  //------------------------------------------
+  //?------------------------------------------
+  //* Utils Methods :
+  //?------------------------------------------
   serialize() {
     let str = ""
     for (let i = 0; i < 9; i++) {
@@ -114,9 +113,9 @@ class Board extends Component {
     }
     this.setState(game_state)
   };
-  //-------------------------------------------------
-  // "Click Vs DoubleClick"  Handling :
-  //---------------------------------------------------------------------------------------
+  //?-------------------------------------------------
+  // * "Click Vs DoubleClick"  Handling :
+  //?-------------------------------------------------
   doClickAction(key,piece_present) {
     if (this.state.move === "" && piece_present) { this.state.move = key;}
     else if (this.state.move.length>=2) // switching the selected piece
@@ -173,9 +172,9 @@ class Board extends Component {
       this.doClickAction(key,piece_present);
     }
   };
-  //-------------------------------------------------
-  // Main Handler methods :
-  //-------------------------------------------------
+  //?-------------------------------------------------
+  // * Main Handler methods :
+  //?-------------------------------------------------
   handleStartMove(piece_key) {
     this.state.move = piece_key;
     console.log(this.state.move)
@@ -185,65 +184,24 @@ class Board extends Component {
     // console.log("handleHover got called the move now is : ",this.state.move);
   }
   handleMove() {
-    if (this.state.move.length) {
-      if(this.state.AI)
-      {
-        console.log("We are calling the view for AI.")
-        this.MoveRequest(this.state.move);
-      }
-      else
-      {
-        console.log("We are calling websocket")
-        this.MoveRequest_ws(this.state.move);
-      }
-    }
-  };
-  //-----------------------------------------------------------------------
-  // Handling Request and getting the reponses from the back end methods :
-  //-----------------------------------------------------------------------
-  MoveRequest(move_str) {
-    /*This function communicate with the makeGameMove view in the
-      back end to update the board appopriatly after a move it is used
-      in games vs AI only as it doesnt require a websocket to play vs AI.
-      */
-
-      if (move_str.length >= 5) {
-      console.log("Trying the move : ", move_str);
-      const requestOptions =
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json',
-                    "X-CSRFToken": '{{ csrf_token }}' },
-        body: JSON.stringify({
-          'id': this.state.Code,
-          'state': this.state.board_txt,
-          'last_move': move_str,
-          'current_turn': this.state.player,
-          'winner':"",
-        })
-      };
-      fetch('/DhametCode/move', requestOptions).
-        then((response) => response.json()).
-        then((data) => {
-          if (typeof data["Bad Request"] != "undefined") {
-            console.log("Invalid Move : Ignored!");
-            this.state.move = "";
-          }
-          else // to solve the problem of the fetch getting called twice.
+      if (this.state.move.length) {
+          if(this.state.AI)
           {
-            console.log(data);
-            let game_state = this.state;
-            game_state.player = game_state.player === 0 ? 1 : 0;
-            console.log("The player now is : ", game_state.player);
-            game_state.board_txt = data.state;
-            this.setState(game_state);
-            this.deserialize(data.state);
-            this.state.move = "";
-          }
+            //   console.log("We are calling the view for AI.")
+              this.MoveRequest(this.state.move);
+            }
+            else
+            {
+                // console.log("We are calling websocket")
+                this.MoveRequest_ws(this.state.move);
+            }
         }
-        );
-    }
+        console.log("🚀 ~ file: Board.js ~ line 188 ~ Board ~ handleMove")
   };
+  //?-----------------------------------------------------------------------
+  // * Handling Request and getting the reponses from the back end methods :
+  //?-----------------------------------------------------------------------
+
   MoveRequest_ws(move_str) {
     console.log("🚀 ~ file: Board.js ~ line 248 ~ Board ~ MoveRequest_ws")
     // * This function communicate with the GameMoveConsumer in the backend
@@ -275,7 +233,7 @@ class Board extends Component {
             {CallFakeOpponent(me);}
         else
             { console.log("🚀 ~ file: Board.js ~ line 279 ~ Board ~ thisTimeout ~ Opponent does exist no need for fake")}
-    }, 10000);
+    }, 30000);
 
     function CallFakeOpponent(me) {
         clearTimeout(thisTimeout);
@@ -291,6 +249,7 @@ class Board extends Component {
                 'creator':me.state.creator,
                 'opponent':me.BOT_NAMES[idx],
                 'allow_fake':true,
+                'tier': me.Tiers[idx],
             })
         };
         fetch('/DhametCode/create-game', requestOptions).
@@ -299,9 +258,24 @@ class Board extends Component {
                 if (typeof data["Bad Request"] !="undefined")
                 {}
                 else {
+
                     console.log("🚀 ~ file: Board.js ~ line 295 ~ Board ~ then ~ data", data)
                     me.state.opponent = data.opponent;
                     me.state.tier = me.Tiers[idx];
+                    me.props.client.send(
+                        JSON.stringify({
+                          'id': me.state.Code,
+                          'state': me.state.board_txt,
+                          'last_move': me.state.move,
+                          'current_turn': me.state.player,
+                          'creator': me.state.creator,
+                          'creator_score': "",
+                          'opponent' : me.state.opponent,
+                          'opponent_score': "",
+                          'winner': me.state.winner,
+                          'winner_score': "",
+                          'tier': me.state.tier,
+                        }));
                 }
             });
         }
@@ -358,7 +332,9 @@ class Board extends Component {
             }
         });
   }
-  // Component's Native methods :
+  //?---------------------------------------------------------
+  // * Component's Native methods :
+  //?---------------------------------------------------------
   componentWillMount() {
         this.getUserNameRequest();
         this.CreateFakeOpponent();
@@ -376,6 +352,7 @@ class Board extends Component {
               'opponent_score': "",
               'winner': this.state.winner,
               'winner_score': "",
+              'tier': "",
             }));
         };
         let me = this;
@@ -418,6 +395,7 @@ class Board extends Component {
                 {
                     me.state.opponent = data.opponent;
                     me.state.creator  = data.creator;
+                    me.state.tier = data.tier===0? null : data.tier;
                     console.log("🚀 ~ file: Board.js ~ line 425 ~ Board ~ componentWillMount ~ state", me.state)
                   if (data.opponent === me.state.username)
                   {
@@ -493,9 +471,9 @@ class Board extends Component {
         };
 
     }
-  //----------------------------------------
-  // Web Page modifiers :
-  //----------------------------------------
+  //?----------------------------------------
+  // * Web Page modifiers :
+  //?----------------------------------------
   add_one_history_item(content,color)
   {
     console.log("Adding a history item")
@@ -531,9 +509,9 @@ class Board extends Component {
     this.add_one_history_item(this.state.move_history_render[0],"dark");
     this.add_one_history_item(this.state.move_history_render[1],"secondary");
   }
-  // --------------------------------------
-  // Rendering React native method :
-  //---------------------------------------
+  //?--------------------------------------
+  // *Rendering React native method :
+  //?--------------------------------------
   render() {
     let Cells = [];
     let { board } = this.state;

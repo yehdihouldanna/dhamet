@@ -60,9 +60,9 @@ class CreateGameView(generics.ListAPIView):
 
         elif request.data['allow_fake'] == True and request.data['opponent'] in BOT_NAMES : # Online  Vs Fake Opponent
             try:
-                bot = User.objects.filter(username = request.data['opponent'], is_fake=True)[0]
+                bot = User.objects.filter(username = request.data['opponent'], is_fake=True )[0]
             except:
-                bot = User(username = request.data['opponent'] ,name = request.data['opponent'], phone=000 , is_fake=True)
+                bot = User(username = request.data['opponent'] ,name = request.data['opponent'], phone=000 , is_fake=True , tier = request.data['tier'])
                 bot.save()
             queryset_ = Game.get_available_games(user = user)
             if len(queryset_): # if game
