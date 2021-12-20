@@ -188,7 +188,7 @@ class Board extends Component {
           if(this.state.AI)
           {
             //   console.log("We are calling the view for AI.")
-              this.MoveRequest(this.state.move);
+              this.MoveRequest_ws(this.state.move);
             }
             else
             {
