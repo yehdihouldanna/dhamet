@@ -342,7 +342,7 @@ License: For each use you must have a valid license purchased only from above li
 											<div class="menu-sub menu-sub-lg-down-accordion menu-sub-lg-dropdown menu-rounded-0 py-lg-4 w-lg-225px">
 												<div class="menu-item">
 													<a class="menu-link py-3"
-														href="documentation/getting-started_Ar.html"
+														href="../../../main/documentation/getting-started_Ar.html"
 														title="Check out the complete documentation"
 														data-bs-toggle="tooltip" data-bs-trigger="hover"
 														data-bs-dismiss="click" data-bs-placement="right">
@@ -354,7 +354,7 @@ License: For each use you must have a valid license purchased only from above li
 												</div>
 												<div class="menu-item">
 													<a class="menu-link py-3"
-														href="documentation/getting-started_Fr.html"
+														href="../../../main/documentation/getting-started_Fr.html"
 														title="Check out the complete documentation"
 														data-bs-toggle="tooltip" data-bs-trigger="hover"
 														data-bs-dismiss="click" data-bs-placement="right">
@@ -1291,7 +1291,7 @@ License: For each use you must have a valid license purchased only from above li
 					
 						<div class="row g-5 g-xl-7">
 							
-							<div class="col-xl-6 ">
+							<div class="col-xl-7 ">
 								
 								<!--begin::List Widget 4-->
 						<div class="card card-xl-stretch mb-xl-8 " >
@@ -1307,7 +1307,7 @@ License: For each use you must have a valid license purchased only from above li
 							<div class=" p-4 row g-5 g-xl-8 justify-content-center zoom ">
 								<div class="col-xl-4 mw-125px m-2">
 									<!--begin::Statistics Widget 5-->
-									<a href="#"  onclick="CreateGameRequest('AI_Random')" class="card bg-primary hoverable mb-xl-8 w-125px" >
+									<a  onclick="CreateGameRequest('AI_Random')" class="card bg-primary hoverable mb-xl-8 w-125px" >
 										<div class="symbol symbol-125px ">
 											<img alt="Logo" src="{% static 'assets/media/logos/vieux.jpg' %}" />
 										</div>
@@ -1326,7 +1326,7 @@ License: For each use you must have a valid license purchased only from above li
 								
 								<div class="col-xl-4 mw-125px m-2">
 									<!--begin::Statistics Widget 5-->
-									<a href ="#" onclick="CreateGameRequest('AI_Dummy')" class="card bg-primary hoverable  mb-xl-8 w-125px">
+									<a  onclick="CreateGameRequest('AI_Dummy')" class="card bg-primary hoverable  mb-xl-8 w-125px">
 										<div class="symbol symbol-125px ">
 											<img alt="Logo" src="{% static 'assets/media/logos/femme.jpg' %}" />
 										</div>
@@ -1343,7 +1343,7 @@ License: For each use you must have a valid license purchased only from above li
 						
 								<div class=" m-2 col-xl-4 mw-125px">
 									<!--begin::Statistics Widget 5-->
-									<a href="#"  onclick="CreateGameRequest('AI_MinMax')" class="card bg-primary hoverable  mb-xl-8 w-125px" >
+									<a onclick="CreateGameRequest('AI_MinMax')" class="card bg-primary hoverable  mb-xl-8 w-125px" >
 										<div class="symbol symbol-125px ">
 											<img alt="Logo" src="{% static 'assets/media/logos/vieux4.jpg' %}" />
 										</div>
@@ -1356,13 +1356,14 @@ License: For each use you must have a valid license purchased only from above li
 									</a>
 									<!--end::Statistics Widget 5-->
 								</div>
+								
 								</div>
 								
 								
-								<div class="row g-5 g-xl-8 p-4 justify-content-center zoom">
+								<div class="row g-5 g-xl-8 p-0 justify-content-center zoom">
 									<div class="col-xl-4 mw-125px m-2">
 										<!--begin::Statistics Widget 5-->
-										<a href="#"  onclick="CreateGameRequest('AI_MinMax')" class="card bg-primary hoverable mb-xl-8 w-125px" >
+										<a onclick="CreateGameRequest('AI_MinMax')" class="card bg-primary hoverable mb-xl-8 w-125px" >
 											<div class="symbol symbol-125px ">
 												<img alt="Logo" src="{% static 'assets/media/logos/vieux2.jpg' %}" />
 											</div>
@@ -1378,7 +1379,7 @@ License: For each use you must have a valid license purchased only from above li
 									</div>
 									<div class="col-xl-4 mw-125px m-2">
 										<!--begin::Statistics Widget 5-->
-										<a href="#" onclick="CreateGameRequest('AI_MinMax')" class="card bg-primary hoverable  mb-xl-8 w-125px" >
+										<a onclick="CreateGameRequest('AI_MinMax')" class="card bg-primary hoverable  mb-xl-8 w-125px" >
 											<div class="symbol symbol-125px">
 												<img alt="Logo" src="{% static 'assets/media/logos/elkazaz.jpg' %}" />
 											</div>
@@ -1394,7 +1395,7 @@ License: For each use you must have a valid license purchased only from above li
 									</div>
 								<div class="col-xl-4 mw-125px m-2">
 									<!--begin::Statistics Widget 5-->
-									<a href="#"  onclick="CreateGameRequest('AI_MinMax')" class="card bg-primary hoverable mb-xl-8 w-125px" >
+									<a onclick="CreateGameRequest('AI_MinMax')" class="card bg-primary hoverable mb-xl-8 w-125px" >
 										<div class="symbol symbol-125px ">
 											<img alt="Logo" src="{% static 'assets/media/logos/bouamama.jpg' %}" />
 										</div>
@@ -1408,9 +1409,23 @@ License: For each use you must have a valid license purchased only from above li
 									</a>
 									<!--end::Statistics Widget 5-->
 								</div>
+								
+								
 							</div>
 							<!--end::Row-->			
-							<!--begin::Row-->			
+							<!--begin::Row-->
+							<div class="row g-5 g-xl-8 mb-4 p-0 justify-content-center zoom">
+									<!--begin::Statistics Widget 5-->
+									<button type = "button" id="startbutton"
+											class="btn btn-success w-225px  btn-hover-scale me-5 m-8" type="button"
+											onclick="CreateGameRequest('Online')" style="text-align: center;">Jouer en ligne</button>
+									<!--end::Statistics Widget 5-->
+								
+								
+							
+						</div>	
+								
+													
 									
 <!--end::chat -->
 
@@ -1421,7 +1436,7 @@ License: For each use you must have a valid license purchased only from above li
 								<!--end::List Widget 4-->
 							</div>
 										
-							<div class=" col-xl-6">
+							<div class=" col-xl-4">
 								<div class="card card-xl-stretch mb-xl-8 " >
 									
 						<style>
@@ -1438,121 +1453,82 @@ License: For each use you must have a valid license purchased only from above li
 }
 						</style>
 									<!--begin::Row-->
+									<!--  
 												<h1  class="p-4 m-0 mb-0 text-dark" style="text-align: center;" >Jouer En ligne</h1>
-												<!--begin::Quick links-->
+												
 												<div class="separator my-5 mb-4"></div>
 										
-												<!--end::Quick links-->
-												
-												<!--begin::Row-->
 										<div class=" p-4 row g-5 g-xl-8 justify-content-center zoom">
 											<div class="col-xl-4 mw-125px m-2">
-												<!--begin::Statistics Widget 5-->
-												<a href="#"  class="card bg-success hoverable mb-xl-8 w-125px " >
+												<a class="card bg-success hoverable mb-xl-8 w-125px " >
 													<div class="symbol  symbol-125px ">
 													<div class="symbol-label lh-xxl fs-5 fw-bold text-success"> <i class="bi bi-person-circle text-success m-2"></i>{{ user.username }} </div>
 													<span class="symbol-badge badge badge-circle bg-success start-0 m-3"><i class="bi bi-bookmark-check-fill text-success fs-2x mb-0"></i></span>	
 													</div>
-													<!--begin::Body-->
 													<div style="text-align: center;">			
 													<div class="text-white fw-bolder fs-2 p-0 "> game 101</div>
 												
 														
 													</div>
-													<!--end::Body-->
 												</a>
-												<!--end::Statistics Widget 5-->
 											</div>
 											<div class="col-xl-4 mw-125px m-2">
-												<!--begin::Statistics Widget 5-->
-												<a href="#" class="card bg-success hoverable  mb-xl-8 w-125px">
+												<a  class="card bg-success hoverable  mb-xl-8 w-125px">
 													<div class="symbol  symbol-125px ">
 														<div class="symbol-label lh-xxl fs-5 fw-bold text-success"> <i class="bi bi-person-circle text-success m-2"></i>{{ user.username }} </div>
 														<span class="symbol-badge badge badge-circle bg-success start-0 m-3"><i class="bi bi-bookmark-check-fill text-success fs-2x mb-0"></i></span>	
 														</div>
-													<!--begin::Body-->
-													<div style="text-align: center;">	
-														<!--end::Svg Icon-->
+													<div style="text-align: center;">
 														<div class="text-white fw-bolder fs-2 "> game 102</div>
 													</div>
-													<!--end::Body-->
 												</a>
-												<!--end::Statistics Widget 5-->
 											</div>
-											<!--begin::Row-->
 											<div class=" m-2 col-xl-4 mw-125px">
-												<!--begin::Statistics Widget 5-->
-												<a href="#" class="card bg-success hoverable  mb-xl-8 w-125px" >
+												<a class="card bg-success hoverable  mb-xl-8 w-125px" >
 													<div class="symbol  symbol-125px ">
 														<div class="symbol-label lh-xxl fs-5 fw-bold text-success"> <i class="bi bi-person-circle text-success m-2"></i>{{ user.username }} </div>
 														<span class="symbol-badge badge badge-circle bg-success start-0 m-3"><i class="bi bi-bookmark-check-fill text-success fs-2x mb-0"></i></span>
 														</div>
-													<!--begin::Body-->
 													<div style="text-align: center;">	
 														<div class="text-white fw-bolder fs-2 ">game 103</div>
 													</div>
-													<!--end::Body-->
 												</a>
-												<!--end::Statistics Widget 5-->
 											</div>
 										</div>	
 											
 										<div class="row g-5 g-xl-8 p-4 justify-content-center zoom ">
 											<div class="col-xl-4 mw-125px m-2">
-												<!--begin::Statistics Widget 5-->
-												<a href="#" class="card bg-success hoverable mb-xl-8 w-125px" >
+												<a class="card bg-success hoverable mb-xl-8 w-125px" >
 													<div class="symbol  symbol-125px ">
 														<div class="symbol-label lh-xxl fs-5 fw-bold text-success"> <i class="bi bi-person-circle text-success m-2"></i>{{ user.username }} </div>
 														<span class="symbol-badge badge badge-circle bg-success start-0 m-3"><i class="bi bi-bookmark-check-fill text-success fs-2x mb-0"></i></span>	
 														</div>
-													<!--begin::Body-->
 													<div style="text-align: center;">
-															
-														<!--end::Svg Icon-->
 														<div class="text-white fw-bolder fs-2 ">game 104</div>
 													</div>
-													<!--end::Body-->
 												</a>
-												<!--end::Statistics Widget 5-->
 											</div>
 											<div class="col-xl-4 mw-125px m-2">
-												<!--begin::Statistics Widget 5-->
-												<a href="#" class="card bg-success hoverable mb-xl-8 w-125px" >
+												<a class="card bg-success hoverable mb-xl-8 w-125px" >
 													<div class="symbol  symbol-125px ">
 														<div class="symbol-label lh-xxl fs-5 fw-bold text-success"> <i class="bi bi-person-circle text-success m-2"></i>{{ user.username }} </div>
 														<span class="symbol-badge badge badge-circle bg-success start-0 m-3"><i class="bi bi-bookmark-check-fill text-success fs-2x mb-0"></i></span>	
 														</div>
-													<!--begin::Body-->
 													<div style="text-align: center;">	
 														<div class="text-white fw-bolder fs-2 ">game 105</div>
 													</div>
-													<!--end::Body-->
 												</a>
-												<!--end::Statistics Widget 5-->
 											</div>
 											<div class="col-xl-4 mw-125px m-2">
-												<!--begin::Statistics Widget 5-->
-												<a href="#" class="card bg-success hoverable mb-xl-8 w-125px" >
-													<div class="symbol  symbol-125px bg-succes justify-content-center ">
-													<div class="p-9 "></div> 
-														<button  onclick="CreateGameRequest('Online')" class="btn btn-success " type="button">
-															<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" class="bi bi-plus-square-fill" viewBox="0 0 16 16">
-																<path d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2zm6.5 4.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3a.5.5 0 0 1 1 0z"/>
-															  </svg> <span class="justify-content-center"> Créer Un Jeu</span> 
-															</button> 
-															
-														
-													</div>
-													<!--begin::Body-->
+												<a  onclick="CreateGameRequest('Online')"  class="card bg-success hoverable mb-xl-8 w-125px" >
+													<div class="symbol  symbol-125px ">
+														<div class="symbol-label lh-xxl fs-5 fw-bold text-white bg-success "><i class="bi bi-plus-circle text-white m-2"></i>Creer un jeu </div>
+														</div>
 													<div style="text-align: center;">	
-														<div class="text-success fw-bolder fs-2 "> Nouveau jeu</div>
+														<div class="text-success fw-bolder fs-2 ">Nouveau jeu</div>
 													</div>
-													<!--end::Body-->
 												</a>
-												<!--end::Statistics Widget 5-->
-											</div>
-											
-										<!--end::Row-->
+											</div>-->
 										<script>
 											function CreateGameRequest(type) {
 			
