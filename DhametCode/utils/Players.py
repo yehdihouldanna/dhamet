@@ -111,8 +111,6 @@ class Dummy(Agent):
             move  = max(dict_, key=dict_.get)
         return move
 
-
-
 class MinMax(Agent):
     """
     This is a dummy agent it choses the best move available to it in it's turn
@@ -127,7 +125,7 @@ class MinMax(Agent):
         score = 0
         cur_depth = 1
         maxi_turn = 1
-        best_move,best_score = self.minmax(state,score,cur_depth,self.depth,maxi_turn)
+        best_move,_ = self.minmax(state,score,cur_depth,self.depth,maxi_turn)
         if best_move is None:
             cprint(f"ALERT: {self.name} couldn't return a move!")
         return best_move
@@ -135,16 +133,9 @@ class MinMax(Agent):
     # this is the strategy of the agent
     def minmax(self,state,score,cur_depth,target_depth,maxi_turn):
         if maxi_turn: # agent turn to maximize
-            if self.player :
-                pieces = np.argwhere(state.board<=-1)
-            else :
-                pieces = np.argwhere(state.board>=1)
+            pieces = np.argwhere(state.board<=-1) if self.player else np.argwhere(state.board>=1)
         else: # agent adversary turn to minimize
-            if not self.player :
-                pieces = np.argwhere(state.board<=-1)
-            else :
-                pieces = np.argwhere(state.board>=1)
-
+            pieces = np.argwhere(state.board<=-1) if not self.player else np.argwhere(state.board>=1)
         if cur_depth==target_depth: # base scenario for recursivity
             best_move = None
             best_score = None
@@ -178,10 +169,7 @@ class MinMax(Agent):
                 if len(chains):
                     new_move = max(chains, key=chains.get)
                     new_score = chains[new_move]
-                    if maxi_turn:
-                        score_ = score + new_score
-                    else:
-                        score_ = score - new_score
+                    score_ = (score + new_score) if maxi_turn else (score - new_score)
                     moved = state.move_from_str(new_move)
                     ended,_ = state.check_end_condition()
                     if not moved:
@@ -204,8 +192,3 @@ class MinMax(Agent):
                     state.set_player(player)
                     state.set_last_player(last_player)
             return best_move,best_score
-
-
-
-
-

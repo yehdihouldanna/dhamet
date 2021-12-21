@@ -38,15 +38,15 @@ class State():
         if board is None:
             self.board = np.zeros((n,n),dtype=int)
             middle = n//2
-            self.board[:middle,:]=1 # first full row
-            self.board[middle,:middle]=-1
-            self.board[middle,middle]=0
+            self.board[:middle,:]=1 # first full rows
+            self.board[middle,:middle]=-1 # left side of the middle row
+            self.board[middle,middle]=0  # the central cell
             self.board[middle,middle+1:]=1
             self.board[middle+1:]=-1
         elif type(board)==str:
             self.board = self.deserialize(board)
         else:
-            self.board = np.copy(board)
+            self.board = np.copy(board) # we need a deep copy here in order to avoid some problems
 
 
     def check_end_condition(self):
@@ -128,8 +128,7 @@ class State():
             score = possible_moves[destination]
         except :
             pass
-        if destination not in possible_moves.keys(): #
-            # self.last_player = not self.player
+        if destination not in possible_moves.keys():
             # print("Move is invalid !, Try again")
             return False
         elif (self.last_player==self.player and self.last_move_nature==0):
@@ -184,8 +183,6 @@ class State():
                 break
         return moved
 
-
-
     def get_chain_moves(self,x,y):
         # TODO : optimize this function to return only the optimal chained move and reduce the overhead
         """This function returns all possible moves including the chained ones.
@@ -221,17 +218,13 @@ class State():
                     move = move_str + " " +str(x_)+str(y_)
                     chains[move] = 0
 
-
     def available_moves(self,x,y):
         """
         This function return all the available moves of the given piece, (one step only doesn't return chained moves).
         params : x,y : piece coordinates on the board
-        returns : possible moves - list containing tuples of coordinates of possible moves
-                  scores  - list the scores of the moves (aka the number of pieces that move killed)
+        returns : possible moves - dict containing tuples of coordinates of possible moves with their respective scores
         """
-
         possible_moves = {}
-        # we have two type of nodes : '+' (Plus) and '*' (Star)
         vectors_up_star = [(1,-1),(1,0),(1,1)]
         vectors_down_star = [(-1,-1),(-1,0),(-1,1)]
         vectors_up_plus = [(1,0)]
@@ -412,7 +405,7 @@ class State():
         self.board = np.copy(board)
 
     def set_player(self,player):
-        """this method sets the player manually , used for unit testing."""
+        """this method sets the player manually"""
         if (type(player)==int and player==1) or (type(player)==str and player.lower() in ["b","black"]):
                 self.player = 1
         elif (type(player)==int and player==0) or (type(player)==str and player.lower() in ["w" , "white"]):
@@ -479,8 +472,6 @@ if __name__=="__main__":
     match = Play_Game(Player1,Player2,n=9,file_name=file_name,console=True)
     while(not match.game_ended):
         match.turn()
-
-
 
     if save_to_file:
         with open(os.path.join(os.getcwd(),"logs","labels.txt"),mode="a") as f:
