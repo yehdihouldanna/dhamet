@@ -29,7 +29,6 @@ def sign_in(request):
 def sign_up(request):
     return render(request,"authentication/layouts/basic/sign-up.html")
 
-
 def docs_Fr(request):
     return render(request,"documentation/getting-started_Fr.html")
 
@@ -49,8 +48,16 @@ def Intro_Ar(request):
 def Intro_Fr(request):
     return render(request,"documentation/getting-started/build/gulp_Fr.html")
 
-def jouer_f(request):
-     return render(request,"jeu.html")
+def profile(request):
+    return render(request,"account/overview.html")
+def mod_profile(request):
+    return render(request,"account/settings.html")
+
+def chat_pr(request):
+    return render(request,"apps/chat/private.html")
+def chat_gr(request):
+    return render(request,"apps/chat/group.html")
+
 
 
 
