@@ -29,7 +29,6 @@ class State():
         self.dhaimat_value = 3
         self.winner = None  # -1 for black , 0 for draw and 1 for white
 
-        self.current_moves = {}
         self.souffle = souffle  # سوفلة
         self.can_souffle = True
         self.soufflables = []
@@ -146,7 +145,7 @@ class State():
             # print("Move is invalid !, Try again")
             return False
         else:
-            self.current_moves = possible_moves
+            max_score = max(possible_moves.values())
             if np.abs(destination[0]-piece[0])>=2 or np.abs(destination[1]-piece[1])>=2:
                 vec_x = np.sign(destination[0]-piece[0])
                 vec_y = np.sign(destination[1]-piece[1])
@@ -177,28 +176,38 @@ class State():
 
             self.last_player = self.player
 
-            return True
+            return True,max_score
 
     def move_from_str(self,move_str):
         moves = move_str.split(" ")
         moved = False
+        last_moved = None
+        last_score = None
         for k in range(len(moves)-1):
             source = moves[k]
             destination = moves[k+1]
             xs,ys = [int(i) for i in source]
             xd,yd = [int(i) for i in destination]
-            moved = self.move((xs,ys),(xd,yd))
+            moved,last_score = self.move((xs,ys),(xd,yd))
+            last_moved = (xd,yd)
             if not moved:
                 break
 
-        if self.souffle and self.last_move_nature == 0:
-            self.update_soufflables()
+
+        if moved and self.souffle and self.last_move_nature == 0:
+            self.update_soufflables(last_moved, last_score)
         return moved , self.soufflables
 
-    def update_soufflables(self):
+    def update_soufflables(self,last_moved,last_score):
         # TODO : Make a lazy search algorithm for soufflable ->
         # TODO : ->(u dont have to loop over all availbles moves for a piece it is enough to find one that has a score of 1)
-        self.soufflables = [str(piece[0])+str(piece[1]) for piece in self.get_pieces(self.player)]
+
+        self.soufflables = []
+        pieces = self.get_pieces(self.player)
+        for piece in pieces:
+            moves = self.available_moves(piece[0],piece[1],lazy = True)
+            if len(moves):
+                self.soufflables.append(str(piece[0])+str(piece[1]))
 
     def apply_souffle(self,piece_str):
         # if (piece_str in self.soufflables) and ((not self.player and self.board[int(piece_str[0]),int(piece_str[1])]>=1) or (self.player and self.board[int(piece_str[0]),int(piece_str[1])]<=-1)):
@@ -206,7 +215,7 @@ class State():
 
             self.board[int(piece_str[0]),int(piece_str[1])]=0
             can_souffle = False
-            print(f'Souffle applied on the piece {piece_str}')
+            # print(f'Souffle applied on the piece {piece_str}')
             return True
         return False
 
@@ -245,10 +254,12 @@ class State():
                     move = move_str + " " +str(x_)+str(y_)
                     chains[move] = 0
 
-    def available_moves(self,x,y):
+    def available_moves(self,x,y,lazy=False):
         """
         This function return all the available moves of the given piece, (one step only doesn't return chained moves).
         params : x,y : piece coordinates on the board
+                lazy : is boolean , if true it will just return the first killing moves
+
         returns : possible moves - dict containing tuples of coordinates of possible moves with their respective scores
         """
         possible_moves = {}
@@ -266,9 +277,12 @@ class State():
                     y_ = lambda k : y+k*vec[1] # returns the next ordinate
                     if self.board[x,y]==1: # regular white piece
                         if  valid_index(x_(1),y_(1)) and self.board[x_(1),y_(1)]==0 and vec in vectors_up_star:
-                            possible_moves[(x_(1),y_(1))]=0
+                            if not lazy:
+                                possible_moves[(x_(1),y_(1))]=0
                         elif valid_index(x_(1),y_(1)) and np.sign(self.board[x_(1),y_(1)])==-1 and valid_index(x_(2),y_(2)) and self.board[x_(2),y_(2)]==0:
                             possible_moves[(x_(2),y_(2))]=1
+                            if lazy:
+                                return possible_moves # we have an element
 
                     else : # White Dhaimat piece:
                         valid = False
@@ -282,6 +296,9 @@ class State():
                             elif valid_index(x_(k+1),y_(k+1)) and self.board[x_(k+1),y_(k+1)]!=0 and self.board[x_(k),y_(k)]!=0: # two adjacent pieces blocking the line.
                                 break
                             elif self.board[x_(k),y_(k)]==0: # a killing move
+                                if p and lazy:
+                                    possible_moves[(x_(k),y_(k))]=p
+                                    return possible_moves
                                 possible_moves[(x_(k),y_(k))]=p
                             elif np.sign(self.board[x_(k),y_(k)])==-1: # a piece is present in the cell but we still need to check the next cell case.
                                 p+=1
@@ -294,9 +311,12 @@ class State():
                     y_ = lambda k : y+k*vec[1] # returns the next ordinate
                     if self.board[x,y]==1: # regular white piece
                         if  valid_index(x_(1),y_(1)) and self.board[x_(1),y_(1)]==0 and vec in vectors_up_plus:
-                            possible_moves[(x_(1),y_(1))]=0
+                            if not lazy:
+                                possible_moves[(x_(1),y_(1))]=0
                         elif valid_index(x_(1),y_(1)) and np.sign(self.board[x_(1),y_(1)])==-1 and valid_index(x_(2),y_(2)) and self.board[x_(2),y_(2)]==0:
                             possible_moves[(x_(2),y_(2))]=1
+                            if lazy :
+                                return possible_moves
                     else : # White Dhaimat piece:
                         valid = False
                         k=1
@@ -309,6 +329,9 @@ class State():
                             elif valid_index(x_(k+1),y_(k+1)) and self.board[x_(k+1),y_(k+1)]!=0 and self.board[x_(k),y_(k)]!=0:
                                 break
                             elif self.board[x_(k),y_(k)]==0: # a killing move
+                                if p and lazy:
+                                    possible_moves[(x_(k),y_(k))]=p
+                                    return possible_moves
                                 possible_moves[(x_(k),y_(k))]=p
                             elif np.sign(self.board[x_(k),y_(k)])==-1:
                                 p+=1
@@ -322,9 +345,12 @@ class State():
                     y_ = lambda k : y+k*vec[1] # returns the next ordinate
                     if self.board[x,y]==-1: # regular balck piece
                         if  valid_index(x_(1),y_(1)) and self.board[x_(1),y_(1)]==0 and vec in vectors_down_star:
-                            possible_moves[(x_(1),y_(1))]=0
+                            if not lazy:
+                                possible_moves[(x_(1),y_(1))]=0
                         elif valid_index(x_(1),y_(1)) and np.sign(self.board[x_(1),y_(1)])==1 and valid_index(x_(2),y_(2)) and self.board[x_(2),y_(2)]==0:
                             possible_moves[(x_(2),y_(2))]=1
+                            if lazy :
+                                return possible_moves
                     else : # Black Dhaimat piece:
                         valid = False
                         k=1
@@ -337,6 +363,9 @@ class State():
                             elif valid_index(x_(k+1),y_(k+1)) and self.board[x_(k+1),y_(k+1)]!=0 and self.board[x_(k),y_(k)]!=0:
                                 break
                             elif self.board[x_(k),y_(k)]==0: # a killing move
+                                if p and lazy:
+                                    possible_moves[(x_(k),y_(k))]=p
+                                    return possible_moves
                                 possible_moves[(x_(k),y_(k))]=p
                             elif np.sign(self.board[x_(k),y_(k)])==1: # enemy piece
                                 p+=1
@@ -354,6 +383,9 @@ class State():
                             elif valid_index(x_(k+1),y_(k+1)) and self.board[x_(k+1),y_(k+1)]!=0 and self.board[x_(k),y_(k)]!=0: # if two successif piecse are blocking the line
                                 break
                             elif self.board[x_(k),y_(k)]==0: # a killing move
+                                if p and lazy:
+                                    possible_moves[(x_(k),y_(k))]=p
+                                    return possible_moves
                                 possible_moves[(x_(k),y_(k))]=p
                             elif np.sign(self.board[x_(k),y_(k)])==1: # enemy piece
                                 p+=1
@@ -365,9 +397,12 @@ class State():
                     y_ = lambda k : y+k*vec[1]
                     if self.board[x,y]==-1: # regular black piece
                         if  valid_index(x_(1),y_(1)) and self.board[x_(1),y_(1)]==0 and vec in vectors_down_plus:
-                            possible_moves[(x_(1),y_(1))]=0
+                            if not lazy:
+                                possible_moves[(x_(1),y_(1))]=0
                         elif valid_index(x_(1),y_(1)) and np.sign(self.board[x_(1),y_(1)])==1 and valid_index(x_(2),y_(2)) and self.board[x_(2),y_(2)]==0:
                             possible_moves[(x_(2),y_(2))]=1
+                            if lazy:
+                                return possible_moves
                     else : # Black Dhaimat piece:
                         valid = False
                         k=1
@@ -380,6 +415,9 @@ class State():
                             elif valid_index(x_(k+1),y_(k+1)) and self.board[x_(k+1),y_(k+1)]!=0 and self.board[x_(k),y_(k)]!=0:
                                 break
                             elif self.board[x_(k),y_(k)]==0: # a killing move
+                                if p and lazy:
+                                    possible_moves[(x_(k),y_(k))]=p
+                                    return possible_moves
                                 possible_moves[(x_(k),y_(k))]=p
                             elif np.sign(self.board[x_(k),y_(k)])==1: # enemy piece
                                 p+=1
