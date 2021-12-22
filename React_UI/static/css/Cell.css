@@ -9,6 +9,8 @@
   color :rgba(243, 227, 227, 0.45);
   font-weight: bold;
   touch-action: manipulation; /*to disable the double tap zoom on mobile devices*/
+  -webkit-transform: scale(1);]
+	-webkit-transition: .2s ease-in-out;
 }
 
 .cell {
@@ -20,6 +22,8 @@
 }
 .cell:hover
 {
+  -webkit-transform: scale(1.01);
+	transform: scale(1.01);
   background-color: rgba(245, 212, 130, 0.61);
 }
 
@@ -36,4 +40,5 @@
 .cell_active
 {
   border:solid 1px rgba(255, 0, 0, 0.75);
+  
 }

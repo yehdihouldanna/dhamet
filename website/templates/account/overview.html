@@ -69,80 +69,43 @@ License: For each use you must have a valid license purchased only from above li
 						</a>
 					</div>
 					<div data-kt-menu-trigger="click" data-kt-menu-placement="right-start"
-						class="menu-item py-2">
-						<span class="menu-link menu-center" data-bs-trigger="hover" data-bs-dismiss="click"
-							data-bs-placement="right">
-							<span class="menu-icon me-0">
-								<i class="bi bi-chat-square-text fs-2"></i>
-							</span>
-							<span class="menu-title">Discussions</span>
-						</span>
-						<div class="menu-sub menu-sub-dropdown w-225px px-1 py-4">
-							<div class="menu-item">
-								<div class="menu-content">
-									<span class="menu-section fs-5 fw-bolder ps-1 py-1">Discussions</span>
-								</div>
-							</div>
-							<div class="menu-item">
-								<a class="menu-link" href="../apps/chat/private/">
-									<span class="menu-bullet">
-										<span class="bullet bullet-dot"></span>
-									</span>
-									<span class="menu-title">Discussion privée</span>
-								</a>
-							</div>
-							<div class="menu-item">
-								<a class="menu-link" href="../apps/chat/group/">
-									<span class="menu-bullet">
-										<span class="bullet bullet-dot"></span>
-									</span>
-									<span class="menu-title">Discussion en groupe</span>
-								</a>
-							</div>
-						</div>
-					</div>
-					<div data-kt-menu-trigger="click" data-kt-menu-placement="right-start"
-						class="menu-item py-2">
-						<span class="menu-link menu-center" data-bs-trigger="hover" data-bs-dismiss="click"
-							data-bs-placement="right">
-							<span class="menu-icon me-0">
-								<i class="bi bi-file-text fs-2"></i>
-							</span>
-							<span class="menu-title">Generale</span>
-						</span>
-						<div class="menu-sub menu-sub-dropdown w-225px px-1 py-4">
-							<div class="menu-item">
-								<div class="menu-content">
-									<span class="menu-section fs-5 fw-bolder ps-1 py-1">Generale</span>
-								</div>
-							</div>
-							<div class="menu-item">
-								<a class="menu-link" href="pages/company/about.html">
-									<span class="menu-bullet">
-										<span class="bullet bullet-dot"></span>
-									</span>
-									<span class="menu-title">À propos </span>
-								</a>
-							</div>
-						
-							<div class="menu-item">
-								<a class="menu-link" href="pages/company/contact.html">
-									<span class="menu-bullet">
-										<span class="bullet bullet-dot"></span>
-									</span>
-									<span class="menu-title">Nous Contacter</span>
-								</a>
-							</div>
-							<div class="menu-item">
-								<a class="menu-link" href="pages/company/team.html">
-									<span class="menu-bullet">
-										<span class="bullet bullet-dot"></span>
-									</span>
-									<span class="menu-title">Notre groupe</span>
-								</a>
-							</div>
-						</div>
-					</div>
+                                class="menu-item py-2">
+                                <span class="menu-link menu-center" data-bs-trigger="hover" data-bs-dismiss="click"
+                                    data-bs-placement="right">
+                                    <span class="menu-icon me-0">
+                                        <i class="bi bi-box fs-3 fs-2"></i>
+                                    </span>
+                                    <span class="menu-title">Documentation</span>
+                                </span>
+                                <div
+                                class="menu-sub menu-sub-lg-down-accordion menu-sub-lg-dropdown menu-rounded-0 py-lg-4 w-lg-225px">
+                                <div class="menu-item">
+                                    <a class="menu-link py-3"
+                                        href="{% url 'docs-ar' %}"
+                                        title="Check out the complete documentation"
+                                        data-bs-toggle="tooltip" data-bs-trigger="hover"
+                                        data-bs-dismiss="click" data-bs-placement="right">
+                                        <span class="menu-icon">
+                                            <i class="bi bi-box fs-3"></i>
+                                        </span>
+                                        <span class="menu-title">بالعربية</span>
+                                    </a>
+                                </div>
+                                <div class="menu-item">
+                                    <a class="menu-link py-3"
+                                        href="{% url 'docs-fr' %}"
+                                        title="Check out the complete documentation"
+                                        data-bs-toggle="tooltip" data-bs-trigger="hover"
+                                        data-bs-dismiss="click" data-bs-placement="right">
+                                        <span class="menu-icon">
+                                            <i class="bi bi-box fs-3"></i>
+                                        </span>
+                                        <span class="menu-title">Français</span>
+                                    </a>
+                                </div>
+                            </div>
+                            </div>
+					
 				</div>
 				<!--end::Menu-->
 				</div>
@@ -186,6 +149,7 @@ License: For each use you must have a valid license purchased only from above li
 										<!--begin::Menu-->
 									<div class="menu menu-lg-rounded menu-column menu-lg-row menu-state-bg menu-title-gray-700 menu-state-title-primary menu-state-icon-primary menu-state-bullet-primary menu-arrow-gray-400 fw-bold my-5 my-lg-0 align-items-stretch"
 									id="#kt_header_menu" data-kt-menu="true">
+									<!--  
 									<div data-kt-menu-trigger="click" data-kt-menu-placement="bottom-start"
 										class="menu-item menu-lg-down-accordion me-lg-1">
 										<span class="menu-link py-3">
@@ -226,7 +190,7 @@ License: For each use you must have a valid license purchased only from above li
 												</div>
 											</div>
 										</div>
-									</div>
+									</div> -->
 									<div data-kt-menu-trigger="click" data-kt-menu-placement="bottom-start"
 										class="menu-item menu-lg-down-accordion me-lg-1">
 										<span class="menu-link py-3">

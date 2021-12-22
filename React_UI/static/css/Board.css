@@ -13,6 +13,8 @@
   flex-direction : horizontal;
   flex-flow : space-between;
   touch-action: manipulation; /*to disable the double tap zoom on mobile devices*/
+  -webkit-filter: drop-shadow(3px 3px 3px #222);
+  filter: drop-shadow(3px 3px 3px #222);
 }
 #dhamet_container{
   text-align: center;
