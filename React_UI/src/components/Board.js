@@ -41,6 +41,10 @@ class Board extends Component {
       MouseOnBoard: true,
       username : "",
       tier: null,
+      //* Souffle parameters
+      can_souffle:true,
+      souffle_move : "",
+      soufflables : [],
     };
     this.AI_NAMES  = ["AI_Random","AI_Dummy","AI_MinMax"];
 
@@ -57,6 +61,7 @@ class Board extends Component {
 
     this.handleClick = this.handleClick.bind(this);
     this.handleMouseLeave = this.handleMouseLeave.bind(this);
+    this.handleSouffle = this.handleSouffle.bind(this);
 
     this.doClickAction = this.doClickAction.bind(this);
     this.doDoubleClickAction = this.doDoubleClickAction.bind(this);
@@ -137,6 +142,11 @@ class Board extends Component {
     this.setState(game_state);
   };
   doDoubleClickAction(key,piece_present) {
+    if (this.state.move.length==0 && piece_present ==2)
+    {
+        console.log("🚀 ~ file: Board.js ~ line 148 ~ Board ~ doDoubleClickAction ~ handleSouffle got called")
+        this.handleSouffle(key);
+    }
     if (this.state.move.length>=5)
     {
       console.log("This condition got invoked!");
@@ -164,12 +174,13 @@ class Board extends Component {
     }
     this.handleMove();
   };
-  handleClick(e, key,piece_present) {
+  handleClick(e, key,piece_state) {
+      // * piece state: 0 (no piece in cell), (1 a piece in cell non souffle),(2 a souffle piece in cell)
     if (e.detail > 1) {
-      this.doDoubleClickAction(key,piece_present);
+      this.doDoubleClickAction(key,piece_state);
     }
     else {
-      this.doClickAction(key,piece_present);
+      this.doClickAction(key,piece_state);
     }
   };
   //?-------------------------------------------------
@@ -184,38 +195,48 @@ class Board extends Component {
     // console.log("handleHover got called the move now is : ",this.state.move);
   }
   handleMove() {
-      if (this.state.move.length) {
-          if(this.state.AI)
-          {
-            //   console.log("We are calling the view for AI.")
-              this.MoveRequest_ws(this.state.move);
-            }
-            else
-            {
-                // console.log("We are calling websocket")
-                this.MoveRequest_ws(this.state.move);
-            }
-        }
-        console.log("🚀 ~ file: Board.js ~ line 188 ~ Board ~ handleMove")
+    if (this.state.move.length)
+      {this.MoveRequest_ws(this.state.move,this.state.souffle_move);}
+    console.log("🚀 ~ file: Board.js ~ line 188 ~ Board ~ handleMove")
   };
   //?-----------------------------------------------------------------------
   // * Handling Request and getting the reponses from the back end methods :
   //?-----------------------------------------------------------------------
-
-  MoveRequest_ws(move_str) {
+  handleSouffle(piece_key)
+  {
+      console.log("in handle souffle")
+    let i = parseInt(piece_key[0]);
+    let j = parseInt(piece_key[1]);
+    let game_state= this.state;
+   game_state.souffle_move = piece_key;
+    console.log("souffle contains now : ",game_state.souffle_move)
+   game_state.can_souffle = false;
+   game_state.soufflables = [];
+   game_state.board[i][j] = 0;
+   game_state.board_txt = this.serialize();
+   game_state.move = "";
+   this.setState(game_state);
+  }
+  is_player_turn()
+  {
+      if ((this.state.username === this.state.creator && this.state.player==0) || (this.state.username === this.state.opponent && this.state.player==1))
+      {return true;}
+      return false;
+  }
+  MoveRequest_ws(move_str,souffle_move) {
     console.log("🚀 ~ file: Board.js ~ line 248 ~ Board ~ MoveRequest_ws")
     // * This function communicate with the GameMoveConsumer in the backend
     if (this.state.Code === "") {
       this.CreateGameRequest();
     }
     else if (move_str.length >= 5) {
-
       console.log("Trying the move : ", move_str);
         this.props.client.send(
         JSON.stringify({
           'id': this.state.Code,
           'state': this.state.board_txt,
           'last_move': move_str,
+          'souffle_move':souffle_move,
           'current_turn': this.state.player,
           'winner':"",
         }));
@@ -267,6 +288,7 @@ class Board extends Component {
                           'id': me.state.Code,
                           'state': me.state.board_txt,
                           'last_move': me.state.move,
+                          'souffle_move':me.state.souffle_move,
                           'current_turn': me.state.player,
                           'creator': me.state.creator,
                           'creator_score': "",
@@ -345,6 +367,7 @@ class Board extends Component {
               'id': this.state.Code,
               'state': this.state.board_txt,
               'last_move': this.state.move,
+              'souffle_move':this.state.souffle_move,
               'current_turn': this.state.player,
               'creator': this.state.creator,
               'creator_score': "",
@@ -357,7 +380,7 @@ class Board extends Component {
         };
         let me = this;
           this.props.client.onmessage = function (e) {
-            //* Take a cup of tea if you want to follow this function :)
+
             const data = JSON.parse(e.data);
             let moved = false;
             if (typeof data["Bad Request"] != "undefined") {
@@ -370,6 +393,11 @@ class Board extends Component {
                 game_state.player = data.current_turn;
                 console.log("The player now is : ", game_state.player);
                 game_state.board_txt = data.state;
+                game_state.soufflables = data.soufflables;
+                if(game_state.soufflables.length)
+                {
+                    game_state.can_souffle= true;
+                }
                 if (game_state.last_move != data.last_move )
                 {
                   game_state.last_move = data.last_move;
@@ -437,8 +465,10 @@ class Board extends Component {
                             'id': me.state.Code,
                             'state': me.state.board_txt,
                             'last_move': "",
+                            'souffle_move':"",
                             'current_turn': me.state.player,
                             'winner':"",
+
                         }));
                     }
                         }, 350);
@@ -457,6 +487,7 @@ class Board extends Component {
                             'id': me.state.Code,
                             'state': me.state.board_txt,
                             'last_move': "",
+                            'souffle_move':"",
                             'current_turn': me.state.player,
                             'winner':"",
                             'tier':me.state.tier,
@@ -540,6 +571,7 @@ class Board extends Component {
                   onClick={this.handleClick}
                   ex_css_class ={ex_css_class}
                   toggle = {this.state.move.includes(key)}
+                  soufflables = {this.state.soufflables}
                 >
                 </Cell>
               );
@@ -571,6 +603,7 @@ class Board extends Component {
                 onClick={this.handleClick}
                 ex_css_class ={ex_css_class}
                 toggle = {this.state.move.includes(key)}
+                soufflables = {this.state.soufflables}
               >
               </Cell>
             );

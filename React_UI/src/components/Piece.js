@@ -46,8 +46,8 @@ const PieceSource = {
     if (!monitor.didDrop()) {
       // You can check whether the drop was successful
       // or if the drag ended but nobody handled the drop
-      
-      return 
+
+      return
     }
     // When dropped on a compatible target, do something.
     // Read the original dragged item from getItem():
@@ -89,11 +89,18 @@ class Piece extends Component {
   }
   onClick_(e,key)
   {
+      console.log("🚀 ~ file: Piece.js ~ line 91 ~ Piece ~ onClick_",this.props.soufflables.includes(key),e.detail,this.props.player,this.props.color,((this.props.soufflables.includes(key)) && (e.detail > 1) && ((this.props.player ===0 && this.props.color==="Black") || (this.props.player ===1 && this.props.color==="White"))))
+
     if ( (e.detail > 1) || (this.props.player ===0 && this.props.color==="White") || (this.props.player ===1 && this.props.color==="Black"))
     {
-      this.props.onClick(e,key,1);
+      this.props.onClick(e,key,1); // the piece is present
     }
-  }
+    if((this.props.soufflables.includes(key)) && (e.detail > 1) && ((this.props.player ===0 && this.props.color==="Black") || (this.props.player ===1 && this.props.color==="White")))
+    {
+        console.log("yes it does include key but something is wrong after this point");
+        this.props.onClick(e,key,2) // 2 for souffle
+    }
+}
   render() {
     // console.log("the props of the piece are ",this.props);
     let  class_ = "Piece "+this.props.color +"_"+ this.props.type ;
@@ -110,7 +117,6 @@ class Piece extends Component {
                 textShadow: isDragging ? "20px" : "0px",
             }}>
         </div>
-
     )
   }
 }

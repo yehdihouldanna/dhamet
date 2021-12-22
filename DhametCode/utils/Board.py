@@ -15,7 +15,7 @@ class State():
     This class contains the state of the game at a give turn,
     the main content of this class is the baord vairable which contains
     """
-    def __init__(self,n=9,board=None,player =0,length=0):
+    def __init__(self,n=9,board=None,player =0,length=0,souffle = False):
         self.n = n
         self.length = length
         self.player = player   # who's turn : 0 for white 1 for black.
@@ -28,10 +28,16 @@ class State():
         self.no_kill_limit = 20
         self.dhaimat_value = 3
         self.winner = None  # -1 for black , 0 for draw and 1 for white
-        self.souffle = False  # if a piece have a taking move and it does a non take it so it gets taken itself سوفلة
+
+        self.current_moves = {}
+        self.souffle = souffle  # سوفلة
+        self.can_souffle = True
+        self.soufflables = []
+
 
         self.last_move_nature = None # 0/1 if the last move took an adversary piece
         self.last_player = None # just checks for the last player, this is used in chained moves optimization
+
 
         # initialising the board matrix
         self.lim_takes = 10  # limits AI takes per turn (improves performance (when the baord contain few Dhaimat pieces))
@@ -48,6 +54,8 @@ class State():
         else:
             self.board = np.copy(board) # we need a deep copy here in order to avoid some problems
 
+    def get_pieces(self,player):
+        return np.argwhere(self.board<=-1) if player else np.argwhere(self.board>=1)
 
     def check_end_condition(self):
         if not self.player_has_moves():
@@ -138,6 +146,7 @@ class State():
             # print("Move is invalid !, Try again")
             return False
         else:
+            self.current_moves = possible_moves
             if np.abs(destination[0]-piece[0])>=2 or np.abs(destination[1]-piece[1])>=2:
                 vec_x = np.sign(destination[0]-piece[0])
                 vec_y = np.sign(destination[1]-piece[1])
@@ -181,7 +190,25 @@ class State():
             moved = self.move((xs,ys),(xd,yd))
             if not moved:
                 break
-        return moved
+
+        if self.souffle and self.last_move_nature == 0:
+            self.update_soufflables()
+        return moved , self.soufflables
+
+    def update_soufflables(self):
+        # TODO : Make a lazy search algorithm for soufflable ->
+        # TODO : ->(u dont have to loop over all availbles moves for a piece it is enough to find one that has a score of 1)
+        self.soufflables = [str(piece[0])+str(piece[1]) for piece in self.get_pieces(self.player)]
+
+    def apply_souffle(self,piece_str):
+        # if (piece_str in self.soufflables) and ((not self.player and self.board[int(piece_str[0]),int(piece_str[1])]>=1) or (self.player and self.board[int(piece_str[0]),int(piece_str[1])]<=-1)):
+        if ((self.player and self.board[int(piece_str[0]),int(piece_str[1])]>=1) or (not self.player and self.board[int(piece_str[0]),int(piece_str[1])]<=-1)):
+
+            self.board[int(piece_str[0]),int(piece_str[1])]=0
+            can_souffle = False
+            print(f'Souffle applied on the piece {piece_str}')
+            return True
+        return False
 
     def get_chain_moves(self,x,y):
         # TODO : optimize this function to return only the optimal chained move and reduce the overhead

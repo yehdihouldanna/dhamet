@@ -29,12 +29,6 @@ class Agent(Player):
         super().__init__(name,player)
         self.pieces_indices=None
 
-    def get_pieces(self,state):
-        if self.player: #case the agent is playing with black pieces
-            self.pieces_indices = np.argwhere(state.board<=-1)
-        else :
-            self.pieces_indices = np.argwhere(state.board>=1)
-
     def move(self,state):
         pass
 
@@ -48,7 +42,7 @@ class Naive(Agent):
 
     def move(self,state):
         move="_"
-        self.get_pieces(state)
+        state.get_pieces(self.player)
         for i in range(self.pieces_indices.shape[0]):
             x,y = tuple(self.pieces_indices[i])
             moves,scores = state.available_moves(x,y)
@@ -70,10 +64,12 @@ class Random(Agent):
     def move(self,state):
         move="_"
         dict_ = {}
-        self.get_pieces(state)
-        for i in range(self.pieces_indices.shape[0]):
-            x,y = tuple(self.pieces_indices[i])
-            moves,scores= state.available_moves(x,y)
+        pieces = state.get_pieces(self.player)
+        for i in range(pieces.shape[0]):
+            x,y = tuple(pieces[i])
+            possible_moves= state.available_moves(x,y)
+            moves= list(possible_moves.keys())
+            scores = possible_moves.values()
             if len(moves):
                 source = str(x)+str(y)
                 dict_[source]=moves
@@ -96,9 +92,9 @@ class Dummy(Agent):
     def move(self,state):
         move="_"
         dict_ = {}
-        self.get_pieces(state)
-        for i in range(self.pieces_indices.shape[0]):
-            x,y = tuple(self.pieces_indices[i])
+        pieces=state.get_pieces(self.player)
+        for i in range(pieces.shape[0]):
+            x,y = tuple(pieces[i])
             chains = state.get_chain_moves(x,y)
             if len(chains):
                 best_cp_move = max(chains, key=chains.get)
@@ -132,10 +128,7 @@ class MinMax(Agent):
 
     # this is the strategy of the agent
     def minmax(self,state,score,cur_depth,target_depth,maxi_turn):
-        if maxi_turn: # agent turn to maximize
-            pieces = np.argwhere(state.board<=-1) if self.player else np.argwhere(state.board>=1)
-        else: # agent adversary turn to minimize
-            pieces = np.argwhere(state.board<=-1) if not self.player else np.argwhere(state.board>=1)
+        pieces = state.get_pieces(self.player) if maxi_turn else state.get_pieces(not self.player) # if maxi_turn we maximise for player, else we maximise for adversary
         if cur_depth==target_depth: # base scenario for recursivity
             best_move = None
             best_score = None
@@ -149,6 +142,7 @@ class MinMax(Agent):
                         best_score = new_score
                         best_move = new_move
 
+            #TODO : Fix bug AI minmax ends game before it actually ends.
             if best_move is None:
                 return "",score
             elif maxi_turn:
@@ -170,7 +164,7 @@ class MinMax(Agent):
                     new_move = max(chains, key=chains.get)
                     new_score = chains[new_move]
                     score_ = (score + new_score) if maxi_turn else (score - new_score)
-                    moved = state.move_from_str(new_move)
+                    moved,soufflables = state.move_from_str(new_move)
                     ended,_ = state.check_end_condition()
                     if not moved:
                         print(f"MinMax Agent tried the move: {new_move} but couldn't perform it!")
