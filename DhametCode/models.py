@@ -51,9 +51,10 @@ class Game(models.Model):
     def get_game_code(self):
         return self.pk
     @staticmethod
-    def get_available_games():
+    def get_available_games(user = None):
+        if user is not None:
+            return Game.objects.filter(creator = user , opponent =None,completed=None)
         return Game.objects.filter(opponent=None,completed = None)
-
 
     @staticmethod
     def created_count(user):

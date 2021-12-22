@@ -57,7 +57,13 @@ class ChatConsumer(AsyncWebsocketConsumer):
             'message': message
         }))
 
+
+AI_NAMES = ["AI_Random","AI_Dummy","AI_MinMax"]
+BOT_NAMES= ["Med10","Mariem","Sidi","احمد","Khadijetou","Cheikh","Vatimetou","ابراهيم",
+            "Mamadou","Oumar","Amadou","3abdellahi","Va6me","Moussa","Aly","Samba"]
+
 class GameConsumer(AsyncWebsocketConsumer):
+    # TODO : Migrate the code to the model file (to follow the norm : FAT models skinny views)
     def __init__(self):
         super().__init__()
     async def connect(self):
@@ -93,15 +99,12 @@ class GameConsumer(AsyncWebsocketConsumer):
         )
     # Receive message from game group
     async def move_message(self, event):
-        logger.info("['f': move_message]")
-        # data = event['data']
-        # sender = self.scope["user"].username
-        # receiver = self.scope['path'].split('_')[1]
-        # output_data = await self.post_move(event)
         # Send message to WebSocket
         await self.send(text_data = event['data'])
 
-    def update_game(self,id,user,game,game_instance,move):
+    def update_game(self,id,user,game,game_instance,move,souffle_move=""):
+        if type(souffle_move)==str and souffle_move!="":
+            game_instance.apply_souffle(souffle_move)
         if move =="":
             winner=""
             winner_score = ""
@@ -117,6 +120,12 @@ class GameConsumer(AsyncWebsocketConsumer):
                 opponent_score = game.opponent.score
             except:
                 pass
+            tier = 0
+            try:
+                if game.opponent.is_fake:
+                    tier = game.opponent.tier
+            except:
+                pass
             output_data  = json.dumps({
                         'id':id,
                         'state': game.state,
@@ -126,11 +135,13 @@ class GameConsumer(AsyncWebsocketConsumer):
                         'creator_score' : game.creator.score,
                         'opponent' : opponent,
                         'opponent_score' : opponent_score,
+                        'soufflables' : [],
                         'winner' : winner,
                         'winner_score' : winner_score,
+                        'tier' : tier,
                         })
         else:
-            moved = game_instance.move_from_str(move)
+            moved,soufflables = game_instance.move_from_str(move)
             if moved:
                 game_instance.player = not game_instance.player
                 game_instance.length+=1
@@ -153,6 +164,10 @@ class GameConsumer(AsyncWebsocketConsumer):
                 winner_score = game.winner.score
             except:
                 pass
+            if game.opponent.is_fake:
+                tier = game.opponent.tier
+            else:
+                tier=0
             output_data  = json.dumps({
                         'id':id,
                         'state': game.state,
@@ -161,6 +176,8 @@ class GameConsumer(AsyncWebsocketConsumer):
                         'creator' : game.creator.username,
                         'opponent' : game.opponent.username,
                         'opponent_score' : game.opponent.score,
+                        'tier' : tier,
+                        'soufflables' : soufflables,
                         'winner' : winner,
                         'winner_score' : winner_score,
                         'winner' : winner
@@ -172,7 +189,7 @@ class GameConsumer(AsyncWebsocketConsumer):
         user = self.scope['user']
         # data = event["data"]
         data = text_data_json
-        logger.info(f"['f': post_move]['user ': {user.username}]['data':{data}]")
+        # logger.info(f"['f': post_move]['user ': {user.username}]['data':{data}]")
         id = data["id"]
         if user.is_authenticated:
             user = User.objects.filter(username = user.username)[0]
@@ -182,26 +199,50 @@ class GameConsumer(AsyncWebsocketConsumer):
             queryset = Game.objects.filter(id=id)
             if queryset.exists():
                 current_turn_  = data['current_turn']
+                tier = 0
+                try :
+                    tier = int(data["tier"])
+                except:
+                    pass
                 move = data['last_move']
-                logger.info(f"['f': post_move]['move': {move}]")
+                souffle_move = data['souffle_move']
+                # logger.info(f"['f': post_move]['move': {move}]")
                 game = queryset[0]
                 current_turn = game.current_turn
                 length = game.length
                 board = game.state
-                game_instance = State(n=9,board=board,player = current_turn, length=length)
-                AI_NAMES = set(["AI_Random","AI_Dummy","AI_MinMax"])
-                if ((game.creator==user and current_turn==0) or (game.opponent == user and current_turn)): # user is playing
-                    return self.update_game(id,user,game,game_instance,move)
-                elif ((game.opponent.username in AI_NAMES and current_turn) or (game.creator.username in AI_NAMES and current_turn==0)): # the AI is playing
-                    # Agent = Random('AI',current_turn)
-                    # Agent = Dummy('AI',current_turn)
+                game_instance = State(n=9,board=board,player = current_turn, length=length,souffle=True)
+
+                if ((game.creator==user and current_turn==0) or (game.opponent == user and current_turn)): # * user is playing
+                    return self.update_game(id,user,game,game_instance,move,souffle_move)
+                elif ((game.opponent.username in AI_NAMES and current_turn) or (game.creator.username in AI_NAMES and current_turn==0)): # * the AI is playing
                     Agent = MinMax("AI",current_turn,depth=2)
+                    if game.opponent.username == AI_NAMES[0] or game.opponent.username ==AI_NAMES[0]:
+                        Agent = Random('AI',current_turn)
+                    elif game.opponent.username == AI_NAMES[1] or game.opponent.username ==AI_NAMES[1]:
+                        Agent = Dummy('AI',current_turn)
+
                     move = Agent.move(game_instance)
                     logger.info(f"['f': post_move]['AI_move': {move}]")
                     user_ = game.creator if game.creator.username in AI_NAMES else game.opponent
-                    return self.update_game(id,user_,game,game_instance,move)
-                elif ((game.creator==user and current_turn==1) or (game.opponent == user and current_turn==0)): # case a user tries a move when it't turn only happens at start when user joins a new game
-                    return self.update_game(id,user,game,game_instance,move="")
+                    return self.update_game(id,user_,game,game_instance,move,souffle_move)
+
+                elif (tier and current_turn==1 ):
+                    if tier ==1:
+                        Agent = Random("",current_turn)
+                    elif tier==2:
+                        Agent = Dummy("",current_turn)
+                    elif tier ==3: # can be used for ML agent
+                        Agent = MinMax("",current_turn,depth=2)
+                    else: # just in order to prevent erros
+                        Agent = MinMax("________",current_turn,depth=2)
+                    move = Agent.move(game_instance)
+                    logger.debug(f"['f': post_move]['AI_move': {move}]")
+                    user_ = game.creator if game.creator.username in BOT_NAMES else game.opponent
+                    return self.update_game(id,user_,game,game_instance,move,souffle_move)
+
+                elif ((game.creator==user and current_turn==1) or (game.opponent == user and current_turn==0)): #* case a user tries a move when it't turn only happens at start when user joins a new game
+                    return self.update_game(id,user,game,game_instance,move="",soufle_move="")
             # raise Exception(f"user {user.username} tried to make a non valid move!")
             return Response({'Bad Request': 'Invalid data...'}, status=status.HTTP_400_BAD_REQUEST)
         return Response({'Bad Request': 'Invalid data...'}, status=status.HTTP_400_BAD_REQUEST)

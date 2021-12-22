@@ -40,7 +40,20 @@ class Board extends Component {
       prevent: false,
       MouseOnBoard: true,
       username : "",
+      tier: null,
+      //* Souffle parameters
+      can_souffle:true,
+      souffle_move : "",
+      soufflables : [],
     };
+    this.AI_NAMES  = ["AI_Random","AI_Dummy","AI_MinMax"];
+
+
+    this.BOT_NAMES = ["Med10","Mariem","Sidi","احمد","Khadijetou","Cheikh","Vatimetou","ابراهيم",
+                      "Mamadou","Oumar","Amadou","3abdellahi","Va6me","Moussa","Aly","Samba"];
+    //* Tiers are the difficulty level, for now we have 3 tiers, 3 :AI_MinMax, 2 : Dummy, 1 : Random
+    this.Tiers = [3,2,3,2,1,2,3,1,1,2,3,3,1,1,3,2];
+
     // Biding Events handlers :
     this.handleMove = this.handleMove.bind(this);
     this.handleHover = this.handleHover.bind(this);
@@ -48,12 +61,13 @@ class Board extends Component {
 
     this.handleClick = this.handleClick.bind(this);
     this.handleMouseLeave = this.handleMouseLeave.bind(this);
+    this.handleSouffle = this.handleSouffle.bind(this);
 
     this.doClickAction = this.doClickAction.bind(this);
     this.doDoubleClickAction = this.doDoubleClickAction.bind(this);
     // Binding request handlers :
     this.CreateGameRequest = this.CreateGameRequest.bind(this);
-    this.MoveRequest = this.MoveRequest.bind(this);
+    this.CreateFakeOpponent = this.CreateFakeOpponent.bind(this);
     this.MoveRequest_ws = this.MoveRequest_ws.bind(this);
     this.getUserNameRequest = this.getUserNameRequest.bind(this);
     // Binding extra util methods
@@ -63,9 +77,9 @@ class Board extends Component {
     this.update_moves_time_line = this.update_moves_time_line.bind(this);
     this.add_one_history_item = this.add_one_history_item.bind(this);
   };
-  //------------------------------------------
-  //Utils Methods :
-  //------------------------------------------
+  //?------------------------------------------
+  //* Utils Methods :
+  //?------------------------------------------
   serialize() {
     let str = ""
     for (let i = 0; i < 9; i++) {
@@ -104,9 +118,9 @@ class Board extends Component {
     }
     this.setState(game_state)
   };
-  //-------------------------------------------------
-  // "Click Vs DoubleClick"  Handling :
-  //---------------------------------------------------------------------------------------
+  //?-------------------------------------------------
+  // * "Click Vs DoubleClick"  Handling :
+  //?-------------------------------------------------
   doClickAction(key,piece_present) {
     if (this.state.move === "" && piece_present) { this.state.move = key;}
     else if (this.state.move.length>=2) // switching the selected piece
@@ -128,6 +142,11 @@ class Board extends Component {
     this.setState(game_state);
   };
   doDoubleClickAction(key,piece_present) {
+    if (this.state.move.length==0 && piece_present ==2)
+    {
+        console.log("🚀 ~ file: Board.js ~ line 148 ~ Board ~ doDoubleClickAction ~ handleSouffle got called")
+        this.handleSouffle(key);
+    }
     if (this.state.move.length>=5)
     {
       console.log("This condition got invoked!");
@@ -154,20 +173,19 @@ class Board extends Component {
       this.setState(game_state);
     }
     this.handleMove();
-
-
   };
-  handleClick(e, key,piece_present) {
+  handleClick(e, key,piece_state) {
+      // * piece state: 0 (no piece in cell), (1 a piece in cell non souffle),(2 a souffle piece in cell)
     if (e.detail > 1) {
-      this.doDoubleClickAction(key,piece_present);
+      this.doDoubleClickAction(key,piece_state);
     }
     else {
-      this.doClickAction(key,piece_present);
+      this.doClickAction(key,piece_state);
     }
   };
-  //-------------------------------------------------
-  // Main Handler methods :
-  //-------------------------------------------------
+  //?-------------------------------------------------
+  // * Main Handler methods :
+  //?-------------------------------------------------
   handleStartMove(piece_key) {
     this.state.move = piece_key;
     console.log(this.state.move)
@@ -177,80 +195,48 @@ class Board extends Component {
     // console.log("handleHover got called the move now is : ",this.state.move);
   }
   handleMove() {
-    if (this.state.move.length) {
-      if(this.state.AI)
-      {
-        console.log("We are calling the view for AI.")
-        this.MoveRequest(this.state.move);
-      }
-      else
-      {
-        console.log("We are calling websocket")
-        this.MoveRequest_ws(this.state.move);
-      }
-    }
+    if (this.state.move.length)
+      {this.MoveRequest_ws(this.state.move,this.state.souffle_move);}
+    console.log("🚀 ~ file: Board.js ~ line 188 ~ Board ~ handleMove")
   };
-  //-----------------------------------------------------------------------
-  // Handling Request and getting the reponses from the back end methods :
-  //-----------------------------------------------------------------------
-  MoveRequest(move_str) {
-    /*This function communicate with the makeGameMove view in the
-      back end to update the board appopriatly after a move it is used
-      in games vs AI only as it doesnt require a websocket to play vs AI.
-      */
-
-      if (move_str.length >= 5) {
-      console.log("Trying the move : ", move_str);
-      const requestOptions =
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json',
-                    "X-CSRFToken": '{{ csrf_token }}' },
-        body: JSON.stringify({
-          'id': this.state.Code,
-          'state': this.state.board_txt,
-          'last_move': move_str,
-          'current_turn': this.state.player,
-          'winner':"",
-        })
-      };
-      fetch('/DhametCode/move', requestOptions).
-        then((response) => response.json()).
-        then((data) => {
-          if (typeof data["Bad Request"] != "undefined") {
-            console.log("Invalid Move : Ignored!");
-            this.state.move = "";
-          }
-          else // to solve the problem of the fetch getting called twice.
-          {
-            console.log(data);
-            let game_state = this.state;
-            game_state.player = game_state.player === 0 ? 1 : 0;
-            console.log("The player now is : ", game_state.player);
-            game_state.board_txt = data.state;
-            this.setState(game_state);
-            this.deserialize(data.state);
-            this.state.move = "";
-          }
-        }
-        );
-    }
-  };
-  MoveRequest_ws(move_str) {
+  //?-----------------------------------------------------------------------
+  // * Handling Request and getting the reponses from the back end methods :
+  //?-----------------------------------------------------------------------
+  handleSouffle(piece_key)
+  {
+      console.log("in handle souffle")
+    let i = parseInt(piece_key[0]);
+    let j = parseInt(piece_key[1]);
+    let game_state= this.state;
+   game_state.souffle_move = piece_key;
+    console.log("souffle contains now : ",game_state.souffle_move)
+   game_state.can_souffle = false;
+   game_state.soufflables = [];
+   game_state.board[i][j] = 0;
+   game_state.board_txt = this.serialize();
+   game_state.move = "";
+   this.setState(game_state);
+  }
+  is_player_turn()
+  {
+      if ((this.state.username === this.state.creator && this.state.player==0) || (this.state.username === this.state.opponent && this.state.player==1))
+      {return true;}
+      return false;
+  }
+  MoveRequest_ws(move_str,souffle_move) {
+    console.log("🚀 ~ file: Board.js ~ line 248 ~ Board ~ MoveRequest_ws")
     // * This function communicate with the GameMoveConsumer in the backend
-    console.log("a move request");
-    console.log("Code:", this.state.Code);
     if (this.state.Code === "") {
       this.CreateGameRequest();
     }
     else if (move_str.length >= 5) {
-
       console.log("Trying the move : ", move_str);
         this.props.client.send(
         JSON.stringify({
           'id': this.state.Code,
           'state': this.state.board_txt,
           'last_move': move_str,
+          'souffle_move':souffle_move,
           'current_turn': this.state.player,
           'winner':"",
         }));
@@ -261,34 +247,59 @@ class Board extends Component {
   CreateFakeOpponent()
   {
     // creates a game with a fake opponenet if the player waited so long, without another human joining his game
-    let thisTimeout = setTimeout(function() {myFunction();}, 1000);
-    if ((this.state.opponent == "")) {myFunction();}
     let me = this;
-    function myFunction() {
-        clearTimeout(thisTimeout);
-        let me = this;
+    let thisTimeout = setTimeout(() =>{
+        console.log("🚀 ~ Waited 10s, Launching a fake opponent request")
+        if ((me.state.opponent === ""))
+            {CallFakeOpponent(me);}
+        else
+            { console.log("🚀 ~ file: Board.js ~ line 279 ~ Board ~ thisTimeout ~ Opponent does exist no need for fake")}
+    }, 30000);
 
+    function CallFakeOpponent(me) {
+        clearTimeout(thisTimeout);
+        console.log("🚀 ~ file: Board.js ~ line 285 ~ Board ~ CallFakeOpponent ~ 'Launched the request for fake opponenet'")
+        let idx = Math.floor(Math.random() * me.BOT_NAMES.length);
         const requestOptions =
         {method: 'POST',
             headers: { 'Content-Type': 'application/json',
+                        // @ts-ignore
                         "X-CSRFToken":document.getElementsByName('csrfmiddlewaretoken')[0].value },
             body: JSON.stringify({
                 'id':me.state.id,
                 'creator':me.state.creator,
-                'opponent':"",
+                'opponent':me.BOT_NAMES[idx],
                 'allow_fake':true,
+                'tier': me.Tiers[idx],
             })
         };
         fetch('/DhametCode/create-game', requestOptions).
             then((response) => response.json()).
             then((data) => {
-                if (typeof data["Bad Request"] !="undefined") {console.log("['f': CreateFakeOpponent] : Invalid Data : Ignored!");}
+                if (typeof data["Bad Request"] !="undefined")
+                {}
                 else {
-                    console.log("['f': CreateFakeOpponent]['data': ",data,"]");
+
+                    console.log("🚀 ~ file: Board.js ~ line 295 ~ Board ~ then ~ data", data)
                     me.state.opponent = data.opponent;
+                    me.state.tier = me.Tiers[idx];
+                    me.props.client.send(
+                        JSON.stringify({
+                          'id': me.state.Code,
+                          'state': me.state.board_txt,
+                          'last_move': me.state.move,
+                          'souffle_move':me.state.souffle_move,
+                          'current_turn': me.state.player,
+                          'creator': me.state.creator,
+                          'creator_score': "",
+                          'opponent' : me.state.opponent,
+                          'opponent_score': "",
+                          'winner': me.state.winner,
+                          'winner_score': "",
+                          'tier': me.state.tier,
+                        }));
                 }
             });
-
         }
     }
   CreateGameRequest(name) {
@@ -338,16 +349,17 @@ class Board extends Component {
         then((data) => {
             if (typeof data["Bad Request"] !="undefined") {console.log("Invalid Data : Ignored!");}
             else {username = data.username;
-                // console.log("['f': fetch]['user': ",username,"]");
                 me.state.username = username;
+                // console.log("🚀 ~ file: Board.js ~ line 351 ~ Board ~ then ~ username", username)
             }
         });
-    // console.log("['f': getUserNameRequest]['user': ",username,"]");
-    // console.log("['_': state]['user': ",this.state.username,"]");
   }
-  // Componenets Native methods :
+  //?---------------------------------------------------------
+  // * Component's Native methods :
+  //?---------------------------------------------------------
   componentWillMount() {
         this.getUserNameRequest();
+        this.CreateFakeOpponent();
         this.props.client.onopen = () => {
           console.log('A new client Connected');
           this.props.client.send(
@@ -355,6 +367,7 @@ class Board extends Component {
               'id': this.state.Code,
               'state': this.state.board_txt,
               'last_move': this.state.move,
+              'souffle_move':this.state.souffle_move,
               'current_turn': this.state.player,
               'creator': this.state.creator,
               'creator_score': "",
@@ -362,24 +375,29 @@ class Board extends Component {
               'opponent_score': "",
               'winner': this.state.winner,
               'winner_score': "",
+              'tier': "",
             }));
         };
         let me = this;
           this.props.client.onmessage = function (e) {
+
             const data = JSON.parse(e.data);
             let moved = false;
             if (typeof data["Bad Request"] != "undefined") {
               console.log("Invalid Move : Ignored!");
               me.state.move = "";
             }
-            else {
-                let AI_NAMES = ["AI_Random","AI_Dummy","AI_MinMax"];
+            else { // *server returned a valid move :
                 console.log("We received a correct data: ", data);
                 let game_state = me.state;
                 game_state.player = data.current_turn;
-                // console.log("The winner returned is : ",data.winner)
                 console.log("The player now is : ", game_state.player);
                 game_state.board_txt = data.state;
+                game_state.soufflables = data.soufflables;
+                if(game_state.soufflables.length)
+                {
+                    game_state.can_souffle= true;
+                }
                 if (game_state.last_move != data.last_move )
                 {
                   game_state.last_move = data.last_move;
@@ -393,27 +411,32 @@ class Board extends Component {
                   me.deserialize(data.state);
                 }
                 me.state.move = "";
+
                 if (data.winner!==null && data.winner!=="")
-                {// TODO : change this to a better thing.
+                {
+                    // TODO : change this to a better thing.
                     alert(data.winner + " Won the game!");
                     me.state.winner = data.winner
                 }
+
                 if (data.opponent !== me.state.opponent)
                 {
                     me.state.opponent = data.opponent;
                     me.state.creator  = data.creator;
-                    console.log("['f': move]['state' : ",me.state,"]");
+                    me.state.tier = data.tier===0? null : data.tier;
+                    console.log("🚀 ~ file: Board.js ~ line 425 ~ Board ~ componentWillMount ~ state", me.state)
                   if (data.opponent === me.state.username)
                   {
                     document.getElementById("player2_name").innerHTML       = data.creator;
                     document.getElementById("player2_score").innerHTML = data.creator_score;
                     document.getElementById("player1_name").innerHTML       = data.opponent;
                     document.getElementById("player1_score").innerHTML = data.opponent_score;
-                    document.getElementById("player1").style.backgroundColor  = "rgb(156,108,20)";
-                    document.getElementById("timer_p1").style.backgroundColor = "rgb(156,108,20)";
 
+                    document.getElementById("player1").style.backgroundColor  = "rgb(156,108,20)";
                     document.getElementById("player2").style.backgroundColor  = "rgb(76,52,36)";
-                    document.getElementById("timer_p2").style.backgroundColor = "rgb(76,52,36)";
+
+                    // document.getElementById("timer_p1").style.backgroundColor = "rgb(156,108,20)";
+                    // document.getElementById("timer_p2").style.backgroundColor = "rgb(76,52,36)";
                   }
                   else if (data.creator === me.state.username)
                   {
@@ -423,15 +446,15 @@ class Board extends Component {
                     document.getElementById("player2_score").innerHTML = data.opponent_score;
 
                     document.getElementById("player1").style.backgroundColor  = "rgb(76,52,36)";
-                    document.getElementById("timer_p1").style.backgroundColor = "rgb(76,52,36)";
-
                     document.getElementById("player2").style.backgroundColor  = "rgb(156,108,20)";
-                    document.getElementById("timer_p2").style.backgroundColor =  "rgb(156,108,20)";
+
+                    // document.getElementById("timer_p1").style.backgroundColor = "rgb(76,52,36)";
+                    // document.getElementById("timer_p2").style.backgroundColor =  "rgb(156,108,20)";
                   }
                 }
 
                 // * If We are playing vs AI then we will send it's request after the player's
-                if( AI_NAMES.includes(me.state.opponent) && me.state.player===1)
+                if( me.AI_NAMES.includes(me.state.opponent) && me.state.player===1)
                 {
                     setTimeout(() => {
                     // * We can change the response time based on the need
@@ -442,21 +465,46 @@ class Board extends Component {
                             'id': me.state.Code,
                             'state': me.state.board_txt,
                             'last_move': "",
+                            'souffle_move':"",
                             'current_turn': me.state.player,
                             'winner':"",
+
                         }));
                     }
                         }, 350);
                     }
+
+                // * If the player is playing vs a Bot
+                if( me.state.tier!==null && me.state.player===1)
+                {
+                    let delay = 350 + Math.floor(Math.random() * 10000) // randomizing the time of the response
+                    setTimeout(() => {
+                    // * We can change the response time based on the need
+                    if (me.state.previous_board != me.state.board_txt) {
+                        console.log("The AI request waited for 350 ms !")
+                        me.props.client.send(
+                        JSON.stringify({
+                            'id': me.state.Code,
+                            'state': me.state.board_txt,
+                            'last_move': "",
+                            'souffle_move':"",
+                            'current_turn': me.state.player,
+                            'winner':"",
+                            'tier':me.state.tier,
+                        }));
+                    }
+                        }, delay);
+                    }
                 }
           };
           this.props.client.onclose = function (e) {
-          console.error('Client socket closed unexpectedly');
+            console.error('Client socket closed unexpectedly');
         };
+
     }
-  //----------------------------------------
-  // Web Page modifiers :
-  //----------------------------------------
+  //?----------------------------------------
+  // * Web Page modifiers :
+  //?----------------------------------------
   add_one_history_item(content,color)
   {
     console.log("Adding a history item")
@@ -466,9 +514,10 @@ class Board extends Component {
 
     let time_label = document.createElement("div");
     time_label.classList.add("timeline-label", "fw-bolder", "text-gray-800", "fs-6");
-    var today = new Date();
-    let time = document.getElementById("timer_p1").innerHTML;
-    // var time = today.getMinutes() + ":" + today.getSeconds();
+    let today = new Date();
+    let min = today.getMinutes() ? "" + today.getMinutes(): "0" + today.getMinutes();
+    let sec = today.getSeconds() ? "" +today.getSeconds(): "0" + today.getSeconds();
+    let time = min + ":" + sec;
     time_label.innerHTML = time;
     let badge = document.createElement("div");
     badge.classList.add("timeline-badge");
@@ -491,9 +540,9 @@ class Board extends Component {
     this.add_one_history_item(this.state.move_history_render[0],"dark");
     this.add_one_history_item(this.state.move_history_render[1],"secondary");
   }
-  // --------------------------------------
-  // Rendering React native method :
-  //---------------------------------------
+  //?--------------------------------------
+  // *Rendering React native method :
+  //?--------------------------------------
   render() {
     let Cells = [];
     let { board } = this.state;
@@ -522,6 +571,7 @@ class Board extends Component {
                   onClick={this.handleClick}
                   ex_css_class ={ex_css_class}
                   toggle = {this.state.move.includes(key)}
+                  soufflables = {this.state.soufflables}
                 >
                 </Cell>
               );
@@ -553,6 +603,7 @@ class Board extends Component {
                 onClick={this.handleClick}
                 ex_css_class ={ex_css_class}
                 toggle = {this.state.move.includes(key)}
+                soufflables = {this.state.soufflables}
               >
               </Cell>
             );

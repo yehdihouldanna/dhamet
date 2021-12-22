@@ -273,6 +273,8 @@ class User(AbstractUser):
     id = models.AutoField(primary_key=True)
     score = models.IntegerField("Score",default = 1000 , blank=False,null=False)
     avatar_url = models.CharField(default = DEFAULT_AVATAR , blank=True,max_length=255)
+    is_fake = models.BooleanField(default=False,null=False,blank=False)
+    tier = models.IntegerField(default =0,null=False,blank=False)
     country = CountryField(default = "ZZ", blank = False)
 
     @receiver(pre_save)

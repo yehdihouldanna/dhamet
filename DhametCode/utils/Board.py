@@ -15,7 +15,7 @@ class State():
     This class contains the state of the game at a give turn,
     the main content of this class is the baord vairable which contains
     """
-    def __init__(self,n=9,board=None,player =0,length=0):
+    def __init__(self,n=9,board=None,player =0,length=0,souffle = False):
         self.n = n
         self.length = length
         self.player = player   # who's turn : 0 for white 1 for black.
@@ -28,25 +28,37 @@ class State():
         self.no_kill_limit = 20
         self.dhaimat_value = 3
         self.winner = None  # -1 for black , 0 for draw and 1 for white
-        self.souffle = False  # if a pices have a killing move and it does non killing move it get's killed it self سوفلة
+
+        self.current_moves = {}
+        self.souffle = souffle  # سوفلة
+        self.can_souffle = True
+        self.soufflables = []
+
+
+        self.last_move_nature = None # 0/1 if the last move took an adversary piece
+        self.last_player = None # just checks for the last player, this is used in chained moves optimization
+
+
         # initialising the board matrix
         self.lim_takes = 10  # limits AI takes per turn (improves performance (when the baord contain few Dhaimat pieces))
         if board is None:
             self.board = np.zeros((n,n),dtype=int)
             middle = n//2
-            self.board[:middle,:]=1 # first full row
-            self.board[middle,:middle]=-1
-            self.board[middle,middle]=0
+            self.board[:middle,:]=1 # first full rows
+            self.board[middle,:middle]=-1 # left side of the middle row
+            self.board[middle,middle]=0  # the central cell
             self.board[middle,middle+1:]=1
             self.board[middle+1:]=-1
         elif type(board)==str:
             self.board = self.deserialize(board)
         else:
-            self.board = np.copy(board)
+            self.board = np.copy(board) # we need a deep copy here in order to avoid some problems
 
+    def get_pieces(self,player):
+        return np.argwhere(self.board<=-1) if player else np.argwhere(self.board>=1)
 
     def check_end_condition(self):
-        if self.player_has_no_moves_condition():
+        if not self.player_has_moves():
             self.winner =["White" ,"Black"][not self.player]
             end_msg = f"{self.winner} Won! The adversary had no moves"
             return True,end_msg
@@ -64,7 +76,7 @@ class State():
             return True,end_msg
         return False,""
 
-    def player_has_no_moves_condition(self):
+    def player_has_moves(self):
         pieces_indices=None
         if self.player:
             pieces_indices = np.argwhere(self.board<=-1)
@@ -72,10 +84,10 @@ class State():
             pieces_indices = np.argwhere(self.board>=1)
         for i in range(pieces_indices.shape[0]):
             x,y = tuple(pieces_indices[i])
-            moves,scores= self.available_moves(x,y)
+            moves= self.available_moves(x,y) # //TODO : Very bad place to call this function, find a better way to check for the end
             if len(moves):
-                return False
-        return True
+                return True
+        return False
 
     def show_board(self,file=None):
         """Shows the board in a colorful manner"""
@@ -118,12 +130,23 @@ class State():
 
     def move(self,piece,destination):
         """moves a piece, given its position coordinates and it's destination coordinates"""
-        possible_moves,scores = self.available_moves(piece[0],piece[1])
-        if destination not in possible_moves:
-            print("Move is invalid !, Try again")
+        possible_moves = self.available_moves(piece[0],piece[1])
+        score = 0
+        try:
+            score = possible_moves[destination]
+        except :
+            pass
+        if destination not in possible_moves.keys():
+            # print("Move is invalid !, Try again")
+            return False
+        elif (self.last_player==self.player and self.last_move_nature==0):
+            # print("Move is invalid !, Try again")
+            return False
+        elif (score==0 and self.last_player==self.player):
+            # print("Move is invalid !, Try again")
             return False
         else:
-            idx = possible_moves.index(destination)
+            self.current_moves = possible_moves
             if np.abs(destination[0]-piece[0])>=2 or np.abs(destination[1]-piece[1])>=2:
                 vec_x = np.sign(destination[0]-piece[0])
                 vec_y = np.sign(destination[1]-piece[1])
@@ -145,16 +168,14 @@ class State():
             elif not self.player and destination[0]==self.n-1 :
                 self.board[destination[0],destination[1]]=self.dhaimat_value
 
-            if self.souffle and scores[idx] == 0 and 1 in scores: # souvle kills itself
-                self.board[destination[0],destination[1]]=0
-            # updating the repeating end_condition.
-            current_white_score = self.white_score
-            current_black_score = self.black_score
-            self.update_scores()
-            if current_white_score==self.white_score and current_black_score==self.black_score:
+            if not score:
                 self.no_kill_counter+=1
+                self.last_move_nature=0
             else:
                 self.no_kill_counter=0
+                self.last_move_nature=1
+
+            self.last_player = self.player
 
             return True
 
@@ -169,9 +190,25 @@ class State():
             moved = self.move((xs,ys),(xd,yd))
             if not moved:
                 break
-        return moved
 
+        if self.souffle and self.last_move_nature == 0:
+            self.update_soufflables()
+        return moved , self.soufflables
 
+    def update_soufflables(self):
+        # TODO : Make a lazy search algorithm for soufflable ->
+        # TODO : ->(u dont have to loop over all availbles moves for a piece it is enough to find one that has a score of 1)
+        self.soufflables = [str(piece[0])+str(piece[1]) for piece in self.get_pieces(self.player)]
+
+    def apply_souffle(self,piece_str):
+        # if (piece_str in self.soufflables) and ((not self.player and self.board[int(piece_str[0]),int(piece_str[1])]>=1) or (self.player and self.board[int(piece_str[0]),int(piece_str[1])]<=-1)):
+        if ((self.player and self.board[int(piece_str[0]),int(piece_str[1])]>=1) or (not self.player and self.board[int(piece_str[0]),int(piece_str[1])]<=-1)):
+
+            self.board[int(piece_str[0]),int(piece_str[1])]=0
+            can_souffle = False
+            print(f'Souffle applied on the piece {piece_str}')
+            return True
+        return False
 
     def get_chain_moves(self,x,y):
         # TODO : optimize this function to return only the optimal chained move and reduce the overhead
@@ -190,11 +227,12 @@ class State():
         if len(move_str)>=3*self.lim_takes+2: # just an overhead reducer could be made false in __init__
             return
         else:
-            # print(f"chain move {move_str} Started :")
             temp_board = np.copy(self.board)
             current_player = self.player
-            possible_moves,scores = self.available_moves(x,y)
-            for (x_,y_),score in zip(possible_moves,scores):
+            last_player = self.last_player
+            possible_moves = self.available_moves(x,y)
+            for (x_,y_) in possible_moves.keys():
+                score = possible_moves[ (x_,y_)]
                 if score :
                     move = move_str + " " +str(x_)+str(y_)
                     chains[move] = chains[move_str] + 1
@@ -202,22 +240,18 @@ class State():
                     self.helper_chain_moves(x_,y_,move,chains,False)
                     self.set_board(temp_board)
                     self.set_player(current_player)
+                    self.set_last_player(last_player)
                 elif first_lvl and not score:
                     move = move_str + " " +str(x_)+str(y_)
                     chains[move] = 0
-        # print(f"chain move {move_str} exited Ok!")
-
 
     def available_moves(self,x,y):
         """
         This function return all the available moves of the given piece, (one step only doesn't return chained moves).
         params : x,y : piece coordinates on the board
-        returns : possible moves - list containing tuples of coordinates of possible moves
-                  scores  - list the scores of the moves (aka the number of pieces that move killed)
+        returns : possible moves - dict containing tuples of coordinates of possible moves with their respective scores
         """
-        possible_moves = []
-        scores = []
-        # we have two type of nodes : '+' (Plus) and '*' (Star)
+        possible_moves = {}
         vectors_up_star = [(1,-1),(1,0),(1,1)]
         vectors_down_star = [(-1,-1),(-1,0),(-1,1)]
         vectors_up_plus = [(1,0)]
@@ -232,11 +266,9 @@ class State():
                     y_ = lambda k : y+k*vec[1] # returns the next ordinate
                     if self.board[x,y]==1: # regular white piece
                         if  valid_index(x_(1),y_(1)) and self.board[x_(1),y_(1)]==0 and vec in vectors_up_star:
-                            possible_moves.append((x_(1),y_(1)))
-                            scores.append(0)
+                            possible_moves[(x_(1),y_(1))]=0
                         elif valid_index(x_(1),y_(1)) and np.sign(self.board[x_(1),y_(1)])==-1 and valid_index(x_(2),y_(2)) and self.board[x_(2),y_(2)]==0:
-                            possible_moves.append((x_(2),y_(2)))
-                            scores.append(1)
+                            possible_moves[(x_(2),y_(2))]=1
 
                     else : # White Dhaimat piece:
                         valid = False
@@ -250,8 +282,7 @@ class State():
                             elif valid_index(x_(k+1),y_(k+1)) and self.board[x_(k+1),y_(k+1)]!=0 and self.board[x_(k),y_(k)]!=0: # two adjacent pieces blocking the line.
                                 break
                             elif self.board[x_(k),y_(k)]==0: # a killing move
-                                possible_moves.append((x_(k),y_(k)))
-                                scores.append(p)
+                                possible_moves[(x_(k),y_(k))]=p
                             elif np.sign(self.board[x_(k),y_(k)])==-1: # a piece is present in the cell but we still need to check the next cell case.
                                 p+=1
                             k+=1
@@ -263,11 +294,9 @@ class State():
                     y_ = lambda k : y+k*vec[1] # returns the next ordinate
                     if self.board[x,y]==1: # regular white piece
                         if  valid_index(x_(1),y_(1)) and self.board[x_(1),y_(1)]==0 and vec in vectors_up_plus:
-                            possible_moves.append((x_(1),y_(1)))
-                            scores.append(0)
+                            possible_moves[(x_(1),y_(1))]=0
                         elif valid_index(x_(1),y_(1)) and np.sign(self.board[x_(1),y_(1)])==-1 and valid_index(x_(2),y_(2)) and self.board[x_(2),y_(2)]==0:
-                            possible_moves.append((x_(2),y_(2)))
-                            scores.append(1)
+                            possible_moves[(x_(2),y_(2))]=1
                     else : # White Dhaimat piece:
                         valid = False
                         k=1
@@ -280,8 +309,7 @@ class State():
                             elif valid_index(x_(k+1),y_(k+1)) and self.board[x_(k+1),y_(k+1)]!=0 and self.board[x_(k),y_(k)]!=0:
                                 break
                             elif self.board[x_(k),y_(k)]==0: # a killing move
-                                possible_moves.append((x_(k),y_(k)))
-                                scores.append(p)
+                                possible_moves[(x_(k),y_(k))]=p
                             elif np.sign(self.board[x_(k),y_(k)])==-1:
                                 p+=1
                             k+=1
@@ -294,11 +322,9 @@ class State():
                     y_ = lambda k : y+k*vec[1] # returns the next ordinate
                     if self.board[x,y]==-1: # regular balck piece
                         if  valid_index(x_(1),y_(1)) and self.board[x_(1),y_(1)]==0 and vec in vectors_down_star:
-                            possible_moves.append((x_(1),y_(1)))
-                            scores.append(0)
+                            possible_moves[(x_(1),y_(1))]=0
                         elif valid_index(x_(1),y_(1)) and np.sign(self.board[x_(1),y_(1)])==1 and valid_index(x_(2),y_(2)) and self.board[x_(2),y_(2)]==0:
-                            possible_moves.append((x_(2),y_(2)))
-                            scores.append(1)
+                            possible_moves[(x_(2),y_(2))]=1
                     else : # Black Dhaimat piece:
                         valid = False
                         k=1
@@ -311,8 +337,7 @@ class State():
                             elif valid_index(x_(k+1),y_(k+1)) and self.board[x_(k+1),y_(k+1)]!=0 and self.board[x_(k),y_(k)]!=0:
                                 break
                             elif self.board[x_(k),y_(k)]==0: # a killing move
-                                possible_moves.append((x_(k),y_(k)))
-                                scores.append(p)
+                                possible_moves[(x_(k),y_(k))]=p
                             elif np.sign(self.board[x_(k),y_(k)])==1: # enemy piece
                                 p+=1
                             k+=1
@@ -329,8 +354,7 @@ class State():
                             elif valid_index(x_(k+1),y_(k+1)) and self.board[x_(k+1),y_(k+1)]!=0 and self.board[x_(k),y_(k)]!=0: # if two successif piecse are blocking the line
                                 break
                             elif self.board[x_(k),y_(k)]==0: # a killing move
-                                possible_moves.append((x_(k),y_(k)))
-                                scores.append(p)
+                                possible_moves[(x_(k),y_(k))]=p
                             elif np.sign(self.board[x_(k),y_(k)])==1: # enemy piece
                                 p+=1
                             k+=1
@@ -341,11 +365,9 @@ class State():
                     y_ = lambda k : y+k*vec[1]
                     if self.board[x,y]==-1: # regular black piece
                         if  valid_index(x_(1),y_(1)) and self.board[x_(1),y_(1)]==0 and vec in vectors_down_plus:
-                            possible_moves.append((x_(1),y_(1)))
-                            scores.append(0)
+                            possible_moves[(x_(1),y_(1))]=0
                         elif valid_index(x_(1),y_(1)) and np.sign(self.board[x_(1),y_(1)])==1 and valid_index(x_(2),y_(2)) and self.board[x_(2),y_(2)]==0:
-                            possible_moves.append((x_(2),y_(2)))
-                            scores.append(1)
+                            possible_moves[(x_(2),y_(2))]=1
                     else : # Black Dhaimat piece:
                         valid = False
                         k=1
@@ -358,13 +380,12 @@ class State():
                             elif valid_index(x_(k+1),y_(k+1)) and self.board[x_(k+1),y_(k+1)]!=0 and self.board[x_(k),y_(k)]!=0:
                                 break
                             elif self.board[x_(k),y_(k)]==0: # a killing move
-                                possible_moves.append((x_(k),y_(k)))
-                                scores.append(p)
+                                possible_moves[(x_(k),y_(k))]=p
                             elif np.sign(self.board[x_(k),y_(k)])==1: # enemy piece
                                 p+=1
                             k+=1
                             valid = valid_index(x_(k),y_(k))
-        return possible_moves,scores
+        return possible_moves
 
     def serialize(self,board):
         "serialize the matrix board into a string format"
@@ -411,7 +432,7 @@ class State():
         self.board = np.copy(board)
 
     def set_player(self,player):
-        """this method sets the player manually , used for unit testing."""
+        """this method sets the player manually"""
         if (type(player)==int and player==1) or (type(player)==str and player.lower() in ["b","black"]):
                 self.player = 1
         elif (type(player)==int and player==0) or (type(player)==str and player.lower() in ["w" , "white"]):
@@ -419,6 +440,8 @@ class State():
         else:
             print("Trying to set an Invalid Player! : type '0' for 'White' or '1' for 'Black'")
 
+    def set_last_player(self,last_player):
+        self.last_player = last_player
 
 class Play_Game():
     def __init__(self,player1,player2,n=9,file_name=None,console=False):
@@ -476,8 +499,6 @@ if __name__=="__main__":
     match = Play_Game(Player1,Player2,n=9,file_name=file_name,console=True)
     while(not match.game_ended):
         match.turn()
-
-
 
     if save_to_file:
         with open(os.path.join(os.getcwd(),"logs","labels.txt"),mode="a") as f:
