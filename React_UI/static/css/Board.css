@@ -3,7 +3,7 @@
   /* background-image: url('../images/zamma.png'); */
   /* width : 775px;
   height: 775px; */
-  background-image: url('../images/zamma_360.jpg');
+  background-image: url('../images/zamma_360_indexed.png');
   /* padding : 4px; */
   width : 360px;
   height: 360px;
@@ -18,5 +18,5 @@
 }
 #dhamet_container{
   text-align: center;
- 
+
 }

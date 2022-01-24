@@ -47,7 +47,6 @@ sentry_sdk.init(
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', '165.22.85.224','www.dhamet.com','dhamet.com','192.168.100.229']
 
-
 # Application definition
 INSTALLED_APPS = [
     'channels', # avoids some probelems by having it first on the apps list.
@@ -57,9 +56,14 @@ INSTALLED_APPS = [
     "allauth",
     "allauth.account",
     'allauth.socialaccount',
-    "allauth.socialaccount.providers.github", # new
-    "allauth.socialaccount.providers.twitter", # new
 
+    "allauth.socialaccount.providers.github",
+    "allauth.socialaccount.providers.twitter",
+    "allauth.socialaccount.providers.google",
+    "allauth.socialaccount.providers.facebook",
+    "allauth.socialaccount.providers.apple",
+
+    "social_django",
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
@@ -78,13 +82,16 @@ INSTALLED_APPS = [
 ]
 
 AUTHENTICATION_BACKENDS = [
+
     "django.contrib.auth.backends.ModelBackend",
     "allauth.account.auth_backends.AuthenticationBackend",
+    'social_core.backends.google.GoogleOAuth2',
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#auth-user-model
 AUTH_USER_MODEL = "users.User"
 # https://docs.djangoproject.com/en/dev/ref/settings/#login-redirect-url
 LOGIN_REDIRECT_URL = "/main/"
+LOGOUT_REDIRECT_URL = '/'
 # https://docs.djangoproject.com/en/dev/ref/settings/#login-url
 LOGIN_URL = "account_login"
 
@@ -101,7 +108,7 @@ ACCOUNT_ADAPTER = "users.adapters.AccountAdapter"
 SOCIALACCOUNT_ADAPTER = "users.adapters.SocialAccountAdapter"
 AUTH_USER_MODEL = 'users.User'
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-SITE_ID = 1
+SITE_ID = 2
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 ACCOUNT_LOGOUT_ON_GET = True
 
@@ -197,6 +204,11 @@ REST_FRAMEWORK = {
     ]
 }
 
+DEBUG_TOOLBAR_CONFIG = {
+    'SHOW_TOOLBAR_CALLBACK': lambda r: False,  # disables it
+    # '...
+}
+
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
 
@@ -275,4 +287,17 @@ LOGGING = {
             'style': '{',
         },
     },
+}
+
+
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'SCOPE': [
+            'profile',
+            'email',
+        ],
+        'AUTH_PARAMS': {
+            'access_type': 'online',
+        }
+    }
 }

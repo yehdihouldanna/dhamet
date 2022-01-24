@@ -16,7 +16,7 @@ from datetime import datetime
 
 
 logger = logging.getLogger('root')
-# This is a functional chat conumer could be used later to add a chat functionality.
+# This is a functional chat consumer could be use later to add a chat functionality.
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         self.room_name = self.scope['url_route']['kwargs']['room_name']
@@ -198,6 +198,9 @@ class GameConsumer(AsyncWebsocketConsumer):
         if id!="":
             queryset = Game.objects.filter(id=id)
             if queryset.exists():
+                game = queryset[0]
+                if game.completed:
+                    return Response({'Bad Request': 'Invalid data...'}, status=status.HTTP_400_BAD_REQUEST)
                 current_turn_  = data['current_turn']
                 tier = 0
                 try :
@@ -207,7 +210,7 @@ class GameConsumer(AsyncWebsocketConsumer):
                 move = data['last_move']
                 souffle_move = data['souffle_move']
                 # logger.info(f"['f': post_move]['move': {move}]")
-                game = queryset[0]
+
                 current_turn = game.current_turn
                 length = game.length
                 board = game.state
@@ -242,7 +245,7 @@ class GameConsumer(AsyncWebsocketConsumer):
                     return self.update_game(id,user_,game,game_instance,move,souffle_move)
 
                 elif ((game.creator==user and current_turn==1) or (game.opponent == user and current_turn==0)): #* case a user tries a move when it't turn only happens at start when user joins a new game
-                    return self.update_game(id,user,game,game_instance,move="",soufle_move="")
+                    return self.update_game(id,user,game,game_instance,move="",souffle_move="")
             # raise Exception(f"user {user.username} tried to make a non valid move!")
             return Response({'Bad Request': 'Invalid data...'}, status=status.HTTP_400_BAD_REQUEST)
         return Response({'Bad Request': 'Invalid data...'}, status=status.HTTP_400_BAD_REQUEST)

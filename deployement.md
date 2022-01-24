@@ -79,7 +79,6 @@ then place yourself in the folder :
 
 - [https://averyuslaner.com/setting-django-nginx-daphne-ubuntu-1804/](https://averyuslaner.com/setting-django-nginx-daphne-ubuntu-1804/)
 
-
 ---
 ## Required config files :
 ---
@@ -302,3 +301,7 @@ check the following files using `sudo vim <LogFilePath>` in order to detect find
     Run ``npm start``
     OR
     ``rm -rf node_modules package-lock.json && npm install && npm run build``
+
+- if you encounter problems related to `DoesNotExist at /accounts/signup/` or `admin/login` ...etc
+then you might want to find teh apropriate value for `SITE_ID` in `settings.py`
+ 

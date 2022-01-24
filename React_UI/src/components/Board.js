@@ -144,7 +144,7 @@ class Board extends Component {
   doDoubleClickAction(key,piece_present) {
     if (this.state.move.length==0 && piece_present ==2)
     {
-        console.log("🚀 ~ file: Board.js ~ line 148 ~ Board ~ doDoubleClickAction ~ handleSouffle got called")
+        // console.log("🚀 ~ file: Board.js ~ line 148 ~ Board ~ doDoubleClickAction ~ handleSouffle got called")
         this.handleSouffle(key);
     }
     if (this.state.move.length>=5)
@@ -197,7 +197,7 @@ class Board extends Component {
   handleMove() {
     if (this.state.move.length)
       {this.MoveRequest_ws(this.state.move,this.state.souffle_move);}
-    console.log("🚀 ~ file: Board.js ~ line 188 ~ Board ~ handleMove")
+    // console.log("🚀 ~ file: Board.js ~ line 188 ~ Board ~ handleMove")
   };
   //?-----------------------------------------------------------------------
   // * Handling Request and getting the reponses from the back end methods :
@@ -224,7 +224,7 @@ class Board extends Component {
       return false;
   }
   MoveRequest_ws(move_str,souffle_move) {
-    console.log("🚀 ~ file: Board.js ~ line 248 ~ Board ~ MoveRequest_ws")
+    // console.log("🚀 ~ file: Board.js ~ line 248 ~ Board ~ MoveRequest_ws")
     // * This function communicate with the GameMoveConsumer in the backend
     if (this.state.Code === "") {
       this.CreateGameRequest();
@@ -258,7 +258,7 @@ class Board extends Component {
 
     function CallFakeOpponent(me) {
         clearTimeout(thisTimeout);
-        console.log("🚀 ~ file: Board.js ~ line 285 ~ Board ~ CallFakeOpponent ~ 'Launched the request for fake opponenet'")
+        // console.log("🚀 ~ file: Board.js ~ line 285 ~ Board ~ CallFakeOpponent ~ 'Launched the request for fake opponenet'")
         let idx = Math.floor(Math.random() * me.BOT_NAMES.length);
         const requestOptions =
         {method: 'POST',
@@ -280,7 +280,7 @@ class Board extends Component {
                 {}
                 else {
 
-                    console.log("🚀 ~ file: Board.js ~ line 295 ~ Board ~ then ~ data", data)
+                    // console.log("🚀 ~ file: Board.js ~ line 295 ~ Board ~ then ~ data", data)
                     me.state.opponent = data.opponent;
                     me.state.tier = me.Tiers[idx];
                     me.props.client.send(
@@ -350,7 +350,7 @@ class Board extends Component {
             if (typeof data["Bad Request"] !="undefined") {console.log("Invalid Data : Ignored!");}
             else {username = data.username;
                 me.state.username = username;
-                // console.log("🚀 ~ file: Board.js ~ line 351 ~ Board ~ then ~ username", username)
+                // // console.log("🚀 ~ file: Board.js ~ line 351 ~ Board ~ then ~ username", username)
             }
         });
   }
@@ -424,7 +424,7 @@ class Board extends Component {
                     me.state.opponent = data.opponent;
                     me.state.creator  = data.creator;
                     me.state.tier = data.tier===0? null : data.tier;
-                    console.log("🚀 ~ file: Board.js ~ line 425 ~ Board ~ componentWillMount ~ state", me.state)
+                    // console.log("🚀 ~ file: Board.js ~ line 425 ~ Board ~ componentWillMount ~ state", me.state)
                   if (data.opponent === me.state.username)
                   {
                     document.getElementById("player2_name").innerHTML       = data.creator;
@@ -454,7 +454,7 @@ class Board extends Component {
                 }
 
                 // * If We are playing vs AI then we will send it's request after the player's
-                if( me.AI_NAMES.includes(me.state.opponent) && me.state.player===1)
+                if( me.AI_NAMES.includes(me.state.opponent) && me.state.player===1 && me.state.winner === "")
                 {
                     setTimeout(() => {
                     // * We can change the response time based on the need
@@ -475,7 +475,7 @@ class Board extends Component {
                     }
 
                 // * If the player is playing vs a Bot
-                if( me.state.tier!==null && me.state.player===1)
+                if( me.state.tier!==null && me.state.player===1 && me.state.winner === "")
                 {
                     let delay = 350 + Math.floor(Math.random() * 10000) // randomizing the time of the response
                     setTimeout(() => {
@@ -547,7 +547,7 @@ class Board extends Component {
     let Cells = [];
     let { board } = this.state;
     let len = board.length;
-    if(this.state.opponent === this.state.username)
+    if(this.state.opponent === this.state.username && this.state.creator !=="")
     {
         for (let i = 0; i < len; i++) {
             for (let j = 0; j < len; j++) {
@@ -580,15 +580,12 @@ class Board extends Component {
     }
     else
     {
-
         for (let i = len - 1; i >= 0; i--) {
           for (let j = 0; j < len; j++) {
             let key = i.toString() + j.toString();
             let ex_css_class="";
             if (this.state.last_move.includes(key))
-            {
-              ex_css_class = " highlight_last_move";
-            }
+            {ex_css_class = " highlight_last_move";}
             Cells.push(
               <Cell
                 key={key}

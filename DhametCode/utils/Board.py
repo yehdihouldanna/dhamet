@@ -137,13 +137,13 @@ class State():
             pass
         if destination not in possible_moves.keys():
             # print("Move is invalid !, Try again")
-            return False
+            return False,None
         elif (self.last_player==self.player and self.last_move_nature==0):
             # print("Move is invalid !, Try again")
-            return False
+            return False,None
         elif (score==0 and self.last_player==self.player):
             # print("Move is invalid !, Try again")
-            return False
+            return False,None
         else:
             max_score = max(possible_moves.values())
             if np.abs(destination[0]-piece[0])>=2 or np.abs(destination[1]-piece[1])>=2:
