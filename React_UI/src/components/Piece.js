@@ -5,6 +5,8 @@
 import React,{ Component } from "react"
 import '/static/css/Piece.css';
 import { DragSource } from 'react-dnd';
+// import styled, {keyframes} from 'styled-components';
+import {CSSTransition,TransitionGroup} from 'react-transition-group';
 // the rest of your app's constants.
 const Types = {
   Piece: 'Piece'
@@ -81,6 +83,10 @@ function collect(connect, monitor) {
   }
 }
 
+// const Pulse = styled.div`animation: 1s ${keyframes`${pulse}`} infinite alternate`;
+// const Bounce = styled.div`animation: 2s ${keyframes`${bounce}`} infinite`;
+// const Bounce = styled.div`animation: 2s ${keyframes`${bounce}`} alternate infinite`;
+
 class Piece extends Component {
   constructor()
   {
@@ -101,6 +107,8 @@ class Piece extends Component {
         this.props.onClick(e,key,2) // 2 for souffle
     }
 }
+
+  toggleAppear =  ()=>{}
   render() {
     // console.log("the props of the piece are ",this.props);
     let  class_ = "Piece "+this.props.color +"_"+ this.props.type ;
@@ -111,13 +119,24 @@ class Piece extends Component {
     // as defined by your `collect` function above:
     const { isDragging, connectDragSource} = this.props
 
-    return connectDragSource(
-        <div className = {class_} onClick = {(e)=>this.onClick_(e,this.props.i.toString()+this.props.j.toString())}
-            style={{ // this is not working as intended yet:
-                textShadow: isDragging ? "20px" : "0px",
-            }}>
-        </div>
-    )
+    return  <TransitionGroup className = "class__">
+        <CSSTransition
+            key = {parseInt(this.props.i.toString()+this.props.j.toString())}
+            in = {true}
+            appear = {true}
+            enter = {true}
+            exit = {true}
+            timeout = {500}
+            classNames = "anim">
+                {/* connectDragSource( */}
+                <div className = {class_} onClick = {(e)=>this.onClick_(e,this.props.i.toString()+this.props.j.toString())}
+                    style={{ // this is not working as intended yet:
+                        textShadow: isDragging ? "20px" : "0px",
+                    }}>
+                </div>
+                {/* ) */}
+            </CSSTransition>
+        </TransitionGroup>
   }
 }
 

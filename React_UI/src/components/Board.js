@@ -9,7 +9,7 @@ import Cell from './Cell';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import React, { Component, useReducer } from 'react';
-
+import {CSSTransition} from 'react-transition-group';
 class Board extends Component {
   constructor(props) {
     super();
@@ -24,11 +24,22 @@ class Board extends Component {
         [-1, -1, -1, -1, -1, -1, -1, -1, -1],
         [-1, -1, -1, -1, -1, -1, -1, -1, -1],
         [-1, -1, -1, -1, -1, -1, -1, -1, -1]],
+
+      previous_board :[
+                    [ 0,  0,  0,  0,  0,  0,  0,  0,  0],
+                    [ 0,  0,  0,  0,  0,  0,  0,  0,  0],
+                    [ 0,  0,  0,  0,  0,  0,  0,  0,  0],
+                    [ 0,  0,  0,  0,  0,  0,  0,  0,  0],
+                    [ 0,  0,  0,  0,  0,  0,  0,  0,  0],
+                    [ 0,  0,  0,  0,  0,  0,  0,  0,  0],
+                    [ 0,  0,  0,  0,  0,  0,  0,  0,  0],
+                    [ 0,  0,  0,  0,  0,  0,  0,  0,  0],
+                    [ 0,  0,  0,  0,  0,  0,  0,  0,  0]],
       player: 0,
       Code: props.game_code,
       Client : props.client,
       board_txt: "wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwbbbb_wwwwbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-      previous_board : "wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwbbbb_wwwwbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      previous_board_txt : "wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwbbbb_wwwwbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
       move: "",
       last_move :"",
       move_history_render:[],
@@ -47,8 +58,6 @@ class Board extends Component {
       soufflables : [],
     };
     this.AI_NAMES  = ["AI_Random","AI_Dummy","AI_MinMax"];
-
-
     this.BOT_NAMES = ["Med10","Mariem","Sidi","احمد","Khadijetou","Cheikh","Vatimetou","ابراهيم",
                       "Mamadou","Oumar","Amadou","3abdellahi","Va6me","Moussa","Aly","Samba"];
     //* Tiers are the difficulty level, for now we have 3 tiers, 3 :AI_MinMax, 2 : Dummy, 1 : Random
@@ -103,7 +112,7 @@ class Board extends Component {
     }
     return str
   };
-  deserialize(text) {
+  deserialize(text,text_prev) {
     let game_state = this.state
     let k = 0;
     for (let i = 0; i < 9; i++) {
@@ -113,6 +122,13 @@ class Board extends Component {
         else if (text[k] === "_") game_state.board[i][j] = 0;
         else if (text[k] === "w") game_state.board[i][j] = 1;
         else if (text[k] === "W") game_state.board[i][j] = 3;
+
+        if (text_prev[k] === "b") game_state.previous_board[i][j] = -1;
+        else if (text_prev[k] === "B") game_state.previous_board[i][j] = -3;
+        else if (text_prev[k] === "_") game_state.previous_board[i][j] = 0;
+        else if (text_prev[k] === "w") game_state.previous_board[i][j] = 1;
+        else if (text_prev[k] === "W") game_state.previous_board[i][j] = 3;
+
         k += 1;
       }
     }
@@ -204,18 +220,18 @@ class Board extends Component {
   //?-----------------------------------------------------------------------
   handleSouffle(piece_key)
   {
-      console.log("in handle souffle")
+    console.log("in handle souffle")
     let i = parseInt(piece_key[0]);
     let j = parseInt(piece_key[1]);
     let game_state= this.state;
-   game_state.souffle_move = piece_key;
+    game_state.souffle_move = piece_key;
     console.log("souffle contains now : ",game_state.souffle_move)
-   game_state.can_souffle = false;
-   game_state.soufflables = [];
-   game_state.board[i][j] = 0;
-   game_state.board_txt = this.serialize();
-   game_state.move = "";
-   this.setState(game_state);
+    game_state.can_souffle = false;
+    game_state.soufflables = [];
+    game_state.board[i][j] = 0;
+    game_state.board_txt = this.serialize();
+    game_state.move = "";
+    this.setState(game_state);
   }
   is_player_turn()
   {
@@ -379,25 +395,23 @@ class Board extends Component {
             }));
         };
         let me = this;
-          this.props.client.onmessage = function (e) {
-
+        this.props.client.onmessage = function (e) {
             const data = JSON.parse(e.data);
             let moved = false;
             if (typeof data["Bad Request"] != "undefined") {
               console.log("Invalid Move : Ignored!");
               me.state.move = "";
             }
-            else { // *server returned a valid move :
+            else { // * server returned a valid move :
                 console.log("We received a correct data: ", data);
                 let game_state = me.state;
                 game_state.player = data.current_turn;
                 console.log("The player now is : ", game_state.player);
+                game_state.previous_board_txt = game_state.board_txt;
                 game_state.board_txt = data.state;
                 game_state.soufflables = data.soufflables;
                 if(game_state.soufflables.length)
-                {
-                    game_state.can_souffle= true;
-                }
+                { game_state.can_souffle = true;}
                 if (game_state.last_move != data.last_move )
                 {
                   game_state.last_move = data.last_move;
@@ -408,7 +422,7 @@ class Board extends Component {
                     me.update_moves_time_line();
                     me.state.move_history_render=[];
                   }
-                  me.deserialize(data.state);
+                  me.deserialize(data.state,game_state.previous_board_txt);
                 }
                 me.state.move = "";
 
@@ -431,12 +445,8 @@ class Board extends Component {
                     document.getElementById("player2_score").innerHTML = data.creator_score;
                     document.getElementById("player1_name").innerHTML       = data.opponent;
                     document.getElementById("player1_score").innerHTML = data.opponent_score;
-
                     document.getElementById("player1").style.backgroundColor  = "rgb(156,108,20)";
                     document.getElementById("player2").style.backgroundColor  = "rgb(76,52,36)";
-
-                    // document.getElementById("timer_p1").style.backgroundColor = "rgb(156,108,20)";
-                    // document.getElementById("timer_p2").style.backgroundColor = "rgb(76,52,36)";
                   }
                   else if (data.creator === me.state.username)
                   {
@@ -444,12 +454,8 @@ class Board extends Component {
                     document.getElementById("player1_score").innerHTML = data.creator_score;
                     document.getElementById("player2_name").innerHTML       = data.opponent;
                     document.getElementById("player2_score").innerHTML = data.opponent_score;
-
                     document.getElementById("player1").style.backgroundColor  = "rgb(76,52,36)";
                     document.getElementById("player2").style.backgroundColor  = "rgb(156,108,20)";
-
-                    // document.getElementById("timer_p1").style.backgroundColor = "rgb(76,52,36)";
-                    // document.getElementById("timer_p2").style.backgroundColor =  "rgb(156,108,20)";
                   }
                 }
 
@@ -458,7 +464,7 @@ class Board extends Component {
                 {
                     setTimeout(() => {
                     // * We can change the response time based on the need
-                    if (me.state.previous_board != me.state.board_txt) {
+                    if (me.state.previous_board_txt != me.state.board_txt) {
                         console.log("The AI request waited for 350 ms !")
                         me.props.client.send(
                         JSON.stringify({
@@ -480,7 +486,8 @@ class Board extends Component {
                     let delay = 350 + Math.floor(Math.random() * 10000) // randomizing the time of the response
                     setTimeout(() => {
                     // * We can change the response time based on the need
-                    if (me.state.previous_board != me.state.board_txt) {
+                    // @ts-ignore
+                    if (me.state.previous_board_txt != me.state.board_txt) {
                         console.log("The AI request waited for 350 ms !")
                         me.props.client.send(
                         JSON.stringify({
@@ -500,7 +507,6 @@ class Board extends Component {
           this.props.client.onclose = function (e) {
             console.error('Client socket closed unexpectedly');
         };
-
     }
   //?----------------------------------------
   // * Web Page modifiers :
@@ -541,11 +547,11 @@ class Board extends Component {
     this.add_one_history_item(this.state.move_history_render[1],"secondary");
   }
   //?--------------------------------------
-  // *Rendering React native method :
+  // * Rendering React native method :
   //?--------------------------------------
   render() {
     let Cells = [];
-    let { board } = this.state;
+    let { board , previous_board} = this.state;
     let len = board.length;
     if(this.state.opponent === this.state.username && this.state.creator !=="")
     {
@@ -563,6 +569,7 @@ class Board extends Component {
                   i={i}
                   j={j}
                   value={board[i][j]}
+                  previous_value = {previous_board[i][j]}
                   player={this.state.player}
                   move={this.state.move}
                   onMove={this.handleMove}
@@ -572,28 +579,29 @@ class Board extends Component {
                   ex_css_class ={ex_css_class}
                   toggle = {this.state.move.includes(key)}
                   soufflables = {this.state.soufflables}
-                >
+                  >
                 </Cell>
               );
             }
           }
-    }
-    else
-    {
+        }
+        else
+        {
         for (let i = len - 1; i >= 0; i--) {
-          for (let j = 0; j < len; j++) {
-            let key = i.toString() + j.toString();
-            let ex_css_class="";
-            if (this.state.last_move.includes(key))
-            {ex_css_class = " highlight_last_move";}
-            Cells.push(
-              <Cell
-                key={key}
-                i={i}
-                j={j}
-                value={board[i][j]}
-                player={this.state.player}
-                move={this.state.move}
+            for (let j = 0; j < len; j++) {
+                let key = i.toString() + j.toString();
+                let ex_css_class="";
+                if (this.state.last_move.includes(key))
+                {ex_css_class = " highlight_last_move";}
+                Cells.push(
+                    <Cell
+                    key={key}
+                    i={i}
+                    j={j}
+                    value={board[i][j]}
+                    previous_value = {previous_board[i][j]}
+                    player={this.state.player}
+                    move={this.state.move}
                 onMove={this.handleMove}
                 onHover={this.handleHover}
                 onStartMove={this.handleStartMove}
@@ -609,10 +617,19 @@ class Board extends Component {
     }
 
     return (
+
+
       <DndProvider backend={HTML5Backend}>
-        <div id="board"  onMouseLeave={this.handleMouseLeave}>
-          {Cells}
+        <CSSTransition
+            in = {true}
+            appear = {true}
+            timeout = {300}
+            classNames = "transition">
+
+            <div id="board"  onMouseLeave={this.handleMouseLeave}>
+            {Cells}
         </div>
+        </CSSTransition>
       </DndProvider>
     );
   };

@@ -11,12 +11,46 @@
   transform: translate(-50%, -50%);
   touch-action: manipulation; /*to disable the double tap zoom on mobile devices*/
 }
+.anim-appear
+{
+    transform : scale(0.5) translateY(-80%) translateX(-80%);
+}
+
+.anim-appear.anim-appear-active
+{
+    transform : scale(1) translateY(-50%) translateX(-50%) ;
+    transition : transform 500ms ease-in;
+}
+.anim-enter
+{
+    transform: scale(0.5) translateY(-80%) translateX(-80%);
+}
+.anim-enter.anim-enter-active
+{
+    transform : scale(1) translateY(-50%) translateX(-50%);
+    transition : transform 500ms ease-in;
+}
+
+.anim-exit
+{
+    opacity: 1;
+}
+.anim-exit.anim-exit-active
+{
+    opacity : 0.01;
+    transition : opacity 500ms ease-in;
+}
+.anim-exit-done
+{
+    opacity : 0;
+}
+
 .Black_regular
 {
   /* background-image: url('../images/Black_regular.png'); */
   /* background-image: url('../images/BR-1.png'); */
   background-image: url('../images/regular_0_32.png');
-  
+
   /* background-image: url('../images/regular_0_v2.png'); */
 }
 .White_regular
