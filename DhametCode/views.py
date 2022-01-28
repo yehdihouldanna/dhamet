@@ -96,6 +96,8 @@ class GameMoveView(generics.ListAPIView):
     serializer_class = GameMoveSerializer
     queryset = Game.objects.all()
 
+
+
     def get_game_update(self,game_instance,move):
         moves = move.split(" ")
         moved = False
@@ -238,6 +240,8 @@ def get_username(request):
         return HttpResponse(json.dumps({'username' :request.user.username}), content_type="application/json",status = status.HTTP_200_OK)
     else:
         return Response({'Bad Request': 'Invalid data...'}, status=status.HTTP_400_BAD_REQUEST)
+
+
 
 def say_hello(request):
     try :

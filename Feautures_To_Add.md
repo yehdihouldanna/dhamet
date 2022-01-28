@@ -1,4 +1,4 @@
-### The list of the features and functionnalities to add :
+
 
 *This is a non exhaustive list of features and functionnalities that will be added to the game. as we progress the need to add more elements to this list might raise up.*
 
@@ -8,11 +8,11 @@
 
 - **[Very_Importent]** Add a timer functionnality. (add a timer for each player and limited typed game options)
 
+- Add sound effects SFX to the game.
+
 - Migrate the database to postgres instead of sqlite.
 
 - Refractor the code in favor of Fat models Skinny views (a recommended Django practice) . 
-
-- Add wainting bar for pairing when the player is waiting for an online opponenet.
 
 - Make it possible to render a previous game state from historic by clicking on it.
 
@@ -24,7 +24,7 @@
 
 - Add a chat functionnality so that the players can chat while playing.
 
-- Tournament Feature. (add a features that queues multiple players and pair thems in a tournament set up)
+- Tournament Feature. (add a features that queues multiple players and pair them in a tournament set up)
 
 - Authentication with google,facebook APIs. (add a social authentication based on the Auth2 api of google and facebook)
 
@@ -39,9 +39,44 @@
 - Add more specifications for each type of dhamet, (3 , 12 , 40 )
 
 
-### Current Bugs and things to correct :
+### Current Bugs:
 
-- User can take a Soufflé even if the player took in his last move.
+- Sign up before sign in. --> Inverse the two.
+
+- Player can't take a soufflé if the oppoenent last move closed the soufflé valid taking point., --> make soufflé to be based on the previous turn's game state instead of the current.
+
+- Ai wins before the game actually ends.
+
+33 44
+55 33
+22 44
+40 22
+13 31
+42 22 40
+44 55
+51 42
+48 66
+40 31
+55 57
+58 56
+30 32
+42 22
+12 32
+50 40
+38 48
+53 42
+28 38
+60 50
+18 28
+61 51
+08 18
+51 42
+11 22
+62 51
+22 33
+63 53
+33 44
+77 55 33 31 11n,;:
 
 - Improve the behavior of the tier 0 bot players.
 

@@ -6,9 +6,7 @@
 //@ts-check
 import '/static/css/Board.css';
 import Cell from './Cell';
-import { DndProvider } from 'react-dnd';
-import { HTML5Backend } from 'react-dnd-html5-backend';
-import React, { Component, useReducer } from 'react';
+import React, { Component} from 'react';
 import {CSSTransition} from 'react-transition-group';
 class Board extends Component {
   constructor(props) {
@@ -24,29 +22,30 @@ class Board extends Component {
         [-1, -1, -1, -1, -1, -1, -1, -1, -1],
         [-1, -1, -1, -1, -1, -1, -1, -1, -1],
         [-1, -1, -1, -1, -1, -1, -1, -1, -1]],
-
       previous_board :[
-                    [ 0,  0,  0,  0,  0,  0,  0,  0,  0],
-                    [ 0,  0,  0,  0,  0,  0,  0,  0,  0],
-                    [ 0,  0,  0,  0,  0,  0,  0,  0,  0],
-                    [ 0,  0,  0,  0,  0,  0,  0,  0,  0],
-                    [ 0,  0,  0,  0,  0,  0,  0,  0,  0],
-                    [ 0,  0,  0,  0,  0,  0,  0,  0,  0],
-                    [ 0,  0,  0,  0,  0,  0,  0,  0,  0],
-                    [ 0,  0,  0,  0,  0,  0,  0,  0,  0],
-                    [ 0,  0,  0,  0,  0,  0,  0,  0,  0]],
+        [ 0,  0,  0,  0,  0,  0,  0,  0,  0],
+        [ 0,  0,  0,  0,  0,  0,  0,  0,  0],
+        [ 0,  0,  0,  0,  0,  0,  0,  0,  0],
+        [ 0,  0,  0,  0,  0,  0,  0,  0,  0],
+        [ 0,  0,  0,  0,  0,  0,  0,  0,  0],
+        [ 0,  0,  0,  0,  0,  0,  0,  0,  0],
+        [ 0,  0,  0,  0,  0,  0,  0,  0,  0],
+        [ 0,  0,  0,  0,  0,  0,  0,  0,  0],
+        [ 0,  0,  0,  0,  0,  0,  0,  0,  0]],
       player: 0,
       Code: props.game_code,
       Client : props.client,
       board_txt: "wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwbbbb_wwwwbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-      previous_board_txt : "wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwbbbb_wwwwbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      previous_board_txt : "_________________________________________________________________________________",
       move: "",
       last_move :"",
       move_history_render:[],
       creator   :"",
       opponent  :"",
       winner : "",
-      timer: 0,
+      initial_time:5*60,
+      time_left: 5*60,
+      opponent_time_left:5*60,
       delay: 200,
       prevent: false,
       MouseOnBoard: true,
@@ -83,6 +82,7 @@ class Board extends Component {
     this.serialize = this.serialize.bind(this);
     this.deserialize = this.deserialize.bind(this);
 
+    this.update_timer = this.update_timer.bind(this);
     this.update_moves_time_line = this.update_moves_time_line.bind(this);
     this.add_one_history_item = this.add_one_history_item.bind(this);
   };
@@ -93,21 +93,11 @@ class Board extends Component {
     let str = ""
     for (let i = 0; i < 9; i++) {
       for (let j = 0; j < 9; j++) {
-        if (this.state.board[i][j] === -1) {
-          str += "b";
-        }
-        else if (this.state.board[i][j] === -3) {
-          str += "B";
-        }
-        else if (this.state.board[i][j] === 0) {
-          str += "_";
-        }
-        else if (this.state.board[i][j] === 1) {
-          str += "w";
-        }
-        else if (this.state.board[i][j] === 3) {
-          str += "W";
-        }
+             if (this.state.board[i][j] === -1) {str += "b";}
+        else if (this.state.board[i][j] === -3) {str += "B";}
+        else if (this.state.board[i][j] ===  0) {str += "_";}
+        else if (this.state.board[i][j] ===  1) {str += "w";}
+        else if (this.state.board[i][j] ===  3) {str += "W";}
       }
     }
     return str
@@ -117,17 +107,17 @@ class Board extends Component {
     let k = 0;
     for (let i = 0; i < 9; i++) {
       for (let j = 0; j < 9; j++) {
-        if (text[k] === "b") game_state.board[i][j] = -1;
+             if (text[k] === "b") game_state.board[i][j] = -1;
         else if (text[k] === "B") game_state.board[i][j] = -3;
-        else if (text[k] === "_") game_state.board[i][j] = 0;
-        else if (text[k] === "w") game_state.board[i][j] = 1;
-        else if (text[k] === "W") game_state.board[i][j] = 3;
+        else if (text[k] === "_") game_state.board[i][j] =  0;
+        else if (text[k] === "w") game_state.board[i][j] =  1;
+        else if (text[k] === "W") game_state.board[i][j] =  3;
 
-        if (text_prev[k] === "b") game_state.previous_board[i][j] = -1;
+             if (text_prev[k] === "b") game_state.previous_board[i][j] = -1;
         else if (text_prev[k] === "B") game_state.previous_board[i][j] = -3;
-        else if (text_prev[k] === "_") game_state.previous_board[i][j] = 0;
-        else if (text_prev[k] === "w") game_state.previous_board[i][j] = 1;
-        else if (text_prev[k] === "W") game_state.previous_board[i][j] = 3;
+        else if (text_prev[k] === "_") game_state.previous_board[i][j] =  0;
+        else if (text_prev[k] === "w") game_state.previous_board[i][j] =  1;
+        else if (text_prev[k] === "W") game_state.previous_board[i][j] =  3;
 
         k += 1;
       }
@@ -142,8 +132,8 @@ class Board extends Component {
     else if (this.state.move.length>=2) // switching the selected piece
     {
       let len = this.state.move.length;
-      let x = Number(this.state.move[len-2])
-      let y = Number(this.state.move[len-1])
+      let x  = Number(this.state.move[len-2])
+      let y  = Number(this.state.move[len-1])
       let xc = Number(key[0])
       let yc = Number(key[1])
 
@@ -160,17 +150,14 @@ class Board extends Component {
   doDoubleClickAction(key,piece_present) {
     if (this.state.move.length==0 && piece_present ==2)
     {
-        // console.log("🚀 ~ file: Board.js ~ line 148 ~ Board ~ doDoubleClickAction ~ handleSouffle got called")
         this.handleSouffle(key);
     }
     if (this.state.move.length>=5)
     {
-      console.log("This condition got invoked!");
-      console.log("key: ",key,"Move:",this.state.move);
       // if the user double click his piece and double click on another piece of his
       let len = this.state.move.length;
-      let x = Number(this.state.move[len-5])
-      let y = Number(this.state.move[len-4])
+      let x  = Number(this.state.move[len-5])
+      let y  = Number(this.state.move[len-4])
       let xc = Number(key[0])
       let yc = Number(key[1])
 
@@ -213,19 +200,16 @@ class Board extends Component {
   handleMove() {
     if (this.state.move.length)
       {this.MoveRequest_ws(this.state.move,this.state.souffle_move);}
-    // console.log("🚀 ~ file: Board.js ~ line 188 ~ Board ~ handleMove")
   };
   //?-----------------------------------------------------------------------
   // * Handling Request and getting the reponses from the back end methods :
   //?-----------------------------------------------------------------------
   handleSouffle(piece_key)
   {
-    console.log("in handle souffle")
     let i = parseInt(piece_key[0]);
     let j = parseInt(piece_key[1]);
     let game_state= this.state;
     game_state.souffle_move = piece_key;
-    console.log("souffle contains now : ",game_state.souffle_move)
     game_state.can_souffle = false;
     game_state.soufflables = [];
     game_state.board[i][j] = 0;
@@ -265,11 +249,8 @@ class Board extends Component {
     // creates a game with a fake opponenet if the player waited so long, without another human joining his game
     let me = this;
     let thisTimeout = setTimeout(() =>{
-        console.log("🚀 ~ Waited 10s, Launching a fake opponent request")
         if ((me.state.opponent === ""))
             {CallFakeOpponent(me);}
-        else
-            { console.log("🚀 ~ file: Board.js ~ line 279 ~ Board ~ thisTimeout ~ Opponent does exist no need for fake")}
     }, 30000);
 
     function CallFakeOpponent(me) {
@@ -366,9 +347,109 @@ class Board extends Component {
             if (typeof data["Bad Request"] !="undefined") {console.log("Invalid Data : Ignored!");}
             else {username = data.username;
                 me.state.username = username;
-                // // console.log("🚀 ~ file: Board.js ~ line 351 ~ Board ~ then ~ username", username)
             }
         });
+  }
+  //?----------------------------------------
+  // * Web Page modifiers :
+  //?----------------------------------------
+  update_timer()
+  {
+      //set actual timer
+      //   setTimeout(
+          //       function () {
+              //           alert('done');
+              //       }, time_limit);
+      var hours, minutes, seconds; // variables for time units
+
+       document.getElementById("timer_player1").classList.add('tiles');
+       document.getElementById("timer_player1").classList.add('color-full');
+       document.getElementById("timer_player2").classList.add('tiles');
+       document.getElementById("timer_player2").classList.add('color-full');
+      let me = this;
+      getCountdown("timer_player1");
+      getCountdown("timer_player2");
+      setInterval(function () {
+          if (me.state.winner==="")
+          {
+              if (me.state.player===0)
+                {
+                    getCountdown("timer_player1");
+
+                    me.state.time_left-=1;
+                }
+                else if (me.state.player ===1)
+                {
+                    getCountdown("timer_player2");
+                    me.state.opponent_time_left-=1;
+                }
+          }
+        }, 1000);
+    //   setInterval(function () { getCountdown("timer_player2"); }, 1000);
+      function getCountdown(timer_id) {
+          console.log("🚀 ~ file: Board.js ~ line 527 ~ Board ~ getCountdown ~ timer_id", timer_id)
+        //   var seconds_left = (target_date - current_date) / 1000;
+          let seconds_left = me.state.initial_time;
+          if (timer_id ==="timer_player1")
+          {
+            seconds_left = me.state.time_left;
+          }
+          else if (timer_id ==="timer_player2")
+          {
+              seconds_left = me.state.opponent_time_left;
+          }
+
+          if (seconds_left >= 0) {
+              if ((seconds_left ) < Math.min(60, (me.state.initial_time / 2))) {
+                document.getElementById(timer_id).classList.remove('color-full');
+                document.getElementById(timer_id).classList.add('color-half');
+              }
+              if ((seconds_left ) < Math.min(30, (me.state.initial_time / 4))) {
+                document.getElementById(timer_id).classList.remove('color-half');
+                document.getElementById(timer_id).classList.add('color-empty');
+              }
+              hours = pad(parseInt(seconds_left / 3600));
+              seconds_left = seconds_left % 3600;
+              minutes = pad(parseInt(seconds_left / 60));
+              seconds = pad(seconds_left % 60);
+              // format countdown string + set tag value
+              document.getElementById(timer_id).innerHTML = "<span>" + hours + ":</span><span>" + minutes + ":</span><span>" + seconds + "</span>";
+          }
+      }
+      function pad(n) { return (n < 10 ? '0' : '') + n; }
+  }
+  add_one_history_item(content,color)
+  {
+    let time_line_item = document.createElement("div");
+    time_line_item.classList.add("timeline-item","mb-2");
+
+    let time_label = document.createElement("div");
+    time_label.classList.add("timeline-label", "fw-bolder", "text-gray-800", "fs-6");
+    let today = new Date();
+    let min = today.getMinutes() ? "" + today.getMinutes(): "0" + today.getMinutes();
+    let sec = today.getSeconds() ? "" + today.getSeconds(): "0" + today.getSeconds();
+    let time = min + ":" + sec;
+    time_label.innerHTML = time;
+    let badge = document.createElement("div");
+    badge.classList.add("timeline-badge");
+    let icon = document.createElement("i");
+    let icon_class = "text-"+color;
+    icon.classList.add("fa", "fa-genderless", icon_class ,"fs-1");
+    badge.appendChild(icon)
+
+    let move_div = document.createElement("div");
+    move_div.classList.add("fw-mormal", "timeline-content", "text-muted", "ps-3");
+    move_div.innerHTML=content;
+
+    time_line_item.appendChild(time_label);
+    time_line_item.appendChild(badge);
+    time_line_item.appendChild(move_div);
+    document.getElementById("MovesContainer").appendChild(time_line_item);
+  }
+  update_moves_time_line()
+  {
+    this.add_one_history_item(this.state.move_history_render[0],"dark");
+    this.add_one_history_item(this.state.move_history_render[1],"secondary");
   }
   //?---------------------------------------------------------
   // * Component's Native methods :
@@ -397,7 +478,6 @@ class Board extends Component {
         let me = this;
         this.props.client.onmessage = function (e) {
             const data = JSON.parse(e.data);
-            let moved = false;
             if (typeof data["Bad Request"] != "undefined") {
               console.log("Invalid Move : Ignored!");
               me.state.move = "";
@@ -438,15 +518,14 @@ class Board extends Component {
                     me.state.opponent = data.opponent;
                     me.state.creator  = data.creator;
                     me.state.tier = data.tier===0? null : data.tier;
-                    // console.log("🚀 ~ file: Board.js ~ line 425 ~ Board ~ componentWillMount ~ state", me.state)
                   if (data.opponent === me.state.username)
                   {
                     document.getElementById("player2_name").innerHTML       = data.creator;
                     document.getElementById("player2_score").innerHTML = data.creator_score;
                     document.getElementById("player1_name").innerHTML       = data.opponent;
                     document.getElementById("player1_score").innerHTML = data.opponent_score;
-                    document.getElementById("player1").style.backgroundColor  = "rgb(156,108,20)";
-                    document.getElementById("player2").style.backgroundColor  = "rgb(76,52,36)";
+                    // document.getElementById("player1").style.backgroundColor  = "rgb(156,108,20)";
+                    // document.getElementById("player2").style.backgroundColor  = "rgb(76,52,36)";
                   }
                   else if (data.creator === me.state.username)
                   {
@@ -454,9 +533,10 @@ class Board extends Component {
                     document.getElementById("player1_score").innerHTML = data.creator_score;
                     document.getElementById("player2_name").innerHTML       = data.opponent;
                     document.getElementById("player2_score").innerHTML = data.opponent_score;
-                    document.getElementById("player1").style.backgroundColor  = "rgb(76,52,36)";
-                    document.getElementById("player2").style.backgroundColor  = "rgb(156,108,20)";
+                    // document.getElementById("player1").style.backgroundColor  = "rgb(76,52,36)";
+                    // document.getElementById("player2").style.backgroundColor  = "rgb(156,108,20)";
                   }
+                  me.forceUpdate();
                 }
 
                 // * If We are playing vs AI then we will send it's request after the player's
@@ -507,45 +587,15 @@ class Board extends Component {
           this.props.client.onclose = function (e) {
             console.error('Client socket closed unexpectedly');
         };
+
     }
-  //?----------------------------------------
-  // * Web Page modifiers :
-  //?----------------------------------------
-  add_one_history_item(content,color)
-  {
-    console.log("Adding a history item")
-    // colors: [blue:"text_primary",yellow: "text-warning",red:"text-danger",green:"text_success"]
-    let time_line_item = document.createElement("div");
-    time_line_item.classList.add("timeline-item","mb-2");
-
-    let time_label = document.createElement("div");
-    time_label.classList.add("timeline-label", "fw-bolder", "text-gray-800", "fs-6");
-    let today = new Date();
-    let min = today.getMinutes() ? "" + today.getMinutes(): "0" + today.getMinutes();
-    let sec = today.getSeconds() ? "" +today.getSeconds(): "0" + today.getSeconds();
-    let time = min + ":" + sec;
-    time_label.innerHTML = time;
-    let badge = document.createElement("div");
-    badge.classList.add("timeline-badge");
-    let icon = document.createElement("i");
-    let icon_class = "text-"+color;
-    icon.classList.add("fa", "fa-genderless", icon_class ,"fs-1");
-    badge.appendChild(icon)
-
-    let move_div = document.createElement("div");
-    move_div.classList.add("fw-mormal", "timeline-content", "text-muted", "ps-3");
-    move_div.innerHTML=content;
-
-    time_line_item.appendChild(time_label);
-    time_line_item.appendChild(badge);
-    time_line_item.appendChild(move_div);
-    document.getElementById("MovesContainer").appendChild(time_line_item);
-  }
-  update_moves_time_line()
-  {
-    this.add_one_history_item(this.state.move_history_render[0],"dark");
-    this.add_one_history_item(this.state.move_history_render[1],"secondary");
-  }
+  componentDidMount() {
+        // if (!this.AI_NAMES.includes(this.state.opponent))
+        // {
+        //     this.update_timer();
+        // }
+        this.update_timer();
+    }
   //?--------------------------------------
   // * Rendering React native method :
   //?--------------------------------------
@@ -553,16 +603,25 @@ class Board extends Component {
     let Cells = [];
     let { board , previous_board} = this.state;
     let len = board.length;
-    if(this.state.opponent === this.state.username && this.state.creator !=="")
+
+    if (this.state.opponent === "" || this.state.username==="")
+    {
+        Cells.push(
+            <div className="d-flex flex-column justify-content-center align-items-center Wait_text" style = {{"width": "100%" , "height":"100%"}}>
+                <div className="spinner-border text-warning " role="status" style={{width: "5rem",height: "5rem"}}>
+                </div>
+                <div >حانينا اشوي <br/> مسَحفاك مَانَك عجلان اعل شي </div>
+            </div>
+        );
+    }
+    else if(this.state.opponent === this.state.username && this.state.creator !=="")
     {
         for (let i = 0; i < len; i++) {
             for (let j = 0; j < len; j++) {
               let key = i.toString() + j.toString();
               let ex_css_class="";
               if (this.state.last_move.includes(key))
-              {
-                ex_css_class = " highlight_last_move";
-              }
+              {ex_css_class = " highlight_last_move";}
               Cells.push(
                 <Cell
                   key={key}
@@ -585,7 +644,7 @@ class Board extends Component {
             }
           }
         }
-        else
+    else //if (this.state.opponent !==""  && this.state.creator === this.state.username)
         {
         for (let i = len - 1; i >= 0; i--) {
             for (let j = 0; j < len; j++) {
@@ -615,22 +674,16 @@ class Board extends Component {
           }
         }
     }
-
     return (
-
-
-      <DndProvider backend={HTML5Backend}>
         <CSSTransition
             in = {true}
             appear = {true}
             timeout = {300}
             classNames = "transition">
-
             <div id="board"  onMouseLeave={this.handleMouseLeave}>
-            {Cells}
-        </div>
+                {Cells}
+            </div>
         </CSSTransition>
-      </DndProvider>
     );
   };
 }

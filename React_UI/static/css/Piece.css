@@ -13,7 +13,7 @@
 }
 .anim-appear
 {
-    transform : scale(0.5) translateY(-80%) translateX(-80%);
+    transform : scale(0.7) translateY(-80%) translateX(-80%);
 }
 
 .anim-appear.anim-appear-active
@@ -23,7 +23,7 @@
 }
 .anim-enter
 {
-    transform: scale(0.5) translateY(-80%) translateX(-80%);
+    transform: scale(0.7) translateY(-80%) translateX(-80%);
 }
 .anim-enter.anim-enter-active
 {
@@ -33,16 +33,12 @@
 
 .anim-exit
 {
-    opacity: 1;
+    transform: scale(1) translateY(-50%) translateX(-50%);
 }
-.anim-exit.anim-exit-active
+.anim-exit-active
 {
-    opacity : 0.01;
-    transition : opacity 500ms ease-in;
-}
-.anim-exit-done
-{
-    opacity : 0;
+    transform: scale(0.0) translateY(-80%) translateX(-80%);
+    transition : transform 500ms ease-in;
 }
 
 .Black_regular

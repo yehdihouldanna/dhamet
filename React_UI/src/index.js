@@ -2,8 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import '/static/css/index.css';
 import App from './App';
-import {BrowserRouter as Router} from "react-router-dom";
-import {hashHistory} from "react-router"
+import {HashRouter,BrowserRouter as Router} from "react-router-dom";
 
 let game_code = "";
 try
@@ -20,7 +19,7 @@ const client = new WebSocket(
   );
 
 ReactDOM.render(
-  <Router history = {hashHistory}>
+  <Router history = {HashRouter}>
     <App client={client} game_code={game_code}/>
   </Router>,
   document.getElementById('dhamet_container')
