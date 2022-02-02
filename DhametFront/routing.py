@@ -9,4 +9,4 @@ websocket_urlpatterns = [
     re_path(r'DhametCode/game/(?P<game_code>\w+)/$', game_consumers.GameConsumer.as_asgi()),
     re_path(r'DhametCode/game/(?P<game_code>\w+)/move$', game_consumers.GameConsumer.as_asgi()),
 ]
-### game code pattern :  game_+[a-z,A-Z,0-9,_]+ 
+### game code pattern :  game_+[a-z,A-Z,0-9,_]+

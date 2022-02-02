@@ -1,12 +1,21 @@
-
-
 *This is a non exhaustive list of features and functionnalities that will be added to the game. as we progress the need to add more elements to this list might raise up.*
 
 - **[Crucial]** Add animations. animating the game pieces based on movements and events of take and soufflé etc...
+    - animating pieces appeareances; [-/]
+    - animating pieces movements.  [ ]
+    - animating pieces disapearances (taken of the board).
+
 
 - **[Crucial]** Improve the interface of the Web page. (Buy a game template for it.)
+    - improve the game background and the style of the pieces.
+    - Improve players banner.
+    - Add a button for resign , draw and new game.
 
 - **[Very_Importent]** Add a timer functionnality. (add a timer for each player and limited typed game options)
+    - sync the timer between both fronts and
+    - set the ground truth for the timer in the back-end,
+    - set time win condition.
+    - 
 
 - Add sound effects SFX to the game.
 
@@ -46,7 +55,8 @@
 - Player can't take a soufflé if the oppoenent last move closed the soufflé valid taking point., --> make soufflé to be based on the previous turn's game state instead of the current.
 
 - Ai wins before the game actually ends.
-
+To reproduce the bug : 
+```Python
 33 44
 55 33
 22 44
@@ -55,28 +65,27 @@
 42 22 40
 44 55
 51 42
-48 66
-40 31
-55 57
-58 56
-30 32
-42 22
-12 32
-50 40
-38 48
-53 42
-28 38
-60 50
-18 28
-61 51
-08 18
-51 42
-11 22
-62 51
-22 33
-63 53
-33 44
-77 55 33 31 11n,;:
+23 33
+43 23
+24 22
+60 51
+22 31
+66 44 24
+14 34
+40 22
+21 23
+75 66
+45 55
+66 44 24 22
+11 33
+42 24
+35 13
+57 35
+25 45
+51 40
+13 22
+52 42
+```
 
 - Improve the behavior of the tier 0 bot players.
 

@@ -43,23 +43,23 @@ class Board extends Component {
       creator   :"",
       opponent  :"",
       winner : "",
-      initial_time:5*60,
-      time_left: 5*60,
-      opponent_time_left:5*60,
+      initial_time:  5*60,
+      creator_time:  5*60,
+      opponent_time: 5*60,
       delay: 200,
       prevent: false,
       MouseOnBoard: true,
       username : "",
       tier: null,
       //* Souffle parameters
-      can_souffle:true,
+      can_souffle : true,
       souffle_move : "",
       soufflables : [],
     };
     this.AI_NAMES  = ["AI_Random","AI_Dummy","AI_MinMax"];
     this.BOT_NAMES = ["Med10","Mariem","Sidi","احمد","Khadijetou","Cheikh","Vatimetou","ابراهيم",
                       "Mamadou","Oumar","Amadou","3abdellahi","Va6me","Moussa","Aly","Samba"];
-    //* Tiers are the difficulty level, for now we have 3 tiers, 3 :AI_MinMax, 2 : Dummy, 1 : Random
+    //* Tiers : are the difficulty level, for now we have 3 tiers, 3 :AI_MinMax, 2 : Dummy, 1 : Random
     this.Tiers = [3,2,3,2,1,2,3,1,1,2,3,3,1,1,3,2];
 
     // Biding Events handlers :
@@ -299,6 +299,7 @@ class Board extends Component {
             });
         }
     }
+  // @ts-ignore
   CreateGameRequest(name) {
     console.log("Starting a game vs another local player.")
     const requestOptions =
@@ -355,68 +356,7 @@ class Board extends Component {
   //?----------------------------------------
   update_timer()
   {
-      //set actual timer
-      //   setTimeout(
-          //       function () {
-              //           alert('done');
-              //       }, time_limit);
-      var hours, minutes, seconds; // variables for time units
-
-       document.getElementById("timer_player1").classList.add('tiles');
-       document.getElementById("timer_player1").classList.add('color-full');
-       document.getElementById("timer_player2").classList.add('tiles');
-       document.getElementById("timer_player2").classList.add('color-full');
-      let me = this;
-      getCountdown("timer_player1");
-      getCountdown("timer_player2");
-      setInterval(function () {
-          if (me.state.winner==="")
-          {
-              if (me.state.player===0)
-                {
-                    getCountdown("timer_player1");
-
-                    me.state.time_left-=1;
-                }
-                else if (me.state.player ===1)
-                {
-                    getCountdown("timer_player2");
-                    me.state.opponent_time_left-=1;
-                }
-          }
-        }, 1000);
-    //   setInterval(function () { getCountdown("timer_player2"); }, 1000);
-      function getCountdown(timer_id) {
-          console.log("🚀 ~ file: Board.js ~ line 527 ~ Board ~ getCountdown ~ timer_id", timer_id)
-        //   var seconds_left = (target_date - current_date) / 1000;
-          let seconds_left = me.state.initial_time;
-          if (timer_id ==="timer_player1")
-          {
-            seconds_left = me.state.time_left;
-          }
-          else if (timer_id ==="timer_player2")
-          {
-              seconds_left = me.state.opponent_time_left;
-          }
-
-          if (seconds_left >= 0) {
-              if ((seconds_left ) < Math.min(60, (me.state.initial_time / 2))) {
-                document.getElementById(timer_id).classList.remove('color-full');
-                document.getElementById(timer_id).classList.add('color-half');
-              }
-              if ((seconds_left ) < Math.min(30, (me.state.initial_time / 4))) {
-                document.getElementById(timer_id).classList.remove('color-half');
-                document.getElementById(timer_id).classList.add('color-empty');
-              }
-              hours = pad(parseInt(seconds_left / 3600));
-              seconds_left = seconds_left % 3600;
-              minutes = pad(parseInt(seconds_left / 60));
-              seconds = pad(seconds_left % 60);
-              // format countdown string + set tag value
-              document.getElementById(timer_id).innerHTML = "<span>" + hours + ":</span><span>" + minutes + ":</span><span>" + seconds + "</span>";
-          }
-      }
-      function pad(n) { return (n < 10 ? '0' : '') + n; }
+      // this function updates the timers on the front page, (the ground truth value is in the back-end hence the request made in this function.)
   }
   add_one_history_item(content,color)
   {
@@ -455,146 +395,232 @@ class Board extends Component {
   // * Component's Native methods :
   //?---------------------------------------------------------
   componentWillMount() {
-        this.getUserNameRequest();
-        this.CreateFakeOpponent();
-        this.props.client.onopen = () => {
+      this.getUserNameRequest();
+      this.CreateFakeOpponent();
+
+      //?-----------------------------------
+      //**? Moves Socket :**
+      //?-----------------------------------
+      this.props.client.onopen = () => {
           console.log('A new client Connected');
           this.props.client.send(
-            JSON.stringify({
-              'id': this.state.Code,
-              'state': this.state.board_txt,
-              'last_move': this.state.move,
-              'souffle_move':this.state.souffle_move,
-              'current_turn': this.state.player,
-              'creator': this.state.creator,
-              'creator_score': "",
-              'opponent' : this.state.opponent,
-              'opponent_score': "",
-              'winner': this.state.winner,
-              'winner_score': "",
-              'tier': "",
-            }));
-        };
-        let me = this;
-        this.props.client.onmessage = function (e) {
-            const data = JSON.parse(e.data);
-            if (typeof data["Bad Request"] != "undefined") {
+              JSON.stringify({
+                  'id': this.state.Code,
+                  'state': this.state.board_txt,
+                  'last_move': this.state.move,
+                  'souffle_move': this.state.souffle_move,
+                  'current_turn': this.state.player,
+                  'creator': this.state.creator,
+                  'creator_score': "",
+                  'opponent': this.state.opponent,
+                  'opponent_score': "",
+                  'winner': this.state.winner,
+                  'winner_score': "",
+                  'tier': "",
+              }));
+
+              this.props.client.send(
+                JSON.stringify({
+                  'id': me.state.Code,
+                  'current_turn' : me.state.player,
+                  'type' : "timer",
+                  'creator_time' :me.state.creator_time,
+                  'opponent_time' :me.state.opponent_time,
+                  'winner':"",
+                }));
+      };
+      let me = this;
+      this.props.client.onmessage = function (e) {
+          const data = JSON.parse(e.data);
+          if (typeof data["Bad Request"] != "undefined") {
               console.log("Invalid Move : Ignored!");
               me.state.move = "";
-            }
-            else { // * server returned a valid move :
-                console.log("We received a correct data: ", data);
-                let game_state = me.state;
-                game_state.player = data.current_turn;
-                console.log("The player now is : ", game_state.player);
-                game_state.previous_board_txt = game_state.board_txt;
-                game_state.board_txt = data.state;
-                game_state.soufflables = data.soufflables;
-                if(game_state.soufflables.length)
-                { game_state.can_souffle = true;}
-                if (game_state.last_move != data.last_move )
+          }
+          else {
+                if(data.type==="timer")
                 {
+                    // * server returned a valid time :
+                    console.log("Recevied data from timer socket ", data);
+                    let game_state = me.state;
+                    game_state.creator_time = data.creator_time;
+                    game_state.opponent_time = data.opponent_time;
+                    if (data.winner !== null && data.winner !== "") {
+                        // TODO : change this to a better thing.
+                        alert(data.winner + " Won on time!");
+                        me.state.winner = data.winner
+                    }
+                    let hours, minutes, seconds;
+                    let seconds_left = data.creator_time;
+                    let timer_id = "timer_player1";
+                    if (seconds_left >= 0) {
+                        if ((seconds_left) < Math.min(60, (me.state.initial_time / 2))) {
+                            document.getElementById(timer_id).classList.remove('color-full');
+                            document.getElementById(timer_id).classList.add('color-half');
+                        }
+                        if ((seconds_left) < Math.min(30, (me.state.initial_time / 4))) {
+                            document.getElementById(timer_id).classList.remove('color-half');
+                            document.getElementById(timer_id).classList.add('color-empty');
+                        }
+                        // @ts-ignore
+                        hours = pad(parseInt(seconds_left / 3600));
+                        seconds_left = seconds_left % 3600;
+                        // @ts-ignore
+                        minutes = pad(parseInt(seconds_left / 60));
+                        seconds = pad(seconds_left % 60);
+                        // format countdown string + set tag value
+                        document.getElementById(timer_id).innerHTML = "<span>" + hours + ":</span><span>" + minutes + ":</span><span>" + seconds + "</span>";
+                    }
+                    seconds_left = data.opponent_time;
+                    timer_id = "timer_player2";
+                    if (seconds_left >= 0) {
+                        if ((seconds_left) < Math.min(60, (me.state.initial_time / 2))) {
+                            document.getElementById(timer_id).classList.remove('color-full');
+                            document.getElementById(timer_id).classList.add('color-half');
+                        }
+                        if ((seconds_left) < Math.min(30, (me.state.initial_time / 4))) {
+                            document.getElementById(timer_id).classList.remove('color-half');
+                            document.getElementById(timer_id).classList.add('color-empty');
+                        }
+                        // @ts-ignore
+                        hours = pad(parseInt(seconds_left / 3600));
+                        seconds_left = seconds_left % 3600;
+                        // @ts-ignore
+                        minutes = pad(parseInt(seconds_left / 60));
+                        seconds = pad(seconds_left % 60);
+                        // format countdown string + set tag value
+                        document.getElementById(timer_id).innerHTML = "<span>" + hours + ":</span><span>" + minutes + ":</span><span>" + seconds + "</span>";
+                    }
+                    function pad(n) { return (n < 10 ? '0' : '') + n; }
+                    me.setState(game_state);
+                }
+
+
+            else{
+              // * server returned a valid move :
+              console.log("We received a correct data: ", data);
+              let game_state = me.state;
+              game_state.player = data.current_turn;
+              console.log("The player now is : ", game_state.player);
+              game_state.previous_board_txt = game_state.board_txt;
+              game_state.board_txt = data.state;
+              game_state.soufflables = data.soufflables;
+              if (game_state.soufflables.length) { game_state.can_souffle = true; }
+              if (game_state.last_move != data.last_move) {
                   game_state.last_move = data.last_move;
                   game_state.move_history_render.push(game_state.last_move);
                   me.setState(game_state);
-                  if (game_state.move_history_render.length==2)
-                  {
-                    me.update_moves_time_line();
-                    me.state.move_history_render=[];
+                  if (game_state.move_history_render.length == 2) {
+                      me.update_moves_time_line();
+                      me.state.move_history_render = [];
                   }
-                  me.deserialize(data.state,game_state.previous_board_txt);
-                }
-                me.state.move = "";
+                  me.deserialize(data.state, game_state.previous_board_txt);
+              }
+              me.state.move = "";
 
-                if (data.winner!==null && data.winner!=="")
-                {
-                    // TODO : change this to a better thing.
-                    alert(data.winner + " Won the game!");
-                    me.state.winner = data.winner
-                }
+              if (data.winner !== null && data.winner !== "") {
+                  // TODO : change this to a better thing.
+                  alert(data.winner + " Won the game!");
+                  me.state.winner = data.winner
+              }
 
-                if (data.opponent !== me.state.opponent)
-                {
-                    me.state.opponent = data.opponent;
-                    me.state.creator  = data.creator;
-                    me.state.tier = data.tier===0? null : data.tier;
-                  if (data.opponent === me.state.username)
-                  {
-                    document.getElementById("player2_name").innerHTML       = data.creator;
-                    document.getElementById("player2_score").innerHTML = data.creator_score;
-                    document.getElementById("player1_name").innerHTML       = data.opponent;
-                    document.getElementById("player1_score").innerHTML = data.opponent_score;
-                    // document.getElementById("player1").style.backgroundColor  = "rgb(156,108,20)";
-                    // document.getElementById("player2").style.backgroundColor  = "rgb(76,52,36)";
+              if (data.opponent !== me.state.opponent) {
+                  me.state.opponent = data.opponent;
+                  me.state.creator = data.creator;
+                  me.state.tier = data.tier === 0 ? null : data.tier;
+                  if (data.opponent === me.state.username) {
+                      document.getElementById("player2_name").innerHTML = data.creator;
+                      document.getElementById("player2_score").innerHTML = data.creator_score;
+                      document.getElementById("player1_name").innerHTML = data.opponent;
+                      document.getElementById("player1_score").innerHTML = data.opponent_score;
+                      // document.getElementById("player1").style.backgroundColor  = "rgb(156,108,20)";
+                      // document.getElementById("player2").style.backgroundColor  = "rgb(76,52,36)";
                   }
-                  else if (data.creator === me.state.username)
-                  {
-                    document.getElementById("player1_name").innerHTML       = data.creator;
-                    document.getElementById("player1_score").innerHTML = data.creator_score;
-                    document.getElementById("player2_name").innerHTML       = data.opponent;
-                    document.getElementById("player2_score").innerHTML = data.opponent_score;
-                    // document.getElementById("player1").style.backgroundColor  = "rgb(76,52,36)";
-                    // document.getElementById("player2").style.backgroundColor  = "rgb(156,108,20)";
+                  else if (data.creator === me.state.username) {
+                      document.getElementById("player1_name").innerHTML = data.creator;
+                      document.getElementById("player1_score").innerHTML = data.creator_score;
+                      document.getElementById("player2_name").innerHTML = data.opponent;
+                      document.getElementById("player2_score").innerHTML = data.opponent_score;
+                      // document.getElementById("player1").style.backgroundColor  = "rgb(76,52,36)";
+                      // document.getElementById("player2").style.backgroundColor  = "rgb(156,108,20)";
                   }
                   me.forceUpdate();
-                }
+              }
 
-                // * If We are playing vs AI then we will send it's request after the player's
-                if( me.AI_NAMES.includes(me.state.opponent) && me.state.player===1 && me.state.winner === "")
-                {
-                    setTimeout(() => {
-                    // * We can change the response time based on the need
-                    if (me.state.previous_board_txt != me.state.board_txt) {
-                        console.log("The AI request waited for 350 ms !")
-                        me.props.client.send(
-                        JSON.stringify({
-                            'id': me.state.Code,
-                            'state': me.state.board_txt,
-                            'last_move': "",
-                            'souffle_move':"",
-                            'current_turn': me.state.player,
-                            'winner':"",
+              // * If We are playing vs AI then we will send it's request after the player's
+              if (me.AI_NAMES.includes(me.state.opponent) && me.state.player === 1 && me.state.winner === "") {
+                  setTimeout(() => {
+                      // * We can change the response time based on the need
+                      if (me.state.previous_board_txt != me.state.board_txt) {
+                          console.log("The AI request waited for 350 ms !")
+                          me.props.client.send(
+                              JSON.stringify({
+                                  'id': me.state.Code,
+                                  'state': me.state.board_txt,
+                                  'last_move': "",
+                                  'souffle_move': "",
+                                  'current_turn': me.state.player,
+                                  'winner': "",
 
-                        }));
-                    }
-                        }, 350);
-                    }
+                              }));
+                      }
+                  }, 350);
+              }
 
-                // * If the player is playing vs a Bot
-                if( me.state.tier!==null && me.state.player===1 && me.state.winner === "")
-                {
-                    let delay = 350 + Math.floor(Math.random() * 10000) // randomizing the time of the response
-                    setTimeout(() => {
-                    // * We can change the response time based on the need
-                    // @ts-ignore
-                    if (me.state.previous_board_txt != me.state.board_txt) {
-                        console.log("The AI request waited for 350 ms !")
-                        me.props.client.send(
-                        JSON.stringify({
-                            'id': me.state.Code,
-                            'state': me.state.board_txt,
-                            'last_move': "",
-                            'souffle_move':"",
-                            'current_turn': me.state.player,
-                            'winner':"",
-                            'tier':me.state.tier,
-                        }));
-                    }
-                        }, delay);
-                    }
-                }
-          };
-          this.props.client.onclose = function (e) {
-            console.error('Client socket closed unexpectedly');
-        };
+              // * If the player is playing vs a Bot
+              if (me.state.tier !== null && me.state.player === 1 && me.state.winner === "") {
+                  let delay = 350 + Math.floor(Math.random() * 10000) // randomizing the time of the response
+                  setTimeout(() => {
+                      // * We can change the response time based on the need
+                      // @ts-ignore
+                      if (me.state.previous_board_txt != me.state.board_txt) {
+                          console.log("The AI request waited for 350 ms !")
+                          me.props.client.send(
+                              JSON.stringify({
+                                  'id': me.state.Code,
+                                  'state': me.state.board_txt,
+                                  'last_move': "",
+                                  'souffle_move': "",
+                                  'current_turn': me.state.player,
+                                  'winner': "",
+                                  'tier': me.state.tier,
+                              }));
+                      }
+                  }, delay);
+              }
+
+            }
+          }
+      };
+      // @ts-ignore
+      this.props.client.onclose = function (e) {
+          console.error('Client socket closed unexpectedly');
+      };
+        //?-----------------------------------
+        //**? Timer Socket : **
+        //?-----------------------------------
+
+
 
     }
   componentDidMount() {
-        // if (!this.AI_NAMES.includes(this.state.opponent))
-        // {
-        //     this.update_timer();
-        // }
-        this.update_timer();
+    document.getElementById("timer_player1").classList.add('tiles');
+    document.getElementById("timer_player1").classList.add('color-full');
+    document.getElementById("timer_player2").classList.add('tiles');
+    document.getElementById("timer_player2").classList.add('color-full');
+    let me = this;
+    setInterval(function () {
+        console.log("sent a request to check for time update");
+        me.state.Client.send(
+            JSON.stringify({
+                'id': me.state.Code,
+                'current_turn': me.state.player,
+                'type': "timer",
+                'creator_time': me.state.creator_time,
+                'opponent_time': me.state.opponent_time,
+                'winner': "",
+            }));
+
+      }, 1000);
     }
   //?--------------------------------------
   // * Rendering React native method :

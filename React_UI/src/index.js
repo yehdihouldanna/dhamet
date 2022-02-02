@@ -18,6 +18,7 @@ const client = new WebSocket(
     + '/'
   );
 
+
 ReactDOM.render(
   <Router history = {HashRouter}>
     <App client={client} game_code={game_code}/>

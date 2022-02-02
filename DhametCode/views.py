@@ -15,6 +15,7 @@ from users.models import User
 import logging
 from django.conf import settings
 import json
+from termcolor import cprint
 
 # Create a logger object.
 logger = logging.getLogger('root')
@@ -91,12 +92,12 @@ class CreateGameView(generics.ListAPIView):
                 logger.info(f"['f': post]['user': {user.username}]['Game_Live_Created_id': {game.get_game_code()}]")
                 return Response(CreateGameSerializer(game).data,status = status.HTTP_201_CREATED)
 
+
+
 class GameMoveView(generics.ListAPIView):
     """The view that process the player's moves sent by the client"""
     serializer_class = GameMoveSerializer
     queryset = Game.objects.all()
-
-
 
     def get_game_update(self,game_instance,move):
         moves = move.split(" ")
@@ -110,7 +111,7 @@ class GameMoveView(generics.ListAPIView):
             if not moved:
                 break
         if moved:
-            ended ,end_msg  = game_instance.check_end_condition()
+            ended ,end_msg = game_instance.check_end_condition()
             if ended :
                 logger.info(end_msg)
             game_instance.player = not game_instance.player
@@ -174,7 +175,6 @@ class GameMoveView(generics.ListAPIView):
                 queryset = Game.objects.filter(id=id)
                 if queryset.exists():
                     current_turn_game  = serializer.data.get('current_turn')
-
                     board_txt =serializer.data.get('state')
                     move = serializer.data.get('last_move')
                     logger.info(f"in the post method move:{move}")
@@ -233,6 +233,7 @@ class GameMoveView(generics.ListAPIView):
                         return Response(GameMoveSerializer(game).data,status = status.HTTP_202_ACCEPTED)
 
             raise Exception(f"user {user.username} tried to make a move in a non existing game!!")
+
 
 
 def get_username(request):

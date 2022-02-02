@@ -190,6 +190,9 @@ class GameConsumer(AsyncWebsocketConsumer):
         # data = event["data"]
         data = text_data_json
         # logger.info(f"['f': post_move]['user ': {user.username}]['data':{data}]")
+
+
+
         id = data["id"]
         if user.is_authenticated:
             user = User.objects.filter(username = user.username)[0]
@@ -199,9 +202,20 @@ class GameConsumer(AsyncWebsocketConsumer):
             queryset = Game.objects.filter(id=id)
             if queryset.exists():
                 game = queryset[0]
+                #? Game already completed :
                 if game.completed:
                     return Response({'Bad Request': 'Invalid data...'}, status=status.HTTP_400_BAD_REQUEST)
-                current_turn_  = data['current_turn']
+
+                #? Timer request :
+                try :
+                    assert data['type']=="timer"
+                    current_turn_  = data['current_turn']
+                    game.update_timers(current_turn_)
+                    return game.timer_request_response()
+                except:
+                    pass
+
+                #? Normal (Move) request:
                 tier = 0
                 try :
                     tier = int(data["tier"])
@@ -250,3 +264,5 @@ class GameConsumer(AsyncWebsocketConsumer):
             return Response({'Bad Request': 'Invalid data...'}, status=status.HTTP_400_BAD_REQUEST)
         return Response({'Bad Request': 'Invalid data...'}, status=status.HTTP_400_BAD_REQUEST)
         # raise Exception("You can't make a move in a non existing game!!")
+
+

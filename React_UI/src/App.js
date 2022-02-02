@@ -18,29 +18,34 @@ class App extends Component
 
                     <Route exact path = "/game"
                             element = {<Board client={this.props.client}
-                                              game_code={this.props.game_code}
+
+                            game_code={this.props.game_code}
                                        />} >
                      </Route>
 
                     <Route exact path = "/game/*"
                             element = {<Board client={this.props.client}
-                                              game_code={this.props.game_code}
+
+                            game_code={this.props.game_code}
                                        />} >
 
                     </Route>
 
                     <Route exact path = "/main/"
                             element = {<Board client={this.props.client}
+
                             game_code={this.props.game_code}
                             />} >
                     </Route>
                     <Route exact path = "/main/game"
                             element = {<Board client={this.props.client}
+
                             game_code={this.props.game_code}
                             />} >
                     </Route>
                     <Route exact path = "/main/game/*"
                             element = {<Board client={this.props.client}
+
                             game_code={this.props.game_code}
                             />} >
                     </Route>

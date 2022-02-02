@@ -9,7 +9,7 @@ urlpatterns = [
     path('game' , views.GameView.as_view()),
     # path('<str:game_name>' , views.GameView.as_view() , name="game",),
     path('create-game' , views.CreateGameView.as_view()),
-
+    # path('time-game', views.GameTimerView.as_view()),
 #-----------------------------------------------
     # path('move',views.GameMoveView.as_view()),
     path('move/<str:game_code>',views.GameMoveView.as_view(),name="move"),
