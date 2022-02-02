@@ -82,7 +82,7 @@ class Board extends Component {
     this.serialize = this.serialize.bind(this);
     this.deserialize = this.deserialize.bind(this);
 
-    this.update_timer = this.update_timer.bind(this);
+    this.format_time = this.format_time.bind(this);
     this.update_moves_time_line = this.update_moves_time_line.bind(this);
     this.add_one_history_item = this.add_one_history_item.bind(this);
   };
@@ -354,10 +354,6 @@ class Board extends Component {
   //?----------------------------------------
   // * Web Page modifiers :
   //?----------------------------------------
-  update_timer()
-  {
-      // this function updates the timers on the front page, (the ground truth value is in the back-end hence the request made in this function.)
-  }
   add_one_history_item(content,color)
   {
     let time_line_item = document.createElement("div");
@@ -390,6 +386,39 @@ class Board extends Component {
   {
     this.add_one_history_item(this.state.move_history_render[0],"dark");
     this.add_one_history_item(this.state.move_history_render[1],"secondary");
+  }
+
+  format_time()
+  {
+    let timer_id1="timer_player1";
+    let timer_id2="timer_player2";
+    if(this.state.opponent===this.state.username)
+    {
+        timer_id1= "timer_player2";
+        timer_id2= "timer_player1";
+    }
+    let timer_id = this.state.player===0 ? timer_id1 : timer_id2;
+    let seconds_left = this.state.player===0 ? this.state.creator_time : this.state.opponent_time;
+    let hours, minutes, seconds;
+    if (seconds_left >= 0) {
+        if ((seconds_left) < Math.min(60, (this.state.initial_time / 2))) {
+            document.getElementById(timer_id).classList.remove('color-full');
+            document.getElementById(timer_id).classList.add('color-half');
+        }
+        if ((seconds_left) < Math.min(30, (this.state.initial_time / 4))) {
+            document.getElementById(timer_id).classList.remove('color-half');
+            document.getElementById(timer_id).classList.add('color-empty');
+        }
+        // @ts-ignore
+        hours = pad(parseInt(seconds_left / 3600));
+        seconds_left = seconds_left % 3600;
+        // @ts-ignore
+        minutes = pad(parseInt(seconds_left / 60));
+        seconds = pad(seconds_left % 60);
+        // format countdown string + set tag value
+        document.getElementById(timer_id).innerHTML = "<span>" + hours + ":</span><span>" + minutes + ":</span><span>" + seconds + "</span>";
+    }
+    function pad(n) { return (n < 10 ? '0' : '') + n; }
   }
   //?---------------------------------------------------------
   // * Component's Native methods :
@@ -444,56 +473,8 @@ class Board extends Component {
                     let game_state = me.state;
                     game_state.creator_time = data.creator_time;
                     game_state.opponent_time = data.opponent_time;
-                    if (data.winner !== null && data.winner !== "") {
-                        // TODO : change this to a better thing.
-                        alert(data.winner + " Won on time!");
-                        me.state.winner = data.winner
-                    }
-                    let hours, minutes, seconds;
-                    let seconds_left = data.creator_time;
-                    let timer_id = "timer_player1";
-                    if (seconds_left >= 0) {
-                        if ((seconds_left) < Math.min(60, (me.state.initial_time / 2))) {
-                            document.getElementById(timer_id).classList.remove('color-full');
-                            document.getElementById(timer_id).classList.add('color-half');
-                        }
-                        if ((seconds_left) < Math.min(30, (me.state.initial_time / 4))) {
-                            document.getElementById(timer_id).classList.remove('color-half');
-                            document.getElementById(timer_id).classList.add('color-empty');
-                        }
-                        // @ts-ignore
-                        hours = pad(parseInt(seconds_left / 3600));
-                        seconds_left = seconds_left % 3600;
-                        // @ts-ignore
-                        minutes = pad(parseInt(seconds_left / 60));
-                        seconds = pad(seconds_left % 60);
-                        // format countdown string + set tag value
-                        document.getElementById(timer_id).innerHTML = "<span>" + hours + ":</span><span>" + minutes + ":</span><span>" + seconds + "</span>";
-                    }
-                    seconds_left = data.opponent_time;
-                    timer_id = "timer_player2";
-                    if (seconds_left >= 0) {
-                        if ((seconds_left) < Math.min(60, (me.state.initial_time / 2))) {
-                            document.getElementById(timer_id).classList.remove('color-full');
-                            document.getElementById(timer_id).classList.add('color-half');
-                        }
-                        if ((seconds_left) < Math.min(30, (me.state.initial_time / 4))) {
-                            document.getElementById(timer_id).classList.remove('color-half');
-                            document.getElementById(timer_id).classList.add('color-empty');
-                        }
-                        // @ts-ignore
-                        hours = pad(parseInt(seconds_left / 3600));
-                        seconds_left = seconds_left % 3600;
-                        // @ts-ignore
-                        minutes = pad(parseInt(seconds_left / 60));
-                        seconds = pad(seconds_left % 60);
-                        // format countdown string + set tag value
-                        document.getElementById(timer_id).innerHTML = "<span>" + hours + ":</span><span>" + minutes + ":</span><span>" + seconds + "</span>";
-                    }
-                    function pad(n) { return (n < 10 ? '0' : '') + n; }
                     me.setState(game_state);
                 }
-
 
             else{
               // * server returned a valid move :
@@ -610,16 +591,20 @@ class Board extends Component {
     let me = this;
     setInterval(function () {
         console.log("sent a request to check for time update");
-        me.state.Client.send(
-            JSON.stringify({
-                'id': me.state.Code,
-                'current_turn': me.state.player,
-                'type': "timer",
-                'creator_time': me.state.creator_time,
-                'opponent_time': me.state.opponent_time,
-                'winner': "",
-            }));
-
+        me.format_time();
+        //TODO Improve the timer gestion for the case of 2 players :
+        if (me.state.username === me.state.creator && this.state.opponent!=="")
+        {
+            me.state.Client.send(
+                JSON.stringify({
+                    'id': me.state.Code,
+                    'current_turn': me.state.player,
+                    'type': "timer",
+                    'creator_time': me.state.creator_time,
+                    'opponent_time': me.state.opponent_time,
+                    'winner': "",
+                }));
+        }
       }, 1000);
     }
   //?--------------------------------------
