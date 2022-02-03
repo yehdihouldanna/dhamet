@@ -28,7 +28,6 @@ class Agent(Player):
     def __init__(self,name,player):
         super().__init__(name,player)
         self.pieces_indices=None
-
     def move(self,state):
         pass
 
@@ -41,7 +40,7 @@ class Naive(Agent):
         self.name = "Naive " + name
 
     def move(self,state):
-        move="_"
+        move=None
         state.get_pieces(self.player)
         for i in range(self.pieces_indices.shape[0]):
             x,y = tuple(self.pieces_indices[i])
@@ -51,6 +50,8 @@ class Naive(Agent):
                 move = str(x)+str(y)+" "+str(movet[0])+str(movet[1])
                 print(self.name," moved : ",move)
                 break
+        if not move:
+            cprint(f"ALERT: {self.name} couldn't return a move!",color = "red")
         return move
 
 class Random(Agent):
@@ -62,7 +63,7 @@ class Random(Agent):
         self.name = "Random " + name
         self.choices_limit = 5
     def move(self,state):
-        move="_"
+        move=None
         dict_ = {}
         pieces = state.get_pieces(self.player)
         for i in range(pieces.shape[0]):
@@ -79,6 +80,44 @@ class Random(Agent):
             key  = random.choice(list(dict_))
             destination = random.choice(dict_[key])
             move = key +" "+ str(destination[0])+str(destination[1])
+        if not move:
+            cprint(f"ALERT: {self.name} couldn't return a move!",color = "red")
+        return move
+class Random_plus(Agent):
+    """
+    This a random agent that chooses a random move from the first available moves.
+    """
+    def __init__(self,name,player):
+        super().__init__(name,player)
+        self.name = "Random " + name
+        self.choices_limit = 25
+    def move(self,state):
+        #TODO : The human-ish behavior of this IA could be improved by favoring horizontal and vertical moves over diagonal ones.
+        move=None
+        dict_ = {}
+        scores = {}
+        pieces = state.get_pieces(self.player)
+        for i in range(pieces.shape[0]):
+            x,y = tuple(pieces[i])
+            possible_moves = state.available_moves(x,y)
+            possible_moves = sorted(possible_moves.items(),key=lambda item:item[1],reverse=True)
+            if len(possible_moves):
+                source = str(x)+str(y)
+                dict_[source]= possible_moves[0][0]
+                scores[source] = possible_moves[0][1]
+            if len(dict_)>= self.choices_limit:
+                break
+        if(len(dict_)):
+            gscores = dict([item for item in scores.items() if item[1]==1])
+            if len(gscores): # to prefer more natural moves
+                key = random.choice(list(gscores))
+            else:
+                key  = random.choice(list(dict_))
+            # destination = random.choice(dict_[key])
+            destination = dict_[key]
+            move = key +" "+ str(destination[0])+str(destination[1])
+        if not move:
+            cprint(f"ALERT: {self.name} couldn't return a move!",color = "red")
         return move
 
 class Dummy(Agent):
@@ -90,7 +129,7 @@ class Dummy(Agent):
         self.name = "Dummy " + name
         self.choices_limit = 40 # could be limited if needed.
     def move(self,state):
-        move="_"
+        move=None
         dict_ = {}
         pieces=state.get_pieces(self.player)
         for i in range(pieces.shape[0]):
@@ -105,13 +144,15 @@ class Dummy(Agent):
                 break
         if(len(dict_)):
             move  = max(dict_, key=dict_.get)
+        if move =="_":
+                cprint(f"ALERT: {self.name} couldn't return a move!",color = "red")
         return move
 
 class MinMax(Agent):
     """
     This is a dummy agent it choses the best move available to it in it's turn
     """
-    def __init__(self,name,player,depth = 2):
+    def __init__(self,name,player,depth = 2,allow_souffle=False):
         super().__init__(name,player)
         self.name = "Dummy " + name
         self.choices_limit = 5
@@ -123,7 +164,7 @@ class MinMax(Agent):
         maxi_turn = 1
         best_move,_ = self.minmax(state,score,cur_depth,self.depth,maxi_turn)
         if best_move is None:
-            cprint(f"ALERT: {self.name} couldn't return a move!")
+            cprint(f"ALERT: {self.name} couldn't return a move!",color="red")
         return best_move
 
     # this is the strategy of the agent
@@ -159,7 +200,7 @@ class MinMax(Agent):
             for i in range(pieces.shape[0]):
                 x,y = tuple(pieces[i])
                 chains = state.get_chain_moves(x,y)
-                # TODO : check for a way to make it possible to cover more exploration while looking for the best move
+                # TODO :   a way to make it possible to cover more exploration while looking for the best move
                 if len(chains):
                     new_move = max(chains, key=chains.get)
                     new_score = chains[new_move]

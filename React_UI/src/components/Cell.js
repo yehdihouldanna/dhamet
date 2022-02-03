@@ -29,6 +29,8 @@ class Cell extends Component {
                         onMove = {this.props.onMove}
                         onClick = {this.props.onClick}
                         soufflables = {this.props.soufflables}
+                        audio_url = {this.props.audio_url}
+                        fisrt_render = {this.props.first_render}
                         >
                     </Piece>
                 </div>

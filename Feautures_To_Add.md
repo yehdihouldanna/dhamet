@@ -1,23 +1,20 @@
 *This is a non exhaustive list of features and functionnalities that will be added to the game. as we progress the need to add more elements to this list might raise up.*
 
 - **[Crucial]** Add animations. animating the game pieces based on movements and events of take and soufflé etc...
-    - animating pieces appeareances; [-/]
-    - animating pieces movements.  [ ]
+    - animating pieces appeareances; [_/]
+    - animating pieces movements.  []
     - animating pieces disapearances (taken of the board).
-
 
 - **[Crucial]** Improve the interface of the Web page. (Buy a game template for it.)
     - improve the game background and the style of the pieces.
-    - Improve players banner.
     - Add a button for resign , draw and new game.
 
 - **[Very_Importent]** Add a timer functionnality. (add a timer for each player and limited typed game options)
-    - sync the timer between both fronts and
-    - set the ground truth for the timer in the back-end,
     - set time win condition.
-    - 
 
 - Add sound effects SFX to the game.
+ - piece appearance SFX [_/]
+ -piece disapearance SFX
 
 - Migrate the database to postgres instead of sqlite.
 
@@ -47,14 +44,12 @@
 
 - Add more specifications for each type of dhamet, (3 , 12 , 40 )
 
+- تعريب اللعبة
+
 
 ### Current Bugs:
 
-- Sign up before sign in. --> Inverse the two.
-
-- Player can't take a soufflé if the oppoenent last move closed the soufflé valid taking point., --> make soufflé to be based on the previous turn's game state instead of the current.
-
-- Ai wins before the game actually ends.
+- Ai (minmax) wins before the game actually ends.
 To reproduce the bug : 
 ```Python
 33 44
@@ -87,10 +82,6 @@ To reproduce the bug :
 52 42
 ```
 
-- Improve the behavior of the tier 0 bot players.
-
 - The description of the website is that of mecatronics on google.
 
 - Repeated nav bar on top and side.
-
-- Chat from the original metronics theme is showing.(to be deleted)

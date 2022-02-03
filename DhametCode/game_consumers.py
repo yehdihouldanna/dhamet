@@ -6,13 +6,11 @@ import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 from .utils.Board import State
-from .utils.Players import Random, Dummy , MinMax
+from .utils.Players import Dummy , MinMax, Random_plus
 from DhametCode.models import Game
 from users.models import User
 from rest_framework.response import Response
 from rest_framework import status
-import numpy as np
-from datetime import datetime
 
 
 logger = logging.getLogger('root')
@@ -102,97 +100,12 @@ class GameConsumer(AsyncWebsocketConsumer):
         # Send message to WebSocket
         await self.send(text_data = event['data'])
 
-    def update_game(self,id,user,game,game_instance,move,souffle_move=""):
-        if type(souffle_move)==str and souffle_move!="":
-            game_instance.apply_souffle(souffle_move)
-        if move =="":
-            winner=""
-            winner_score = ""
-            try:
-                winner = game.winner.username
-                winner_score = game.winner.score
-            except:
-                pass
-            opponent = ""
-            opponent_score = ""
-            try:
-                opponent = game.opponent.username
-                opponent_score = game.opponent.score
-            except:
-                pass
-            tier = 0
-            try:
-                if game.opponent.is_fake:
-                    tier = game.opponent.tier
-            except:
-                pass
-            output_data  = json.dumps({
-                        'id':id,
-                        'state': game.state,
-                        'last_move': game.last_move,
-                        'current_turn':game.current_turn,
-                        'creator' : game.creator.username,
-                        'creator_score' : game.creator.score,
-                        'opponent' : opponent,
-                        'opponent_score' : opponent_score,
-                        'soufflables' : [],
-                        'winner' : winner,
-                        'winner_score' : winner_score,
-                        'tier' : tier,
-                        })
-        else:
-            moved,soufflables = game_instance.move_from_str(move)
-            if moved:
-                game_instance.player = not game_instance.player
-                game_instance.length+=1
-                board_txt = game_instance.serialize(game_instance.board)
-                game.state = board_txt
-                game.length = game_instance.length
-                moves = game.moves+"\n"+move
-                game.moves = moves
-                game.last_move= move
-                game.current_turn = (game.current_turn+1)%2
-            ended,end_msg = game_instance.check_end_condition()
-            if ended:
-                game.winner = user
-                game.completed = datetime.now()
-            game.save()
-            winner=""
-            winner_score=""
-            try:
-                winner = game.winner.username
-                winner_score = game.winner.score
-            except:
-                pass
-            if game.opponent.is_fake:
-                tier = game.opponent.tier
-            else:
-                tier=0
-            output_data  = json.dumps({
-                        'id':id,
-                        'state': game.state,
-                        'last_move': game.last_move,
-                        'current_turn':game.current_turn,
-                        'creator' : game.creator.username,
-                        'opponent' : game.opponent.username,
-                        'opponent_score' : game.opponent.score,
-                        'tier' : tier,
-                        'soufflables' : soufflables,
-                        'winner' : winner,
-                        'winner_score' : winner_score,
-                        'winner' : winner
-                        })
-        return output_data
-
     @database_sync_to_async
     def post_move(self , text_data_json):
         user = self.scope['user']
         # data = event["data"]
         data = text_data_json
         # logger.info(f"['f': post_move]['user ': {user.username}]['data':{data}]")
-
-
-
         id = data["id"]
         if user.is_authenticated:
             user = User.objects.filter(username = user.username)[0]
@@ -202,11 +115,14 @@ class GameConsumer(AsyncWebsocketConsumer):
             queryset = Game.objects.filter(id=id)
             if queryset.exists():
                 game = queryset[0]
+
                 #? Game already completed :
                 if game.completed:
                     return Response({'Bad Request': 'Invalid data...'}, status=status.HTTP_400_BAD_REQUEST)
 
+                #? -------------------------
                 #? Timer request :
+                #? -------------------------
                 try :
                     assert data['type']=="timer"
                     current_turn_  = data['current_turn']
@@ -215,54 +131,62 @@ class GameConsumer(AsyncWebsocketConsumer):
                 except:
                     pass
 
+                #? -------------------------
                 #? Normal (Move) request:
+                #? -------------------------
                 tier = 0
                 try :
                     tier = int(data["tier"])
                 except:
                     pass
-                move = data['last_move']
-                souffle_move = data['souffle_move']
-                # logger.info(f"['f': post_move]['move': {move}]")
 
-                current_turn = game.current_turn
-                length = game.length
-                board = game.state
-                game_instance = State(n=9,board=board,player = current_turn, length=length,souffle=True)
+                try:
+                    move = data['last_move']
+                    souffle_move = data['souffle_move']
+                    # logger.info(f"['f': post_move]['move': {move}]")
+                    current_turn = game.current_turn
+                    length = game.length
+                    board = game.state
+                    game_instance = State(n=9,board=board,player = current_turn, length=length,souffle=True)
 
-                if ((game.creator==user and current_turn==0) or (game.opponent == user and current_turn)): # * user is playing
-                    return self.update_game(id,user,game,game_instance,move,souffle_move)
-                elif ((game.opponent.username in AI_NAMES and current_turn) or (game.creator.username in AI_NAMES and current_turn==0)): # * the AI is playing
-                    Agent = MinMax("AI",current_turn,depth=2)
-                    if game.opponent.username == AI_NAMES[0] or game.opponent.username ==AI_NAMES[0]:
-                        Agent = Random('AI',current_turn)
-                    elif game.opponent.username == AI_NAMES[1] or game.opponent.username ==AI_NAMES[1]:
-                        Agent = Dummy('AI',current_turn)
+                    #? User is playing :
+                    if ((game.creator==user and current_turn==0) or (game.opponent == user and current_turn)): # * user is playing
+                        return game.update_game(id,user,game_instance,move,souffle_move)
 
-                    move = Agent.move(game_instance)
-                    logger.info(f"['f': post_move]['AI_move': {move}]")
-                    user_ = game.creator if game.creator.username in AI_NAMES else game.opponent
-                    return self.update_game(id,user_,game,game_instance,move,souffle_move)
+                    #? The AI is playing :
+                    elif ((game.opponent.username in AI_NAMES and current_turn) or (game.creator.username in AI_NAMES and current_turn==0)): # * the AI is playing
+                        Agent = MinMax("AI",current_turn,depth=2)
+                        if game.opponent.username == AI_NAMES[0] or game.opponent.username ==AI_NAMES[0]:
+                            Agent = Random_plus('AI',current_turn)
+                        elif game.opponent.username == AI_NAMES[1] or game.opponent.username ==AI_NAMES[1]:
+                            Agent = Dummy('AI',current_turn)
 
-                elif (tier and current_turn==1 ):
-                    if tier ==1:
-                        Agent = Random("",current_turn)
-                    elif tier==2:
-                        Agent = Dummy("",current_turn)
-                    elif tier ==3: # can be used for ML agent
-                        Agent = MinMax("",current_turn,depth=2)
-                    else: # just in order to prevent erros
-                        Agent = MinMax("________",current_turn,depth=2)
-                    move = Agent.move(game_instance)
-                    logger.debug(f"['f': post_move]['AI_move': {move}]")
-                    user_ = game.creator if game.creator.username in BOT_NAMES else game.opponent
-                    return self.update_game(id,user_,game,game_instance,move,souffle_move)
+                        move = Agent.move(game_instance)
+                        logger.info(f"['f': post_move]['AI_move': {move}]")
+                        user_ = game.creator if game.creator.username in AI_NAMES else game.opponent
+                        return game.update_game(id,user_,game_instance,move,souffle_move)
 
-                elif ((game.creator==user and current_turn==1) or (game.opponent == user and current_turn==0)): #* case a user tries a move when it't turn only happens at start when user joins a new game
-                    return self.update_game(id,user,game,game_instance,move="",souffle_move="")
+                    #? The bot is playing :
+                    elif (tier and current_turn==1 ):
+                        if tier ==1:
+                            Agent = Random_plus("",current_turn)
+                        elif tier==2:
+                            Agent = Dummy("",current_turn)
+                        elif tier ==3: # can be used for ML agent
+                            Agent = MinMax("",current_turn,depth=2)
+                        else: # just in order to prevent erros
+                            Agent = MinMax("________",current_turn,depth=2)
+                        move = Agent.move(game_instance)
+                        logger.debug(f"['f': post_move]['AI_move': {move}]")
+                        user_ = game.creator if game.creator.username in BOT_NAMES else game.opponent
+                        return game.update_game(id,user_,game_instance,move,souffle_move)
+
+                    #? Refrech request
+                    elif ((game.creator==user and current_turn==1) or (game.opponent == user and current_turn==0)): #* case a user tries a move when it't turn only happens at start when user joins a new game
+                        return game.update_game(id,user,game_instance,move="",souffle_move="")
+                except:
+                    pass
             # raise Exception(f"user {user.username} tried to make a non valid move!")
             return Response({'Bad Request': 'Invalid data...'}, status=status.HTTP_400_BAD_REQUEST)
         return Response({'Bad Request': 'Invalid data...'}, status=status.HTTP_400_BAD_REQUEST)
         # raise Exception("You can't make a move in a non existing game!!")
-
-

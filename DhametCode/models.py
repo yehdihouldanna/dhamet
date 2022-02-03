@@ -4,6 +4,7 @@ import string
 from users.models import User
 import json
 import time
+import datetime
 def generate_game_code():
     length = 8 # the code length curr
     chain_source = string.ascii_uppercase+string.ascii_lowercase+"0123456789" # chain containing the type of caracters to generate the code from
@@ -30,7 +31,7 @@ def get_initial_state_json():
 
 class Game(models.Model):
     init_txt="wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwbbbb_wwwwbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
-    default_time = 10*60 # 10min in (s)
+    default_time = 0.25*60 # 10min in (s)
     id = models.AutoField(primary_key=True)
     created = models.DateTimeField(auto_now_add=True)
     completed = models.DateTimeField(blank = True , null = True)
@@ -90,21 +91,106 @@ class Game(models.Model):
             # TODO: Handle this Exception
             pass
 
+    def update_game(self,id,user,game_instance,move,souffle_move=""):
+        if type(souffle_move)==str and souffle_move!="":
+            game_instance.apply_souffle(souffle_move)
+        if move =="":
+            winner=""
+            winner_score = ""
+            try:
+                winner = self.winner.username
+                winner_score = self.winner.score
+            except:
+                pass
+            opponent = ""
+            opponent_score = ""
+            try:
+                opponent = self.opponent.username
+                opponent_score = self.opponent.score
+            except:
+                pass
+            tier = 0
+            try:
+                if self.opponent.is_fake:
+                    tier = self.opponent.tier
+            except:
+                pass
+            output_data  = json.dumps({
+                        'id':id,
+                        'state': self.state,
+                        'last_move': self.last_move,
+                        'current_turn':self.current_turn,
+                        'creator' : self.creator.username,
+                        'creator_score' : self.creator.score,
+                        'opponent' : opponent,
+                        'opponent_score' : opponent_score,
+                        'soufflables' : [],
+                        'winner' : winner,
+                        'winner_score' : winner_score,
+                        'tier' : tier,
+                        })
+        else:
+            moved,soufflables = game_instance.move_from_str(move)
+            if moved:
+                game_instance.player = not game_instance.player
+                game_instance.length+=1
+                board_txt = game_instance.serialize(game_instance.board)
+                self.state = board_txt
+                self.length = game_instance.length
+                moves = self.moves+"\n"+move
+                self.moves = moves
+                self.last_move= move
+                self.current_turn = (self.current_turn+1)%2
+            ended,end_msg = game_instance.check_end_condition()
+            if ended:
+                self.winner = user
+                self.completed = datetime.now()
+            self.save()
+            winner=""
+            winner_score=""
+            try:
+                winner = self.winner.username
+                winner_score = self.winner.score
+            except:
+                pass
+            if self.opponent.is_fake:
+                tier = self.opponent.tier
+            else:
+                tier=0
+            output_data  = json.dumps({
+                        'id':id,
+                        'state': self.state,
+                        'last_move': self.last_move,
+                        'current_turn':self.current_turn,
+                        'creator' : self.creator.username,
+                        'opponent' : self.opponent.username,
+                        'opponent_score' : self.opponent.score,
+                        'tier' : tier,
+                        'soufflables' : soufflables,
+                        'winner' : winner,
+                        'winner_score' : winner_score,
+                        'winner' : winner
+                        })
+        return output_data
+
     def update_timers(self,current_user):
         """updates front-end timers based on the ground truth back-end ones"""
-        current_time = time.time()
-        time_diff = current_time-self.last_move_time
-        time_diff_sec = int(time_diff)
-        if current_user ==0:
-            self.creator_time-=time_diff_sec
-            if self.creator_time==0:
-                self.winner == self.opponent
-        elif current_user == 1:
-            self.opponent_time -= time_diff_sec
-            if self.opponent_time == 0:
-                self.winner == self.creator
-        self.last_move_time = current_time
-        self.save()
+        if not self.completed:
+            current_time = time.time()
+            time_diff = current_time-self.last_move_time
+            time_diff_sec = int(time_diff)
+            if current_user == 0:
+                if self.creator_time<=0:
+                    self.winner = self.opponent
+                    self.completed = datetime.now()
+                self.creator_time -= time_diff_sec
+            elif current_user == 1:
+                if self.opponent_time <= 0:
+                    self.winner = self.creator
+                    self.completed= datetime.now()
+                self.opponent_time -= time_diff_sec
+            self.last_move_time = time.time()
+            self.save()
 
     def timer_request_response(self):
         output_data  = json.dumps({

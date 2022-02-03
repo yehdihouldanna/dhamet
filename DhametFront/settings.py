@@ -94,7 +94,7 @@ LOGIN_REDIRECT_URL = "/main/"
 LOGOUT_REDIRECT_URL = '/'
 # https://docs.djangoproject.com/en/dev/ref/settings/#login-url
 LOGIN_URL = "account_login"
-
+SIGNUP_URL ="account_signup"
 ACCOUNT_ALLOW_REGISTRATION = True
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
 ACCOUNT_AUTHENTICATION_METHOD = "username"

@@ -3,7 +3,6 @@
 # All rights reserved.
 # Code made by : Yehdhih ANNA (TheLuckyMagician).
 #------------------------------------------------
-
 import numpy as np
 from termcolor import cprint
 from .Players import *
@@ -33,10 +32,8 @@ class State():
         self.can_souffle = True
         self.soufflables = []
 
-
         self.last_move_nature = None # 0/1 if the last move took an adversary piece
         self.last_player = None # just checks for the last player, this is used in chained moves optimization
-
 
         # initialising the board matrix
         self.lim_takes = 10  # limits AI takes per turn (improves performance (when the baord contain few Dhaimat pieces))
@@ -179,6 +176,7 @@ class State():
             return True,max_score
 
     def move_from_str(self,move_str):
+        previous_board = np.copy(self.board)
         moves = move_str.split(" ")
         moved = False
         last_moved = None
@@ -193,29 +191,32 @@ class State():
             if not moved:
                 break
 
-
         if moved and self.souffle and self.last_move_nature == 0:
-            self.update_soufflables(last_moved, last_score)
+            self.update_soufflables(moves,previous_board)
+
         return moved , self.soufflables
 
-    def update_soufflables(self,last_moved,last_score):
-        # TODO : Make a lazy search algorithm for soufflable ->
-        # TODO : ->(u dont have to loop over all availbles moves for a piece it is enough to find one that has a score of 1)
-
+    def update_soufflables(self,moves_in,previous_board):
+        aux = np.copy(self.board)
+        self.board = np.copy(previous_board)
         self.soufflables = []
         pieces = self.get_pieces(self.player)
         for piece in pieces:
             moves = self.available_moves(piece[0],piece[1],lazy = True)
             if len(moves):
                 self.soufflables.append(str(piece[0])+str(piece[1]))
+        from_ = moves_in[0]
+        to_= moves_in[1]
+        if from_ in self.soufflables:
+            self.soufflables.append(to_)
+            self.soufflables.remove(from_)
+        self.board = np.copy(aux)
 
     def apply_souffle(self,piece_str):
-        # if (piece_str in self.soufflables) and ((not self.player and self.board[int(piece_str[0]),int(piece_str[1])]>=1) or (self.player and self.board[int(piece_str[0]),int(piece_str[1])]<=-1)):
         if ((self.player and self.board[int(piece_str[0]),int(piece_str[1])]>=1) or (not self.player and self.board[int(piece_str[0]),int(piece_str[1])]<=-1)):
 
             self.board[int(piece_str[0]),int(piece_str[1])]=0
             can_souffle = False
-            # print(f'Souffle applied on the piece {piece_str}')
             return True
         return False
 

@@ -55,7 +55,10 @@ class Board extends Component {
       can_souffle : true,
       souffle_move : "",
       soufflables : [],
+      audio_url : "/static/sounds/punch.wav",
+      first_render :true,
     };
+    this.TimerInterval=null;
     this.AI_NAMES  = ["AI_Random","AI_Dummy","AI_MinMax"];
     this.BOT_NAMES = ["Med10","Mariem","Sidi","احمد","Khadijetou","Cheikh","Vatimetou","ابراهيم",
                       "Mamadou","Oumar","Amadou","3abdellahi","Va6me","Moussa","Aly","Samba"];
@@ -186,6 +189,7 @@ class Board extends Component {
       this.doClickAction(key,piece_state);
     }
   };
+
   //?-------------------------------------------------
   // * Main Handler methods :
   //?-------------------------------------------------
@@ -201,6 +205,7 @@ class Board extends Component {
     if (this.state.move.length)
       {this.MoveRequest_ws(this.state.move,this.state.souffle_move);}
   };
+
   //?-----------------------------------------------------------------------
   // * Handling Request and getting the reponses from the back end methods :
   //?-----------------------------------------------------------------------
@@ -243,6 +248,9 @@ class Board extends Component {
       {
       }
     }
+    let game_state= this.state;
+    game_state.souffle_move = "";
+    this.setState(game_state);
   };
   CreateFakeOpponent()
   {
@@ -276,8 +284,6 @@ class Board extends Component {
                 if (typeof data["Bad Request"] !="undefined")
                 {}
                 else {
-
-                    // console.log("🚀 ~ file: Board.js ~ line 295 ~ Board ~ then ~ data", data)
                     me.state.opponent = data.opponent;
                     me.state.tier = me.Tiers[idx];
                     me.props.client.send(
@@ -473,6 +479,11 @@ class Board extends Component {
                     let game_state = me.state;
                     game_state.creator_time = data.creator_time;
                     game_state.opponent_time = data.opponent_time;
+                    if (data.winner !== null && data.winner !== "") {
+                        // TODO : change this to a better thing.
+                        me.state.winner = data.winner
+                        alert(data.winner + " Won on time !");
+                    }
                     me.setState(game_state);
                 }
 
@@ -589,11 +600,11 @@ class Board extends Component {
     document.getElementById("timer_player2").classList.add('tiles');
     document.getElementById("timer_player2").classList.add('color-full');
     let me = this;
-    setInterval(function () {
+    this.TimerInterval = setInterval(function () {
         console.log("sent a request to check for time update");
         me.format_time();
         //TODO Improve the timer gestion for the case of 2 players :
-        if (me.state.username === me.state.creator && this.state.opponent!=="")
+        if (me.state.username === me.state.creator && me.state.opponent!=="")
         {
             me.state.Client.send(
                 JSON.stringify({
@@ -606,6 +617,9 @@ class Board extends Component {
                 }));
         }
       }, 1000);
+      {this.state.first_render=false;}
+      if(this.state.opponent_time<=0.3 || this.state.creator_time<=0.3 || this.state.winner!="")
+      {clearInterval(this.TimerInterval);}
     }
   //?--------------------------------------
   // * Rendering React native method :
@@ -621,7 +635,7 @@ class Board extends Component {
             <div className="d-flex flex-column justify-content-center align-items-center Wait_text" style = {{"width": "100%" , "height":"100%"}}>
                 <div className="spinner-border text-warning " role="status" style={{width: "5rem",height: "5rem"}}>
                 </div>
-                <div >حانينا اشوي <br/> مسَحفاك مَانَك عجلان اعل شي </div>
+                <div > حاني اشوي مسَحفاك <br/>  مَانَك عجلان اعل شي </div>
             </div>
         );
     }
@@ -649,6 +663,8 @@ class Board extends Component {
                   ex_css_class ={ex_css_class}
                   toggle = {this.state.move.includes(key)}
                   soufflables = {this.state.soufflables}
+                  audio_url = {this.state.audio_url}
+                  first_render= {this.state.first_render}
                   >
                 </Cell>
               );
@@ -679,6 +695,8 @@ class Board extends Component {
                 ex_css_class ={ex_css_class}
                 toggle = {this.state.move.includes(key)}
                 soufflables = {this.state.soufflables}
+                audio_url = {this.state.audio_url}
+                first_render= {this.state.first_render}
               >
               </Cell>
             );
@@ -695,6 +713,7 @@ class Board extends Component {
                 {Cells}
             </div>
         </CSSTransition>
+
     );
   };
 }
