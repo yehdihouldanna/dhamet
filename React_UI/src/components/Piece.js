@@ -32,9 +32,9 @@ class Piece extends Component {
     // }
 
     componentDidMount() {
-        if(this.play && !this.props.first_render)
+        if(this.play && this.props.game_started && !this.first_render)
         {   this.audio.play();
-            this.play =false;
+            this.play = false;
         }
         else
         {

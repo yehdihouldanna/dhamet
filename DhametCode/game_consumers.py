@@ -6,7 +6,7 @@ import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 from .utils.Board import State
-from .utils.Players import Dummy , MinMax, Random_plus
+from .utils.Players import Dummy , MinMax,Random, Random_plus
 from DhametCode.models import Game
 from users.models import User
 from rest_framework.response import Response
@@ -157,7 +157,7 @@ class GameConsumer(AsyncWebsocketConsumer):
                     elif ((game.opponent.username in AI_NAMES and current_turn) or (game.creator.username in AI_NAMES and current_turn==0)): # * the AI is playing
                         Agent = MinMax("AI",current_turn,depth=2)
                         if game.opponent.username == AI_NAMES[0] or game.opponent.username ==AI_NAMES[0]:
-                            Agent = Random_plus('AI',current_turn)
+                            Agent = Random('AI',current_turn)
                         elif game.opponent.username == AI_NAMES[1] or game.opponent.username ==AI_NAMES[1]:
                             Agent = Dummy('AI',current_turn)
 

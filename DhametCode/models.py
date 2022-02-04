@@ -4,7 +4,7 @@ import string
 from users.models import User
 import json
 import time
-import datetime
+from datetime import datetime
 def generate_game_code():
     length = 8 # the code length curr
     chain_source = string.ascii_uppercase+string.ascii_lowercase+"0123456789" # chain containing the type of caracters to generate the code from
@@ -31,7 +31,7 @@ def get_initial_state_json():
 
 class Game(models.Model):
     init_txt="wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwbbbb_wwwwbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
-    default_time = 0.25*60 # 10min in (s)
+    default_time = 10*60 # 10min in (s)
     id = models.AutoField(primary_key=True)
     created = models.DateTimeField(auto_now_add=True)
     completed = models.DateTimeField(blank = True , null = True)
@@ -180,12 +180,12 @@ class Game(models.Model):
             time_diff = current_time-self.last_move_time
             time_diff_sec = int(time_diff)
             if current_user == 0:
-                if self.creator_time<=0:
+                if self.creator_time<=0.3:
                     self.winner = self.opponent
                     self.completed = datetime.now()
                 self.creator_time -= time_diff_sec
             elif current_user == 1:
-                if self.opponent_time <= 0:
+                if self.opponent_time <= 0.3:
                     self.winner = self.creator
                     self.completed= datetime.now()
                 self.opponent_time -= time_diff_sec

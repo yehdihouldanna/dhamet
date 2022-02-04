@@ -30,7 +30,7 @@ class Cell extends Component {
                         onClick = {this.props.onClick}
                         soufflables = {this.props.soufflables}
                         audio_url = {this.props.audio_url}
-                        fisrt_render = {this.props.first_render}
+                        game_started = {this.props.game_started}
                         >
                     </Piece>
                 </div>

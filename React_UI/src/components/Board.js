@@ -56,7 +56,7 @@ class Board extends Component {
       souffle_move : "",
       soufflables : [],
       audio_url : "/static/sounds/punch.wav",
-      first_render :true,
+      game_started :false,
     };
     this.TimerInterval=null;
     this.AI_NAMES  = ["AI_Random","AI_Dummy","AI_MinMax"];
@@ -516,6 +516,7 @@ class Board extends Component {
               }
 
               if (data.opponent !== me.state.opponent) {
+                  me.state.game_started = true;
                   me.state.opponent = data.opponent;
                   me.state.creator = data.creator;
                   me.state.tier = data.tier === 0 ? null : data.tier;
@@ -537,7 +538,6 @@ class Board extends Component {
                   }
                   me.forceUpdate();
               }
-
               // * If We are playing vs AI then we will send it's request after the player's
               if (me.AI_NAMES.includes(me.state.opponent) && me.state.player === 1 && me.state.winner === "") {
                   setTimeout(() => {
@@ -590,9 +590,6 @@ class Board extends Component {
         //?-----------------------------------
         //**? Timer Socket : **
         //?-----------------------------------
-
-
-
     }
   componentDidMount() {
     document.getElementById("timer_player1").classList.add('tiles');
@@ -600,26 +597,31 @@ class Board extends Component {
     document.getElementById("timer_player2").classList.add('tiles');
     document.getElementById("timer_player2").classList.add('color-full');
     let me = this;
-    this.TimerInterval = setInterval(function () {
-        console.log("sent a request to check for time update");
-        me.format_time();
-        //TODO Improve the timer gestion for the case of 2 players :
-        if (me.state.username === me.state.creator && me.state.opponent!=="")
-        {
-            me.state.Client.send(
-                JSON.stringify({
-                    'id': me.state.Code,
-                    'current_turn': me.state.player,
-                    'type': "timer",
-                    'creator_time': me.state.creator_time,
-                    'opponent_time': me.state.opponent_time,
-                    'winner': "",
-                }));
-        }
-      }, 1000);
-      {this.state.first_render=false;}
+        this.TimerInterval = setInterval(function () {
+            console.log("sent a request to check for time update");
+            me.format_time();
+            //TODO Improve the timer gestion for the case of 2 players :
+            if (me.state.username === me.state.creator && me.state.opponent!=="")
+            {
+                me.state.Client.send(
+                    JSON.stringify({
+                        'id': me.state.Code,
+                        'current_turn': me.state.player,
+                        'type': "timer",
+                        'creator_time': me.state.creator_time,
+                        'opponent_time': me.state.opponent_time,
+                        'winner': "",
+                    }));
+            }
+          }, 1000);
+
+
+      {this.state.first_render = false;}
       if(this.state.opponent_time<=0.3 || this.state.creator_time<=0.3 || this.state.winner!="")
-      {clearInterval(this.TimerInterval);}
+      {
+          clearInterval(this.TimerInterval);
+          this.game_started=false;
+      }
     }
   //?--------------------------------------
   // * Rendering React native method :
@@ -629,7 +631,8 @@ class Board extends Component {
     let { board , previous_board} = this.state;
     let len = board.length;
 
-    if (this.state.opponent === "" || this.state.username==="")
+    // if (this.state.opponent === "" || this.state.username==="")
+    if (!this.state.game_started)
     {
         Cells.push(
             <div className="d-flex flex-column justify-content-center align-items-center Wait_text" style = {{"width": "100%" , "height":"100%"}}>
@@ -665,6 +668,7 @@ class Board extends Component {
                   soufflables = {this.state.soufflables}
                   audio_url = {this.state.audio_url}
                   first_render= {this.state.first_render}
+                  game_started = {this.state.game_started}
                   >
                 </Cell>
               );
@@ -697,6 +701,7 @@ class Board extends Component {
                 soufflables = {this.state.soufflables}
                 audio_url = {this.state.audio_url}
                 first_render= {this.state.first_render}
+                game_started = {this.state.game_started}
               >
               </Cell>
             );
