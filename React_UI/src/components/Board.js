@@ -58,7 +58,7 @@ class Board extends Component {
       audio_url : "/static/sounds/punch.wav",
       game_started :false,
     };
-    this.TimerInterval=null;
+    this.TimerInterval = null;
     this.AI_NAMES  = ["AI_Random","AI_Dummy","AI_MinMax"];
     this.BOT_NAMES = ["Med10","Mariem","Sidi","احمد","Khadijetou","Cheikh","Vatimetou","ابراهيم",
                       "Mamadou","Oumar","Amadou","3abdellahi","Va6me","Moussa","Aly","Samba"];
@@ -216,6 +216,7 @@ class Board extends Component {
     let game_state= this.state;
     game_state.souffle_move = piece_key;
     game_state.can_souffle = false;
+    console.log("🚀 ~ Souffle Move", game_state.souffle_move);
     game_state.soufflables = [];
     game_state.board[i][j] = 0;
     game_state.board_txt = this.serialize();
@@ -235,7 +236,7 @@ class Board extends Component {
       this.CreateGameRequest();
     }
     else if (move_str.length >= 5) {
-      console.log("Trying the move : ", move_str);
+      console.log("Trying the move : ", move_str,"with souffle :",souffle_move);
         this.props.client.send(
         JSON.stringify({
           'id': this.state.Code,
@@ -475,7 +476,7 @@ class Board extends Component {
                 if(data.type==="timer")
                 {
                     // * server returned a valid time :
-                    console.log("Recevied data from timer socket ", data);
+                    // console.log("Recevied data from timer socket ", data);
                     let game_state = me.state;
                     game_state.creator_time = data.creator_time;
                     game_state.opponent_time = data.opponent_time;
@@ -586,6 +587,7 @@ class Board extends Component {
       // @ts-ignore
       this.props.client.onclose = function (e) {
           console.error('Client socket closed unexpectedly');
+          clearInterval(this.TimerInterval);
       };
         //?-----------------------------------
         //**? Timer Socket : **
@@ -597,12 +599,12 @@ class Board extends Component {
     document.getElementById("timer_player2").classList.add('tiles');
     document.getElementById("timer_player2").classList.add('color-full');
     let me = this;
-        this.TimerInterval = setInterval(function () {
-            console.log("sent a request to check for time update");
-            me.format_time();
-            //TODO Improve the timer gestion for the case of 2 players :
-            if (me.state.username === me.state.creator && me.state.opponent!=="")
-            {
+    this.TimerInterval = setInterval(function () {
+        //TODO Improve the timer gestion for the case of 2 players :
+        if (me.state.username === me.state.creator && me.state.opponent!=="" && me.state.winner==="" && me.state.creator_time>-1 && me.state.opponent_time>-1)
+        {
+                console.log("sent a request to check for time update");
+                me.format_time();
                 me.state.Client.send(
                     JSON.stringify({
                         'id': me.state.Code,
@@ -617,7 +619,7 @@ class Board extends Component {
 
 
       {this.state.first_render = false;}
-      if(this.state.opponent_time<=0.3 || this.state.creator_time<=0.3 || this.state.winner!="")
+      if(this.state.opponent_time<=0 || this.state.creator_time<=0 || this.state.winner!="")
       {
           clearInterval(this.TimerInterval);
           this.game_started=false;
