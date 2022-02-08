@@ -179,6 +179,17 @@ DATABASES = {
 }
 
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': 'dhamet_db',
+#         'USER': 'dhamet_db_user',
+#         'PASSWORD': 'Dhamet_db_smart_2022',
+#         'HOST': 'localhost',
+#         'PORT': '',
+#     }
+# }
+
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
 
@@ -301,3 +312,4 @@ SOCIALACCOUNT_PROVIDERS = {
         }
     }
 }
+

@@ -16,10 +16,19 @@ By default, Postgres uses an authentication scheme called “peer authentication
 ``sudo -u postgres psql``
 
 first create a user for the database : 
-``CREATE DATABASE myproject;``
+``CREATE DATABASE dhamet_db;``
 Next, create a database user for the project. Make sure to select a secure password:
-``CREATE USER myprojectuser WITH PASSWORD 'password';``
+``CREATE USER dhamet_db_user WITH PASSWORD 'Dhamet_db_smart_2022';``
 
+Extra configuration :
+```bash 
+ALTER ROLE dhamet_db_user SET client_encoding TO 'utf8';
+ALTER ROLE dhamet_db_user SET default_transaction_isolation TO 'read committed';
+ALTER ROLE dhamet_db_user SET timezone TO 'UTC';
+```
+
+give the user acess to the db
+`\q`
 
 ## Project folder and python/django requirements : 
 we set up a python environene
@@ -305,3 +314,25 @@ check the following files using `sudo vim <LogFilePath>` in order to detect find
 - if you encounter problems related to `DoesNotExist at /accounts/signup/` or `admin/login` ...etc
 then you might want to find teh apropriate value for `SITE_ID` in `settings.py`
  
+
+ - when deploying the Postgres for the first time, if you encounter user authentication faild, 
+ change the default user's password with
+ `ALTER USER postgres WITH PASSWORD 'new_password'`
+ `ALTER USER postgres WITH PASSWORD 'Dhamet_db_smart_2022'`
+
+also check the file */etc/postgresql/12/main/pg_hba.conf*
+and replace all occurences of `peer` with `trust`
+
+and restart the service
+`sudo service postgresql restart`
+
+ ## usefull commands :
+
+ When connecting to the droplet from vscode and in order to order files from terminal with vs code with `code FILENAME` you need to be root.
+
+ in order to change to a user in linux : `su USERNAME`
+ or when u are a user with sudo privileges and want to get back to the root user u can do so with `sudo -s`
+
+
+
+

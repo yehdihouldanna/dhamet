@@ -31,7 +31,7 @@ def get_initial_state_json():
 
 class Game(models.Model):
     init_txt="wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwbbbb_wwwwbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
-    default_time = 10*60 # 10min in (s)
+    default_time = 5*60 # 10min in (s)
     id = models.AutoField(primary_key=True)
     created = models.DateTimeField(auto_now_add=True)
     completed = models.DateTimeField(blank = True , null = True)
@@ -91,6 +91,21 @@ class Game(models.Model):
             # TODO: Handle this Exception
             pass
 
+
+    def update_users_scores(self):
+        score_diff = self.creator.score - self.opponent.score
+        f_1 = lambda x: min(int(3*x/100+8),25)  # A=(0,8), B=(400,20) caped at 25
+        f_2 = lambda x: max(int(-3*x/200+8),1)  # A=(0,8), B=(400,2)  caped at 1
+        if self.winner == self.creator :
+            score_change = f_2(abs(score_diff)) if score_diff > 0 else f_1(abs(score_diff))
+            self.creator.update_user_score(score_change)
+            self.opponent.update_user_score(-score_change)
+        elif self.winner ==self.opponent:
+            score_change = f_1(abs(score_diff)) if score_diff >0 else f_2(abs(score_diff))
+            self.opponent.update_user_score(score_change)
+            self.creator.update_user_score(-score_change)
+
+
     def update_game(self,id,user,game_instance,move,souffle_move=""):
         if type(souffle_move)==str and souffle_move!="":
             game_instance.apply_souffle(souffle_move)
@@ -144,6 +159,7 @@ class Game(models.Model):
             ended,end_msg = game_instance.check_end_condition()
             if ended:
                 self.winner = user
+                self.update_users_scores()
                 self.completed = datetime.now()
             self.save()
             winner=""
@@ -182,11 +198,13 @@ class Game(models.Model):
             if current_user == 0:
                 if self.creator_time<=0.3:
                     self.winner = self.opponent
+                    self.update_users_scores()
                     self.completed = datetime.now()
                 self.creator_time -= time_diff_sec
             elif current_user == 1:
                 if self.opponent_time <= 0.3:
                     self.winner = self.creator
+                    self.update_users_scores()
                     self.completed= datetime.now()
                 self.opponent_time -= time_diff_sec
             self.last_move_time = time.time()

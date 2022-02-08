@@ -1281,7 +1281,9 @@ License: For each use you must have a valid license purchased only from above li
 								<!--begin::Content-->
 								<div id="kt_account_settings_profile_details" class="collapse show">
 									<!--begin::Form-->
-									<form id="kt_account_profile_details_form" class="form">
+									<form id="kt_account_profile_details_form" class="form" method="POST"   enctype="multipart/form-data">
+                                        {% csrf_token %}
+                                        {{ form.as_p }}
 										<!--begin::Card body-->
 										<div class="card-body border-top p-9">
 											<!--begin::Input group-->

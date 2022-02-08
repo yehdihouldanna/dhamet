@@ -12,11 +12,11 @@
 - **[Very_Importent]** Add a timer functionnality. (add a timer for each player and limited typed game options)
     - set time win condition.
 
+- **[Important]** Add adds to the website game:
+
 - Add sound effects SFX to the game.
  - piece appearance SFX [_/]
  -piece disapearance SFX
-
-- Migrate the database to postgres instead of sqlite.
 
 - Refractor the code in favor of Fat models Skinny views (a recommended Django practice) . 
 
@@ -48,39 +48,6 @@
 
 
 ### Current Bugs:
-
-- Ai (minmax) wins before the game actually ends.
-To reproduce the bug : 
-```Python
-33 44
-55 33
-22 44
-40 22
-13 31
-42 22 40
-44 55
-51 42
-23 33
-43 23
-24 22
-60 51
-22 31
-66 44 24
-14 34
-40 22
-21 23
-75 66
-45 55
-66 44 24 22
-11 33
-42 24
-35 13
-57 35
-25 45
-51 40
-13 22
-52 42
-```
 
 - The description of the website is that of mecatronics on google.
 

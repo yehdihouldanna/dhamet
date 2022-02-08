@@ -11,6 +11,7 @@ from DhametCode.models import Game
 from users.models import User
 from rest_framework.response import Response
 from rest_framework import status
+from termcolor import cprint
 
 
 logger = logging.getLogger('root')
@@ -87,14 +88,18 @@ class GameConsumer(AsyncWebsocketConsumer):
         message = f"['f': receive]['user': {str(self.user)}]['data': {text_data_json}]"
         logger.info(message)
         output_data = await self.post_move(text_data_json)
+        if type(output_data)==dict and 'Bad Request'in output_data.keys():
+            cprint(f"[IGNORED] {output_data['err_msg']}",color = "blue")
         # Send message to game group
-        await self.channel_layer.group_send(
-            self.game_group_name,
-            {
-                'type': 'move_message',
-                'data': output_data
-            }
-        )
+        # if type()
+        else:
+            await self.channel_layer.group_send(
+                self.game_group_name,
+                {
+                    'type': 'move_message',
+                    'data': output_data
+                }
+            )
     # Receive message from game group
     async def move_message(self, event):
         # Send message to WebSocket
@@ -118,7 +123,8 @@ class GameConsumer(AsyncWebsocketConsumer):
 
                 #? Game already completed :
                 if game.completed:
-                    return Response({'Bad Request': 'Invalid data...'}, status=status.HTTP_400_BAD_REQUEST)
+                    # return Response({'Bad Request': 'Invalid data...'}, status=status.HTTP_400_BAD_REQUEST)
+                    return {'Bad Request': 'Invalid data...','err_msg':f"user {user.username} game already completed!", 'status':status.HTTP_400_BAD_REQUEST}
 
                 #? -------------------------
                 #? Timer request :
@@ -187,6 +193,8 @@ class GameConsumer(AsyncWebsocketConsumer):
                 except:
                     pass
             # raise Exception(f"user {user.username} tried to make a non valid move!")
-            return Response({'Bad Request': 'Invalid data...'}, status=status.HTTP_400_BAD_REQUEST)
-        return Response({'Bad Request': 'Invalid data...'}, status=status.HTTP_400_BAD_REQUEST)
+            # return Response({'Bad Request': 'Invalid data...'}, status=status.HTTP_400_BAD_REQUEST)
+            return {'Bad Request': 'Invalid data...','err_msg':f"user {user.username} tried to make a non valid move!", 'status':status.HTTP_400_BAD_REQUEST}
+        # return Response({'Bad Request': 'Invalid data...'}, status=status.HTTP_400_BAD_REQUEST)
+        return {'Bad Request': 'Invalid data...','err_msg':f"user {user.username} tried to make a move in a non existing game!", 'status':status.HTTP_400_BAD_REQUEST}
         # raise Exception("You can't make a move in a non existing game!!")

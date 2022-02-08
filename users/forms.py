@@ -29,6 +29,7 @@ class UserChangeForm(admin_forms.UserChangeForm):
         model = User
 
 
+
 class UserCreationForm(admin_forms.UserCreationForm):
     error_message = admin_forms.UserCreationForm.error_messages.update(
         {"duplicate_username": _("This username has already been taken.")}
@@ -251,3 +252,8 @@ class UserPasswordUpdateForm(forms.ModelForm):
         if commit:
             user.save()
         return user
+
+# class UserUpdateForm(forms.ModelForm):
+#     model = User
+#     Fields = ['first_name','last_name','score','avatar','email']
+

@@ -11,6 +11,7 @@ from django.dispatch import receiver
 
 
 # http://xml.coverpages.org/country3166.html
+#region
 COUNTRIES = (
     ('AD', _('Andorra')),
     ('AE', _('United Arab Emirates')),
@@ -252,6 +253,43 @@ COUNTRIES = (
     ('ZW', _('Zimbabwe')),
     ('ZZ', _('Unknown or unspecified country')),
 )
+#region
+
+countries = ['afghanistan', 'aland-islands', 'albania', 'algeria', 'american-samoa', 'andorra', 'angola',
+'anguilla', 'antigua-and-barbuda', 'argentina', 'armenia', 'aruba', 'australia', 'austria', 'azerbaijan',
+'azores-islands', 'bahamas', 'bahrain', 'balearic-islands', 'bangladesh', 'barbados', 'basque-country',
+'belarus', 'belgium', 'belize', 'benin', 'bermuda', 'bhutan', 'bolivia', 'bonaire', 'bosnia-and-herzegovina',
+'botswana', 'brazil', 'british-columbia', 'british-indian-ocean-territory', 'british-virgin-islands',
+'brunei', 'bulgaria', 'burkina-faso', 'burundi', 'cambodia', 'cameroon', 'canada', 'canary-islands',
+'cape-verde', 'cayman-islands', 'central-african-republic', 'ceuta', 'chad', 'chile', 'china', 'christm',
+'cuba', 'curacao', 'czech-republic', 'democratic-republic-of-congo', 'denmark', 'djibouti', 'dominica',
+'dominican-republic', 'east-timor', 'ecuador', 'egypt', 'el-salvador', 'england', 'equatorial-guinea',
+'eritrea', 'estonia', 'ethiopia', 'european-union', 'falkland-islands', 'fiji', 'finland', 'flag',
+'france', 'french-polynesia', 'gabon', 'galapagos-islands', 'gambia', 'georgia', 'germany', 'ghana',
+'gibraltar', 'greece', 'greenland', 'grenada', 'guam', 'guatemala', 'guernsey', 'guinea-bissau', 'guinea',
+'haiti', 'hawaii', 'honduras', 'hong-kong', 'hungary', 'iceland', 'india', 'indonesia', 'iran', 'iraq',
+'ireland', 'isle-of-man', 'israel', 'italy', 'ivory-coast', 'jamaica', 'japan', 'jersey', 'jordan',
+'kazakhstan', 'kenya', 'kiribati', 'kosovo', 'kuwait', 'kyrgyzstan', 'laos', 'latvia', 'lebanon',
+'lesotho', 'liberia', 'libya', 'liechtenstein', 'lithuania', 'luxembourg', 'macao', 'madagascar',
+'madeira', 'malawi', 'malaysia', 'maldives', 'mali', 'malta', 'marshall-island', 'martinique',
+'mauritania', 'mauritius', 'melilla', 'mexico', 'micronesia', 'moldova', 'monaco', 'mongolia',
+'montenegro', 'montserrat', 'morocco', 'mozambique', 'myanmar', 'namibia', 'nato', 'nauru',
+'nepal', 'netherlands', 'new-zealand', 'nicaragua', 'niger', 'nigeria', 'niue', 'norfolk-island',
+'north-korea', 'northern-cyprus', 'northern-mariana-islands', 'norway', 'oman', 'ossetia', 'pakistan',
+'palau', 'palestine', 'panama', 'papua-new-guinea', 'paraguay', 'peru', 'philippines', 'pitcairn-islands',
+'poland', 'portugal', 'puerto-rico', 'qatar', 'rapa-nui', 'republic-of-macedonia', 'republic-of-the-congo',
+'romania', 'russia', 'rwanda', 'saba-island', 'sahrawi-arab-democratic-republic', 'saint-kitts-and-nevis',
+'samoa', 'san-marino', 'sao-tome-and-prince', 'sardinia', 'saudi-arabia', 'scotland', 'senegal', 'serbia',
+'seychelles', 'sicily', 'sierra-leone', 'singapore', 'sint-eustatius', 'sint-maarten', 'slovakia',
+'slovenia', 'solomon-islands', 'somalia', 'somaliland', 'south-africa', 'south-korea', 'south-sudan',
+'spain', 'sri-lanka', 'st-barts', 'st-lucia', 'st-vincent-and-the-grenadines', 'sudan', 'suriname',
+'swaziland', 'sweden', 'switzerland', 'syria', 'taiwan', 'tajikistan', 'tanzania', 'thailand', 'tibet',
+'togo', 'tokelau', 'tonga', 'transnistria', 'trinidad-and-tobago', 'tunisia', 'turkey', 'turkmenistan',
+'turks-and-caicos', 'tuvalu-1', 'tuvalu', 'uganda', 'uk', 'ukraine', 'united-arab-emirates',
+'united-kingdom', 'united-nations', 'united-states', 'uruguay', 'uzbekistan', 'vanuatu', 'vatican-city',
+'venezuela', 'vietnam', 'virgin-islands', 'wales', 'yemen', 'zambia', 'zimbabwe']
+
+
 DEFAULT_AVATAR = "uploads\images\Profile_default.jpg"
 
 class CountryField(models.CharField):
@@ -273,6 +311,7 @@ class User(AbstractUser):
     id = models.AutoField(primary_key=True)
     score = models.IntegerField("Score",default = 1000 , blank=False,null=False)
     avatar_url = models.CharField(default = DEFAULT_AVATAR , blank=True,max_length=255)
+    # avatar = models.ImageField(upload_to='uploads/')
     is_fake = models.BooleanField(default=False,null=False,blank=False)
     tier = models.IntegerField(default =0,null=False,blank=False)
     country = CountryField(default = "ZZ", blank = False)
@@ -284,6 +323,23 @@ class User(AbstractUser):
         except :
             pass
 
+    def set_user_score(self,new_score):
+        self.score = new_score
+        self.save()
+
+    def set_user_country(self,new_country):
+        self.country = new_country
+        self.save()
+
+    def get_user_country(self):
+        return self.country
+
+    def update_user_score(self,score_change):
+        self.score = max(0,self.score+score_change)
+        self.save()
+
+    def get_user_flag_url(self):
+        return 'assets/media/flags/'+self.country+'.svg'
 
     def __str__(self):
         if self.name: return f"{self.name}"

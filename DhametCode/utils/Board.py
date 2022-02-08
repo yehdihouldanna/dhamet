@@ -22,9 +22,6 @@ class State():
         self.white_score = self.pieces
         self.black_score = self.pieces
         self.game_score = 0
-        self.no_kill_counter = 0 # a counter that helps break the game
-                                 # in case of long non killing periods
-        self.no_kill_limit = 20
         self.dhaimat_value = 3
         self.winner = None  # -1 for black , 0 for draw and 1 for white
 
@@ -58,10 +55,10 @@ class State():
             self.winner =["White" ,"Black"][not self.player]
             end_msg = f"{self.winner} Won! The adversary had no moves"
             return True,end_msg
-        elif self.no_kill_counter >=self.no_kill_limit:
-            self.winner = "Draw"
-            end_msg = "Game Draw!, by the long no killing moves!"
-            return True,end_msg
+        # elif self.no_kill_counter >=self.no_kill_limit:
+        #     self.winner = "Draw"
+        #     end_msg = "Game Draw!, by the long no killing moves!"
+        #     return True,end_msg
         elif self.white_score==0:
             end_msg = "Black Won!"
             self.winner = "Black"
@@ -142,7 +139,7 @@ class State():
             # print("Move is invalid !, Try again")
             return False,None
         else:
-            max_score = max(possible_moves.values())
+            max_score = max(possible_moves.values()) # aids in finding souvlables
             if np.abs(destination[0]-piece[0])>=2 or np.abs(destination[1]-piece[1])>=2:
                 vec_x = np.sign(destination[0]-piece[0])
                 vec_y = np.sign(destination[1]-piece[1])
@@ -165,10 +162,10 @@ class State():
                 self.board[destination[0],destination[1]]=self.dhaimat_value
 
             if not score:
-                self.no_kill_counter+=1
+                # self.no_kill_counter+=1
                 self.last_move_nature=0
             else:
-                self.no_kill_counter=0
+                # self.no_kill_counter=0
                 self.last_move_nature=1
 
             self.last_player = self.player
