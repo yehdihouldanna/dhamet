@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 
 import os
 
-# * // Adding sentry for logging and debugging
+#? Sentry for debuggin the crucial error messages
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
 
@@ -30,20 +30,22 @@ SECRET_KEY = '*zfe#)(5+cw7u6!btr^94jz96a6=6ug*c(d-6tbs@^r^6h&0li'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+DEV = True
 
-sentry_sdk.init(
-    dsn="https://5c728271aac849e7818ad8b851a41ef1@o1092340.ingest.sentry.io/6110627",
-    integrations=[DjangoIntegration()],
+if not DEBUG:
+    sentry_sdk.init(
+        dsn="https://5c728271aac849e7818ad8b851a41ef1@o1092340.ingest.sentry.io/6110627",
+        integrations=[DjangoIntegration()],
 
-    # Set traces_sample_rate to 1.0 to capture 100%
-    # of transactions for performance monitoring.
-    # We recommend adjusting this value in production.
-    traces_sample_rate=1.0,
+        # Set traces_sample_rate to 1.0 to capture 100%
+        # of transactions for performance monitoring.
+        # We recommend adjusting this value in production.
+        traces_sample_rate=1.0,
 
-    # If you wish to associate users to errors (assuming you are using
-    # django.contrib.auth) you may enable sending PII data.
-    send_default_pii=True
-)
+        # If you wish to associate users to errors (assuming you are using
+        # django.contrib.auth) you may enable sending PII data.
+        send_default_pii=True
+    )
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', '165.22.85.224','www.dhamet.com','dhamet.com','192.168.100.229']
 
@@ -171,24 +173,25 @@ CHANNEL_LAYERS = {
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+if DEV:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        }
     }
-}
 
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#         'NAME': 'dhamet_db',
-#         'USER': 'dhamet_db_user',
-#         'PASSWORD': 'Dhamet_db_smart_2022',
-#         'HOST': 'localhost',
-#         'PORT': '',
-#     }
-# }
+if not DEV :
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': 'dhamet_db',
+            'USER': 'dhamet_db_user',
+            'PASSWORD': 'Dhamet_db_smart_2022',
+            'HOST': 'localhost',
+            'PORT': '',
+        }
+    }
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators

@@ -46,6 +46,7 @@ the git repository to clone after creating an ssh key in the droplet and then co
 
 ### required python libraries installations :
 ```bash
+python -m pip install -U django
 python -m pip install -U channels
 pip install django-allauth
 pip install django-debug-toolbar
@@ -55,6 +56,8 @@ pip3 install django-crispy-forms
 pip install django-filter
 pip install numpy
 pip install termcolor
+pip install channels-redis
+pip install social-auth-app-django
 pip install --upgrade sentry-sdk
 ```
 ### adding exceptions to the firewall:

@@ -16,13 +16,11 @@
 
 - Add sound effects SFX to the game.
  - piece appearance SFX [_/]
- -piece disapearance SFX
-
-- Refractor the code in favor of Fat models Skinny views (a recommended Django practice) . 
-
-- Make it possible to render a previous game state from historic by clicking on it.
+ - piece disapearance SFX []
 
 - Clean improve and modelise player's profile and stats.
+
+- Clean all the unsed pages.
 
 - Update the documentation with images based on the actual game.
 
@@ -33,6 +31,8 @@
 - Tournament Feature. (add a features that queues multiple players and pair them in a tournament set up)
 
 - Authentication with google,facebook APIs. (add a social authentication based on the Auth2 api of google and facebook)
+
+- Connect the website with google analytics API.
 
 - Extra AI levels and make them use soufflé too. ( inceased AI difficulty options )
 
@@ -52,3 +52,7 @@
 - The description of the website is that of mecatronics on google.
 
 - Repeated nav bar on top and side.
+
+- Soufflé forcé pas besoin de caluler.
+
+- Un soufflé maximum force le jeu suivante.

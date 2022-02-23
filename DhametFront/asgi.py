@@ -1,6 +1,4 @@
 import os
-
-from django.conf.urls import url
 from django.core.asgi import get_asgi_application
 
 import DhametCode

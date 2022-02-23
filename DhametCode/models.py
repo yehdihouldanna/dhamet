@@ -143,6 +143,7 @@ class Game(models.Model):
                         'winner' : winner,
                         'winner_score' : winner_score,
                         'tier' : tier,
+                        'length' : self.length,
                         })
         else:
             moved,soufflables = game_instance.move_from_str(move)
@@ -185,7 +186,8 @@ class Game(models.Model):
                         'soufflables' : soufflables,
                         'winner' : winner,
                         'winner_score' : winner_score,
-                        'winner' : winner
+                        'winner' : winner,
+                        'length' : self.length,
                         })
         return output_data
 

@@ -1,19 +1,17 @@
-# +-------------------------------------------------------------------------------------+
-# |<<<<<<<<<<<<<<<<<                 Dhamet AI Project                 >>>>>>>>>>>>>>>> |
-# +-------------------------------------------------------------------------------------+
 
-### Introduction :
+# |<<<<<<<<<<<<<<<<<                 Dhamet AI Project                 >>>>>>>>>>>>>>>> |
+
+## Introduction
 
 This project is an implementation of Dhamet which is a traditionnal Mauritanian board game.
 it's in the same family of board games such as checkers and such but goes back way before theses variants.
 
-Some ressources that inspired the way this code is made are : 
-    - 
+Some ressources that inspired the way this code is made are :
 [Nguyen, Dung & Wong, Stephen. (2002). Design patterns for games. ACM Sigcse Bulletin. 34. 126-130. 10.1145/563340.563387.](https://www.researchgate.net/publication/221537302_Design_patterns_for_games/citation/download)
 
 The rules are adapted by relying on this magazine: [Jeux et Stratégie, no 27, juin-juillet 1984, p. 46-48](http://fr.1001mags.com/parution/jeux-strategie/numero-27-jun-jui-1984)
 
-### Mathematical majoration of the number of the possible moves in the game :
+# Mathematical majoration of the number of the possible moves in the game
 
 Given that the game has 81 quares with each squares having 5 possible states (corresponding to the type of the piece it contains ({regular,dhaima}x{white,black} or empty)),
 and each postition have two players to move,
@@ -23,7 +21,17 @@ and that we have to oblige a rule of 50_moves of non killing max (elsewise the g
 then we can majorate the number of the possible moves with an upper bound as follows :
 $$ NumberofMoves < 81^{5} \times 2 \times 5 \times 50 ≈ 1.7 \times 10^{12} $$
 So the number of moves in Dhamet 40 is less than <font color ="red"> $1.7 \times 10^{12}$ </font>which makes it -computationnaly speaking- much simpler than chess ($≈ 2\times10^{76}$)
-### The technologies used in this Project are : 
+
+# The technologies used in this Project are 
+
+![image](https://img.shields.io/badge/Python-FFD43B?style=for-the-badge&logo=python&logoColor=blue)
+![image](https://img.shields.io/badge/Django-092E20?style=for-the-badge&logo=django&logoColor=green)
+![image](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)
+![image](https://img.shields.io/badge/JavaScript-323330?style=for-the-badge&logo=javascript&logoColor=F7DF1E)
+![image](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+![image](https://img.shields.io/badge/django%20rest-ff1709?style=for-the-badge&logo=django&logoColor=white)
+![image](https://img.shields.io/badge/npm-CB3837?style=for-the-badge&logo=npm&logoColor=white)
+
 -    `Python` , `Django` : For the back end and the game code and AI agents
 
 -    `SQLite3` , For the data storage and access,

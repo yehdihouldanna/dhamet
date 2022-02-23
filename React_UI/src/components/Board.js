@@ -1,5 +1,5 @@
 //------------------------------------------------
-// Copyrigh (c) SMART Solutions SM SA® 2021.
+// Copyrigh (c) SMART Solutions MS SA® 2021.
 // All rights reserved.
 // Code made by : Yehdhih ANNA (TheLuckyMagician).
 //------------------------------------------------
@@ -40,6 +40,11 @@ class Board extends Component {
       move: "",
       last_move :"",
       move_history_render:[],
+      
+      moves_history: [],
+      board_historics : [],
+      length : 0,
+
       creator   :"",
       opponent  :"",
       winner : "",
@@ -86,8 +91,10 @@ class Board extends Component {
     this.deserialize = this.deserialize.bind(this);
 
     this.format_time = this.format_time.bind(this);
+    this.format_lastmove = this.format_lastmove.bind(this);
     this.update_moves_time_line = this.update_moves_time_line.bind(this);
     this.add_one_history_item = this.add_one_history_item.bind(this);
+    this.render_historic_move = this.render_historic_move.bind(this);
   };
   //?------------------------------------------
   //* Utils Methods :
@@ -127,9 +134,9 @@ class Board extends Component {
     }
     this.setState(game_state)
   };
-  //?-------------------------------------------------
+  //?----------------------------------------------
   // * "Click Vs DoubleClick"  Handling :
-  //?-------------------------------------------------
+  //?----------------------------------------------
   doClickAction(key,piece_present) {
     if (this.state.move === "" && piece_present) { this.state.move = key;}
     else if (this.state.move.length>=2) // switching the selected piece
@@ -330,6 +337,8 @@ class Board extends Component {
         console.log("Create successfully a game who's code is :", data.Code)
       }).then(() => this.handleMove())
   };
+
+
   handleMouseLeave() {
     // console.log("On Mouse Leave got called");
     this.state.move = "";
@@ -361,7 +370,39 @@ class Board extends Component {
   //?----------------------------------------
   // * Web Page modifiers :
   //?----------------------------------------
-  add_one_history_item(content,color)
+  
+  render_historic_move(e)
+  {
+    console.log("the event target id : ",e.target.id);
+    let index_shift = this.state.length - this.state.board_historics.length; // after a refrech we might lose old historic moves
+    let move_id = parseInt(e.target.id.split("_")[2]);  
+    console.log("the move id is : ",move_id);
+    console.log("L377 : { function : render_historic_move, length :",length,"}");
+    console.log("Board historics:" , this.state.board_historics);
+    console.log("length historic index",move_id-index_shift);
+    console.log("Board historics[length]:" , this.state.board_historics[move_id-index_shift]);
+
+    this.deserialize(this.state.board_historics[move_id-index_shift],this.state.previous_board_txt);
+    // this.render();
+    this.forceUpdate();
+  }
+
+  reset_board()
+  {
+    this.deserialize(this.state.board_historics[this.state.length-1],this.state.previous_board_txt);
+    this.render();
+  }
+
+  format_lastmove(last_move)
+  {
+    let new_txt = "";
+    let alph = "ABCDEFGHI";
+    for (var x of last_move.split(' ')){
+        new_txt+=" "+alph[parseInt(x[1])]+(parseInt(x[0])+1).toString();
+    }
+    return new_txt;
+  }
+  add_one_history_item(content,color,length)
   {
     let time_line_item = document.createElement("div");
     time_line_item.classList.add("timeline-item","mb-2");
@@ -382,17 +423,22 @@ class Board extends Component {
 
     let move_div = document.createElement("div");
     move_div.classList.add("fw-mormal", "timeline-content", "text-muted", "ps-3");
-    move_div.innerHTML=content;
+    move_div.innerHTML=this.format_lastmove(content);
+
+    // Historic rendering :
+    move_div.setAttribute("id","move_div_"+(length-1).toString());
+    move_div.addEventListener("click",this.render_historic_move,false);
 
     time_line_item.appendChild(time_label);
     time_line_item.appendChild(badge);
     time_line_item.appendChild(move_div);
+
     document.getElementById("MovesContainer").appendChild(time_line_item);
   }
   update_moves_time_line()
   {
-    this.add_one_history_item(this.state.move_history_render[0],"dark");
-    this.add_one_history_item(this.state.move_history_render[1],"secondary");
+    this.add_one_history_item(this.state.move_history_render[0],"dark",this.state.length-1);
+    this.add_one_history_item(this.state.move_history_render[1],"secondary",this.state.length);
   }
 
   format_time()
@@ -499,8 +545,10 @@ class Board extends Component {
               game_state.soufflables = data.soufflables;
               if (game_state.soufflables.length) { game_state.can_souffle = true; }
               if (game_state.last_move != data.last_move) {
+                  game_state.board_historics.push(game_state.board_txt)
                   game_state.last_move = data.last_move;
                   game_state.move_history_render.push(game_state.last_move);
+                  game_state.length = data.length;
                   me.setState(game_state);
                   if (game_state.move_history_render.length == 2) {
                       me.update_moves_time_line();

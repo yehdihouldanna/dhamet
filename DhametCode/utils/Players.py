@@ -156,7 +156,7 @@ class MinMax(Agent):
         super().__init__(name,player)
         self.name = "Dummy " + name
         self.choices_limit = 5
-        self.depth = 2
+        self.depth = 3
 
     def move(self,state):
         score = 0
