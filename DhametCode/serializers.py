@@ -1,6 +1,5 @@
 from django.utils.translation import override
 from rest_framework import  serializers
-from sqlalchemy import null
 from .models import Game
 from rest_framework.exceptions import ValidationError
 

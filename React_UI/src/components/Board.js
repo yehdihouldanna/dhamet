@@ -439,6 +439,7 @@ class Board extends Component {
       //?-----------------------------------
       this.props.client.onopen = () => {
           console.log('A new client Connected');
+          
           this.props.client.send(
               JSON.stringify({
                   'id': this.state.Code,
@@ -632,7 +633,6 @@ class Board extends Component {
     let Cells = [];
     let { board , previous_board} = this.state;
     let len = board.length;
-
     // if (this.state.opponent === "" || this.state.username==="")
     if (!this.state.game_started)
     {
