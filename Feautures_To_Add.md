@@ -20,11 +20,11 @@
 
 - Clean improve and modelise player's profile and stats.
 
-- Clean all the unsed pages.
+- Clean all the unused pages.
 
-- Update the documentation with images based on the actual game.
+- Update the documentation with images based on the actual game.[**..]
 
-- Add on first sign in tool tip tutorials on how to play the game.
+- Add on first sign in tool tip tutorials on how to play the game.[**..]
 
 - Add a chat functionnality so that the players can chat while playing.
 
@@ -50,6 +50,8 @@
 ### Current Bugs:
 
 - The description of the website is that of mecatronics on google.
+
+- Correction de l'algorithme MinMax.
 
 - Repeated nav bar on top and side.
 

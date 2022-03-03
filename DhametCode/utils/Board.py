@@ -14,7 +14,7 @@ class State():
     This class contains the state of the game at a give turn,
     the main content of this class is the baord vairable which contains
     """
-    def __init__(self,n=9,board=None,player =0,length=0,souffle = False):
+    def __init__(self,n=9,board=None,player =0,length=0,souffle = False,forced_souffle=False):
         self.n = n
         self.length = length
         self.player = player   # who's turn : 0 for white 1 for black.
@@ -47,6 +47,8 @@ class State():
         else:
             self.board = np.copy(board) # we need a deep copy here in order to avoid some problems
 
+        self.forced_souffle = forced_souffle
+
     def get_pieces(self,player):
         return np.argwhere(self.board<=-1) if player else np.argwhere(self.board>=1)
 
@@ -55,6 +57,8 @@ class State():
             self.winner =["White" ,"Black"][not self.player]
             end_msg = f"{self.winner} Won! The adversary had no moves"
             return True,end_msg
+        
+        #TODO : add a game draw condition that doesn't cause the game to halt
         # elif self.no_kill_counter >=self.no_kill_limit:
         #     self.winner = "Draw"
         #     end_msg = "Game Draw!, by the long no killing moves!"
@@ -161,23 +165,20 @@ class State():
             elif not self.player and destination[0]==self.n-1 :
                 self.board[destination[0],destination[1]]=self.dhaimat_value
 
-            if not score:
-                # self.no_kill_counter+=1
-                self.last_move_nature=0
-            else:
-                # self.no_kill_counter=0
-                self.last_move_nature=1
-
+            self.last_move_nature = score
+    
             self.last_player = self.player
 
             return True,max_score
 
-    def move_from_str(self,move_str):
+    def move_from_str(self,souffle_move,move_str):
         previous_board = np.copy(self.board)
         moves = move_str.split(" ")
         moved = False
         last_moved = None
         last_score = None
+        if type(souffle_move)==str and souffle_move!="":
+            self.apply_souffle(souffle_move)
         for k in range(len(moves)-1):
             source = moves[k]
             destination = moves[k+1]
@@ -188,9 +189,8 @@ class State():
             if not moved:
                 break
 
-        if moved and self.souffle and self.last_move_nature == 0:
+        if moved and self.souffle:
             self.update_soufflables(moves,previous_board)
-
         return moved , self.soufflables
 
     def update_soufflables(self,moves_in,previous_board):
@@ -199,9 +199,17 @@ class State():
         self.soufflables = []
         pieces = self.get_pieces(self.player)
         for piece in pieces:
-            moves = self.available_moves(piece[0],piece[1],lazy = True)
-            if len(moves):
-                self.soufflables.append(str(piece[0])+str(piece[1]))
+            if self.forced_souffle:
+                chained_moves = self.get_chain_moves(piece[0],piece[1])
+                max_score = 0
+                if len(chained_moves):
+                    max_score = max(chained_moves.values())
+                if self.last_move_nature < max_score:
+                    self.soufflables = [k[:2] for k,v in chained_moves.items() if v == max_score]
+            # else :
+            #     moves = self.available_moves(piece[0],piece[1],lazy = True)
+            #     if len(moves):
+            #         self.soufflables.append(str(piece[0])+str(piece[1]))
         from_ = moves_in[0]
         to_= moves_in[1]
         if from_ in self.soufflables:
@@ -239,7 +247,7 @@ class State():
             last_player = self.last_player
             possible_moves = self.available_moves(x,y)
             for (x_,y_) in possible_moves.keys():
-                score = possible_moves[ (x_,y_)]
+                score = possible_moves[(x_,y_)]
                 if score :
                     move = move_str + " " +str(x_)+str(y_)
                     chains[move] = chains[move_str] + 1
@@ -256,7 +264,7 @@ class State():
         """
         This function return all the available moves of the given piece, (one step only doesn't return chained moves).
         params : x,y : piece coordinates on the board
-                lazy : is boolean , if true it will just return the first killing moves
+                lazy : is boolean , if true returns the list
 
         returns : possible moves - dict containing tuples of coordinates of possible moves with their respective scores
         """
@@ -460,18 +468,15 @@ class State():
         return board
 
     def set_board(self,board):
-        """this method sets the board to a given state
-        mainly used for unit testing."""
         if type(board) == str :
             board = self.deserialize(board)
         assert board.shape == (self.n,self.n)
         self.board = np.copy(board)
 
     def set_player(self,player):
-        """this method sets the player manually"""
-        if (type(player)==int and player==1) or (type(player)==str and player.lower() in ["b","black"]):
+        if (type(player)==int and player==1) or (type(player)==str and player.lower()[0]=="b"):
                 self.player = 1
-        elif (type(player)==int and player==0) or (type(player)==str and player.lower() in ["w" , "white"]):
+        elif (type(player)==int and player==0) or (type(player)==str and player.lower()[0]=="w"):
                 self.player = 0
         else:
             print("Trying to set an Invalid Player! : type '0' for 'White' or '1' for 'Black'")

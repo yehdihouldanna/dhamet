@@ -11,7 +11,8 @@
   /* background-image: url('../images/zamma.png'); */
   /* width : 775px;
   height: 775px; */
-  background-image: url('../images/zamma_360_indexed.png');
+  /* background-image: url('../images/zamma_360_indexed.png'); */
+  background-image: url('../images/dhamet---.jpg');
   /* padding : 4px; */
   width : 364px;
   height: 364px;
@@ -25,6 +26,17 @@
   -webkit-filter: drop-shadow(3px 3px 3px #222);
   filter: drop-shadow(3px 3px 3px #222);
 }
+
+.board_theme_1
+{
+    background-image: url('../images/dhamet---.jpg');
+}
+.board_theme_2
+{
+    background-image: url('../images/zamma_360.jpg');
+}
+
+
 #dhamet_container{
   text-align: center;
 

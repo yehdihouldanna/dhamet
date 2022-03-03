@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 
 import os
 
-#? Sentry for debuggin the crucial error messages
+# * // Adding sentry for logging and debugging
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
 
@@ -29,23 +29,21 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '*zfe#)(5+cw7u6!btr^94jz96a6=6ug*c(d-6tbs@^r^6h&0li'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-DEV = True
+DEBUG = False
 
-if not DEBUG:
-    sentry_sdk.init(
-        dsn="https://5c728271aac849e7818ad8b851a41ef1@o1092340.ingest.sentry.io/6110627",
-        integrations=[DjangoIntegration()],
+sentry_sdk.init(
+    dsn="https://5c728271aac849e7818ad8b851a41ef1@o1092340.ingest.sentry.io/6110627",
+    integrations=[DjangoIntegration()],
 
-        # Set traces_sample_rate to 1.0 to capture 100%
-        # of transactions for performance monitoring.
-        # We recommend adjusting this value in production.
-        traces_sample_rate=1.0,
+    # Set traces_sample_rate to 1.0 to capture 100%
+    # of transactions for performance monitoring.
+    # We recommend adjusting this value in production.
+    traces_sample_rate=1.0,
 
-        # If you wish to associate users to errors (assuming you are using
-        # django.contrib.auth) you may enable sending PII data.
-        send_default_pii=True
-    )
+    # If you wish to associate users to errors (assuming you are using
+    # django.contrib.auth) you may enable sending PII data.
+    send_default_pii=True
+)
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', '165.22.85.224','www.dhamet.com','dhamet.com','192.168.100.229']
 
@@ -65,7 +63,7 @@ INSTALLED_APPS = [
     "allauth.socialaccount.providers.facebook",
     "allauth.socialaccount.providers.apple",
 
-    "social_django",
+    # "social_django",
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
@@ -87,7 +85,7 @@ AUTHENTICATION_BACKENDS = [
 
     "django.contrib.auth.backends.ModelBackend",
     "allauth.account.auth_backends.AuthenticationBackend",
-    'social_core.backends.google.GoogleOAuth2',
+    # 'social_core.backends.google.GoogleOAuth2',
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#auth-user-model
 AUTH_USER_MODEL = "users.User"
@@ -110,7 +108,7 @@ ACCOUNT_ADAPTER = "users.adapters.AccountAdapter"
 SOCIALACCOUNT_ADAPTER = "users.adapters.SocialAccountAdapter"
 AUTH_USER_MODEL = 'users.User'
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-SITE_ID = 2
+SITE_ID = 1
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 ACCOUNT_LOGOUT_ON_GET = True
 
@@ -173,25 +171,25 @@ CHANNEL_LAYERS = {
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
-if DEV:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-        }
-    }
 
-if not DEV :
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql_psycopg2',
-            'NAME': 'dhamet_db',
-            'USER': 'dhamet_db_user',
-            'PASSWORD': 'Dhamet_db_smart_2022',
-            'HOST': 'localhost',
-            'PORT': '5432',
-        }
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+#     }
+# }
+
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'dhamet_db',
+        'USER': 'dhamet_db_user',
+        'PASSWORD': 'Dhamet_db_smart_2022',
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
@@ -304,15 +302,15 @@ LOGGING = {
 }
 
 
-SOCIALACCOUNT_PROVIDERS = {
-    'google': {
-        'SCOPE': [
-            'profile',
-            'email',
-        ],
-        'AUTH_PARAMS': {
-            'access_type': 'online',
-        }
-    }
-}
+# SOCIALACCOUNT_PROVIDERS = {
+#     'google': {
+#         'SCOPE': [
+#             'profile',
+#             'email',
+#         ],
+#         'AUTH_PARAMS': {
+#             'access_type': 'online',
+#         }
+#     }
+# }
 

@@ -308,6 +308,7 @@ class Board extends Component {
                           'winner': me.state.winner,
                           'winner_score': "",
                           'tier': me.state.tier,
+                          'type' : "move",
                         }));
                 }
             });
@@ -373,15 +374,8 @@ class Board extends Component {
   
   render_historic_move(e)
   {
-    console.log("the event target id : ",e.target.id);
     let index_shift = this.state.length - this.state.board_historics.length; // after a refrech we might lose old historic moves
     let move_id = parseInt(e.target.id.split("_")[2]);  
-    console.log("the move id is : ",move_id);
-    console.log("L377 : { function : render_historic_move, length :",length,"}");
-    console.log("Board historics:" , this.state.board_historics);
-    console.log("length historic index",move_id-index_shift);
-    console.log("Board historics[length]:" , this.state.board_historics[move_id-index_shift]);
-
     this.deserialize(this.state.board_historics[move_id-index_shift],this.state.previous_board_txt);
     // this.render();
     this.forceUpdate();
@@ -491,6 +485,7 @@ class Board extends Component {
                   'state': this.state.board_txt,
                   'last_move': this.state.move,
                   'souffle_move': this.state.souffle_move,
+                  'soufflables' : this.state.soufflables,
                   'current_turn': this.state.player,
                   'creator': this.state.creator,
                   'creator_score': "",
@@ -499,6 +494,7 @@ class Board extends Component {
                   'winner': this.state.winner,
                   'winner_score': "",
                   'tier': "",
+                  'type':"move",
               }));
 
               this.props.client.send(
@@ -599,8 +595,10 @@ class Board extends Component {
                                   'state': me.state.board_txt,
                                   'last_move': "",
                                   'souffle_move': "",
+                                  'soufflables' : me.state.soufflables,
                                   'current_turn': me.state.player,
                                   'winner': "",
+                                  'type' :"AI_move",
 
                               }));
                       }
@@ -621,9 +619,11 @@ class Board extends Component {
                                   'state': me.state.board_txt,
                                   'last_move': "",
                                   'souffle_move': "",
+                                  'soufflables' : me.state.soufflables,
                                   'current_turn': me.state.player,
                                   'winner': "",
                                   'tier': me.state.tier,
+                                  'type' :"BOT_move"
                               }));
                       }
                   }, delay);

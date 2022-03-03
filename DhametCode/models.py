@@ -107,8 +107,6 @@ class Game(models.Model):
 
 
     def update_game(self,id,user,game_instance,move,souffle_move=""):
-        if type(souffle_move)==str and souffle_move!="":
-            game_instance.apply_souffle(souffle_move)
         if move =="":
             winner=""
             winner_score = ""
@@ -143,10 +141,10 @@ class Game(models.Model):
                         'winner' : winner,
                         'winner_score' : winner_score,
                         'tier' : tier,
-                        'length' : self.length,
+                        'length' : self.length, 
                         })
         else:
-            moved,soufflables = game_instance.move_from_str(move)
+            moved,soufflables = game_instance.move_from_str(souffle_move,move)
             if moved:
                 game_instance.player = not game_instance.player
                 game_instance.length+=1

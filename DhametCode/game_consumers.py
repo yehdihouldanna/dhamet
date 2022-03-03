@@ -153,7 +153,7 @@ class GameConsumer(AsyncWebsocketConsumer):
                     current_turn = game.current_turn
                     length = game.length
                     board = game.state
-                    game_instance = State(n=9,board=board,player = current_turn, length=length,souffle=True)
+                    game_instance = State(n=9,board=board,player = current_turn, length=length,souffle=True,forced_souffle=True)
 
                     #? User is playing :
                     if ((game.creator==user and current_turn==0) or (game.opponent == user and current_turn)): # * user is playing
@@ -161,19 +161,20 @@ class GameConsumer(AsyncWebsocketConsumer):
 
                     #? The AI is playing :
                     elif ((game.opponent.username in AI_NAMES and current_turn) or (game.creator.username in AI_NAMES and current_turn==0)): # * the AI is playing
-                        Agent = MinMax("AI",current_turn,depth=2)
+                        Agent = MinMax("AI",current_turn,depth=3)
                         if game.opponent.username == AI_NAMES[0] or game.opponent.username ==AI_NAMES[0]:
                             Agent = Random('AI',current_turn)
                         elif game.opponent.username == AI_NAMES[1] or game.opponent.username ==AI_NAMES[1]:
                             Agent = Dummy('AI',current_turn)
-
-                        move = Agent.move(game_instance)
+                        soufflables = data['soufflables']
+                        move = Agent.move(game_instance,soufflables)
                         logger.info(f"['f': post_move]['AI_move': {move}]")
                         user_ = game.creator if game.creator.username in AI_NAMES else game.opponent
                         return game.update_game(id,user_,game_instance,move,souffle_move)
 
                     #? The bot is playing :
                     elif (tier and current_turn==1 ):
+                        soufflables = data['soufflables']
                         if tier ==1:
                             Agent = Random_plus("",current_turn)
                         elif tier==2:
@@ -182,7 +183,7 @@ class GameConsumer(AsyncWebsocketConsumer):
                             Agent = MinMax("",current_turn,depth=2)
                         else: # just in order to prevent erros
                             Agent = MinMax("________",current_turn,depth=2)
-                        move = Agent.move(game_instance)
+                        move = Agent.move(game_instance,soufflables)
                         logger.debug(f"['f': post_move]['AI_move': {move}]")
                         user_ = game.creator if game.creator.username in BOT_NAMES else game.opponent
                         return game.update_game(id,user_,game_instance,move,souffle_move)
