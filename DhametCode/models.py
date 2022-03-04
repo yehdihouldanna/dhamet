@@ -31,7 +31,7 @@ def get_initial_state_json():
 
 class Game(models.Model):
     init_txt="wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwbbbb_wwwwbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
-    default_time = 5*60 # 10min in (s)
+    default_time = 1*3 # 10min in (s)
     id = models.AutoField(primary_key=True)
     created = models.DateTimeField(auto_now_add=True)
     completed = models.DateTimeField(blank = True , null = True)
