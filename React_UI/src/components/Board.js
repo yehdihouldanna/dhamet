@@ -40,6 +40,7 @@ class Board extends Component {
       move: "",
       last_move :"",
       move_history_render:[],
+      souffle_history_render:[],
       
       moves_history: [],
       board_historics : [],
@@ -390,13 +391,16 @@ class Board extends Component {
   format_lastmove(last_move)
   {
     let new_txt = "";
-    let alph = "ABCDEFGHI";
-    for (var x of last_move.split(' ')){
-        new_txt+=" "+alph[parseInt(x[1])]+(parseInt(x[0])+1).toString();
+    if(last_move.length>1)
+    {
+      let alph = "ABCDEFGHI";
+      for (var x of last_move.split(' ')){
+          new_txt+=" "+alph[parseInt(x[1])]+(parseInt(x[0])+1).toString();
+      }
     }
     return new_txt;
   }
-  add_one_history_item(content,color,length)
+  add_one_history_item(content,souffle_content,color,length)
   {
     let time_line_item = document.createElement("div");
     time_line_item.classList.add("timeline-item","mb-2");
@@ -417,7 +421,9 @@ class Board extends Component {
 
     let move_div = document.createElement("div");
     move_div.classList.add("fw-mormal", "timeline-content", "text-muted", "ps-3");
-    move_div.innerHTML=this.format_lastmove(content);
+    console.log("the souffle received is : ",souffle_content);
+    console.log("the formated souffle : ",this.format_lastmove(souffle_content));
+    move_div.innerHTML = this.format_lastmove(content) +"<font color='red'>" +this.format_lastmove(souffle_content) +"</font>"
 
     // Historic rendering :
     move_div.setAttribute("id","move_div_"+(length-1).toString());
@@ -431,18 +437,18 @@ class Board extends Component {
   }
   update_moves_time_line()
   {
-    this.add_one_history_item(this.state.move_history_render[0],"dark",this.state.length-1);
-    this.add_one_history_item(this.state.move_history_render[1],"secondary",this.state.length);
+    this.add_one_history_item(this.state.move_history_render[0],this.state.souffle_history_render[0],"dark",this.state.length-1);
+    this.add_one_history_item(this.state.move_history_render[1],this.state.souffle_history_render[1],"secondary",this.state.length);
   }
 
   format_time()
   {
-    let timer_id1="timer_player1";
-    let timer_id2="timer_player2";
+    let timer_id1 = "timer_player1";
+    let timer_id2 = "timer_player2";
     if(this.state.opponent===this.state.username)
     {
-        timer_id1= "timer_player2";
-        timer_id2= "timer_player1";
+        timer_id1 = "timer_player2";
+        timer_id2 = "timer_player1";
     }
     let timer_id = this.state.player===0 ? timer_id1 : timer_id2;
     let seconds_left = this.state.player===0 ? this.state.creator_time : this.state.opponent_time;
@@ -539,16 +545,20 @@ class Board extends Component {
               game_state.previous_board_txt = game_state.board_txt;
               game_state.board_txt = data.state;
               game_state.soufflables = data.soufflables;
+              
+
               if (game_state.soufflables.length) { game_state.can_souffle = true; }
               if (game_state.last_move != data.last_move) {
                   game_state.board_historics.push(game_state.board_txt)
                   game_state.last_move = data.last_move;
                   game_state.move_history_render.push(game_state.last_move);
+                  game_state.souffle_history_render.push(data.souffle_move);
                   game_state.length = data.length;
                   me.setState(game_state);
                   if (game_state.move_history_render.length == 2) {
                       me.update_moves_time_line();
                       me.state.move_history_render = [];
+                      me.state.souffle_history_render = [];
                   }
                   me.deserialize(data.state, game_state.previous_board_txt);
               }
@@ -648,7 +658,7 @@ class Board extends Component {
     document.getElementById("timer_player2").classList.add('color-full');
     let me = this;
     this.TimerInterval = setInterval(function () {
-        //TODO Improve the timer gestion for the case of 2 players :
+        //TODO Improve the timer synchronisation for the case of 2 players :
         if (me.state.username === me.state.creator && me.state.opponent!=="" && me.state.winner==="" && me.state.creator_time>-1 && me.state.opponent_time>-1)
         {
                 console.log("sent a request to check for time update");
@@ -680,7 +690,6 @@ class Board extends Component {
     let Cells = [];
     let { board , previous_board} = this.state;
     let len = board.length;
-
     // if (this.state.opponent === "" || this.state.username==="")
     if (!this.state.game_started)
     {

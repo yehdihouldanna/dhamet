@@ -125,6 +125,13 @@ class State():
     def __repr__(self):
         return str(self.board) +"\n" + "Current Player : "+['White','Black'][self.player]
 
+    def format_move(self,move):
+        new_text = ""
+        alph = "ABCDEFGHI"
+        if len(move):
+            new_text = " ".join([alph[int(x[1])]+str(int(x[0])+1) for x in move.split(" ")])
+        return new_text
+
     def move(self,piece,destination):
         """moves a piece, given its position coordinates and it's destination coordinates"""
         possible_moves = self.available_moves(piece[0],piece[1])
@@ -177,8 +184,7 @@ class State():
         moved = False
         last_moved = None
         last_score = None
-        if type(souffle_move)==str and souffle_move!="":
-            self.apply_souffle(souffle_move)
+        
         for k in range(len(moves)-1):
             source = moves[k]
             destination = moves[k+1]
@@ -194,27 +200,40 @@ class State():
         return moved , self.soufflables
 
     def update_soufflables(self,moves_in,previous_board):
-        aux = np.copy(self.board)
-        self.board = np.copy(previous_board)
+        aux = np.copy(self.board)  
+        self.board = np.copy(previous_board) # you need the previous board for the soufflables elsewise it will be applied based on current board.
         self.soufflables = []
         pieces = self.get_pieces(self.player)
+        max_score = 0
+        current_score = 0
+        soufflables_dict = {}
         for piece in pieces:
             if self.forced_souffle:
                 chained_moves = self.get_chain_moves(piece[0],piece[1])
-                max_score = 0
                 if len(chained_moves):
-                    max_score = max(chained_moves.values())
-                if self.last_move_nature < max_score:
-                    self.soufflables = [k[:2] for k,v in chained_moves.items() if v == max_score]
-            # else :
-            #     moves = self.available_moves(piece[0],piece[1],lazy = True)
-            #     if len(moves):
-            #         self.soufflables.append(str(piece[0])+str(piece[1]))
+                    current_score = max(chained_moves.values())
+                    if self.last_move_nature < current_score:
+                        try :
+                            soufflables_dict[current_score] += [k[:2] for k,v in chained_moves.items() if v == current_score]
+                        except :
+                            soufflables_dict[current_score] = [k[:2] for k,v in chained_moves.items() if v == current_score]
+                        if max_score < current_score :
+                            max_score = current_score
+            else :
+                moves = self.available_moves(piece[0],piece[1],lazy = True)
+                if len(moves):
+                    self.soufflables.append(str(piece[0])+str(piece[1]))
+
+        if self.forced_souffle :
+            if self.last_move_nature < max_score:
+                    self.soufflables = soufflables_dict[max_score]
+
         from_ = moves_in[0]
         to_= moves_in[1]
         if from_ in self.soufflables:
             self.soufflables.append(to_)
             self.soufflables.remove(from_)
+        cprint(f"the possible soufflables are : {[self.format_move(x) for x in self.soufflables]}", color = "green",attrs=["bold"])
         self.board = np.copy(aux)
 
     def apply_souffle(self,piece_str):

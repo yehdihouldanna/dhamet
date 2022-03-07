@@ -138,12 +138,15 @@ class Game(models.Model):
                         'opponent' : opponent,
                         'opponent_score' : opponent_score,
                         'soufflables' : [],
+                        'souffle_move' : "",
                         'winner' : winner,
                         'winner_score' : winner_score,
                         'tier' : tier,
                         'length' : self.length, 
                         })
         else:
+            if type(souffle_move)==str and souffle_move!="":
+                game_instance.apply_souffle(souffle_move)
             moved,soufflables = game_instance.move_from_str(souffle_move,move)
             if moved:
                 game_instance.player = not game_instance.player
@@ -151,9 +154,10 @@ class Game(models.Model):
                 board_txt = game_instance.serialize(game_instance.board)
                 self.state = board_txt
                 self.length = game_instance.length
-                moves = self.moves+"\n"+move
+                soufle_txt = "" if souffle_move=="" else " S"+souffle_move
+                moves = self.moves+"\n"+move+soufle_txt
                 self.moves = moves
-                self.last_move= move
+                self.last_move = move
                 self.current_turn = (self.current_turn+1)%2
             ended,end_msg = game_instance.check_end_condition()
             if ended:
@@ -182,6 +186,7 @@ class Game(models.Model):
                         'opponent_score' : self.opponent.score,
                         'tier' : tier,
                         'soufflables' : soufflables,
+                        'souffle_move' : souffle_move,
                         'winner' : winner,
                         'winner_score' : winner_score,
                         'winner' : winner,

@@ -22,6 +22,8 @@
 
 - Clean all the unused pages.
 
+- Player customization of the shapes
+  
 - Update the documentation with images based on the actual game.[**..]
 
 - Add on first sign in tool tip tutorials on how to play the game.[**..]
@@ -42,13 +44,14 @@
 
 - Move the functional code to the front end. ( Move the logic of the game to the front end. to increase the performance.)
 
-- Add more specifications for each type of dhamet, (3 , 12 , 40 )
+- Add more specifications for each type of dhamet, ( 12 , 40 )
 
 - تعريب اللعبة
 
-
 ### Current Bugs:
 
+- The AI applies soufflé after it's turn not before it.
+  
 - The description of the website is that of mecatronics on google.
 
 - Correction de l'algorithme MinMax.
@@ -58,3 +61,4 @@
 - Soufflé forcé pas besoin de caluler.
 
 - Un soufflé maximum force le jeu suivante.
+

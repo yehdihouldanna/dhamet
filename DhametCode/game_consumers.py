@@ -126,9 +126,9 @@ class GameConsumer(AsyncWebsocketConsumer):
                     # return Response({'Bad Request': 'Invalid data...'}, status=status.HTTP_400_BAD_REQUEST)
                     return {'Bad Request': 'Invalid data...','err_msg':f"user {user.username} game already completed!", 'status':status.HTTP_400_BAD_REQUEST}
 
-                #? -------------------------
+                #? -----------------------------------------
                 #? Timer request :
-                #? -------------------------
+                #? -----------------------------------------
                 try :
                     assert data['type']=="timer"
                     current_turn_  = data['current_turn']
@@ -137,9 +137,9 @@ class GameConsumer(AsyncWebsocketConsumer):
                 except:
                     pass
 
-                #? -------------------------
+                #? -----------------------------------------
                 #? Normal (Move) request:
-                #? -------------------------
+                #? -----------------------------------------
                 tier = 0
                 try :
                     tier = int(data["tier"])
@@ -167,7 +167,7 @@ class GameConsumer(AsyncWebsocketConsumer):
                         elif game.opponent.username == AI_NAMES[1] or game.opponent.username ==AI_NAMES[1]:
                             Agent = Dummy('AI',current_turn)
                         soufflables = data['soufflables']
-                        move = Agent.move(game_instance,soufflables)
+                        move,souffle_move = Agent.move(game_instance,soufflables)
                         logger.info(f"['f': post_move]['AI_move': {move}]")
                         user_ = game.creator if game.creator.username in AI_NAMES else game.opponent
                         return game.update_game(id,user_,game_instance,move,souffle_move)
@@ -182,13 +182,13 @@ class GameConsumer(AsyncWebsocketConsumer):
                         elif tier ==3: # can be used for ML agent
                             Agent = MinMax("",current_turn,depth=2)
                         else: # just in order to prevent erros
-                            Agent = MinMax("________",current_turn,depth=2)
-                        move = Agent.move(game_instance,soufflables)
+                            Agent = MinMax("___",current_turn,depth=2)
+                        move,souffle_move = Agent.move(game_instance,soufflables)
                         logger.debug(f"['f': post_move]['AI_move': {move}]")
                         user_ = game.creator if game.creator.username in BOT_NAMES else game.opponent
                         return game.update_game(id,user_,game_instance,move,souffle_move)
 
-                    #? Refrech request
+                    #? Refrech request :
                     elif ((game.creator==user and current_turn==1) or (game.opponent == user and current_turn==0)): #* case a user tries a move when it't turn only happens at start when user joins a new game
                         return game.update_game(id,user,game_instance,move="",souffle_move="")
                 except:

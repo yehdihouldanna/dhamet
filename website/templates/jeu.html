@@ -25,6 +25,14 @@
         type="text/css" />
     <link href="{% static 'assets/plugins/global/plugins.bundle.css' %}" rel="stylesheet" type="text/css" />
     <link href="{% static 'assets/css/style.bundle.css' %}" rel="stylesheet" type="text/css" />
+    <style type="text/css">
+         .carousel.carousel-custom .carousel-indicators.carousel-indicators-dots li.active:after {
+                    background-color: #009ef7;
+                }
+                .carousel.carousel-custom .carousel-indicators.carousel-indicators-dots li:after{
+                    background-color: #009ef7;
+                }
+    </style>
 </head>
 
 <body id="kt_body"
@@ -228,6 +236,136 @@
                         <div class="row g-5 g-xl-7">
                             <div class="col-xl-6 card text-center justify-content-center align-content-center ">
 
+                                <div class="row card-toolbar" style="margin: 0 auto; margin-bottom: 10px;">
+                                    <div class="col">
+                                        <button type="button"
+                                                class="btn btn-sm btn-icon btn-color-primary btn-active-light-primary"
+                                                data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end" onclick="showTutorials()">
+                                                <span class="svg-icon svg-icon-2">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px"
+                                                        viewBox="0 0 24 24">
+                                                        <g stroke="none" stroke-width="1" fill="none"
+                                                            fill-rule="evenodd">
+                                                            <rect x="5" y="5" width="5" height="5" rx="1"
+                                                                fill="#000000" />
+                                                            <rect x="14" y="5" width="5" height="5" rx="1"
+                                                                fill="#000000" opacity="0.3" />
+                                                            <rect x="5" y="14" width="5" height="5" rx="1"
+                                                                fill="#000000" opacity="0.3" />
+                                                            <rect x="14" y="14" width="5" height="5" rx="1"
+                                                                fill="#000000" opacity="0.3" />
+                                                        </g>
+                                                    </svg>
+                                                </span>
+                                            </button>
+                                    </div>
+                                    <div class="col">
+                                        <button type="button"
+                                                class="btn btn-sm btn-icon btn-color-primary btn-active-light-primary"
+                                                data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end" onclick="showTutorials()">
+                                                <span class="svg-icon svg-icon-2">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px"
+                                                        viewBox="0 0 24 24">
+                                                        <g stroke="none" stroke-width="1" fill="none"
+                                                            fill-rule="evenodd">
+                                                            <rect x="5" y="5" width="5" height="5" rx="1"
+                                                                fill="#000000" />
+                                                            <rect x="14" y="5" width="5" height="5" rx="1"
+                                                                fill="#000000" opacity="0.3" />
+                                                            <rect x="5" y="14" width="5" height="5" rx="1"
+                                                                fill="#000000" opacity="0.3" />
+                                                            <rect x="14" y="14" width="5" height="5" rx="1"
+                                                                fill="#000000" opacity="0.3" />
+                                                        </g>
+                                                    </svg>
+                                                </span>
+                                            </button>
+                                    </div>
+                                    <div class="col">
+                                        <button type="button"
+                                        class="btn btn-sm btn-icon btn-color-primary btn-active-light-primary"
+                                        data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end" onclick="showTutorials()">
+                                        <span class="svg-icon svg-icon-2">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px"
+                                                viewBox="0 0 24 24">
+                                                <g stroke="none" stroke-width="1" fill="none"
+                                                    fill-rule="evenodd">
+                                                    <rect x="5" y="5" width="5" height="5" rx="1"
+                                                        fill="#000000" />
+                                                    <rect x="14" y="5" width="5" height="5" rx="1"
+                                                        fill="#000000" opacity="0.3" />
+                                                    <rect x="5" y="14" width="5" height="5" rx="1"
+                                                        fill="#000000" opacity="0.3" />
+                                                    <rect x="14" y="14" width="5" height="5" rx="1"
+                                                        fill="#000000" opacity="0.3" />
+                                                </g>
+                                            </svg>
+                                        </span>
+                                    </button>
+                                    </div>
+                                </div>
+
+                                <div id="kt_carousel_1_carousel" class="carousel carousel-custom slide" data-bs-ride="carousel" data-bs-interval="8000" style="display:none">
+                                    <div class="d-flex align-items-center justify-content-between flex-wrap" style="text-align: center; margin-top: 10px;">
+                                        <div class="card-toolbar">
+                                            <button type="button"
+                                                class="btn btn-sm btn-icon btn-color-primary btn-active-light-primary"
+                                                data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end" onclick="hideTutorials()">
+                                                <i class="bi bi-x-circle-fill"></i>
+                                            </button>
+
+                                        </div>
+                                        <ol class="p-0 m-0 carousel-indicators carousel-indicators-dots " >
+                                            <li data-bs-target="#kt_carousel_1_carousel"  data-bs-slide-to="0" class="ms-1 active" ></li>
+                                            <li data-bs-target="#kt_carousel_1_carousel"  data-bs-slide-to="1" class="ms-1" ></li>
+                                            <li data-bs-target="#kt_carousel_1_carousel"  data-bs-slide-to="2" class="ms-1" ></li>
+                                        </ol>
+                                    </div>
+                                    <div class="carousel-inner pt-8">
+                                        <div class="carousel-item active" style="margin: 0 auto;">
+                                            <div class="row">
+                                                <div id="tuto-gif" class="col">
+                                                    <img  src="{% static 'assets/media/tutorial/dhamet-tuto1.gif' %}"  
+                                                          width="200px" 
+                                                          height="200px"/>
+                                                </div>
+                                                <div id="tuto1-text" class="col" style=" margin-top: 0px;margin-right: 10px; font-family: 'Amiri','serif';font-size: 2em;">
+                                                    <p class="middle" style="text-align: center;">
+                                                    اضغط على القطعة التي تود تحريكها، ثم اضغط مرتين على الخانة التي تود تحريكها اليها, 
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="carousel-item">
+                                            <div class="row" style="margin: 0 auto;">
+                                                <div id="tuto-gif" class="col">
+                                                    <img  src="{% static 'assets/media/tutorial/dhamet-tuto2.gif' %}"  
+                                                          width="200px" 
+                                                          height="200px"/>
+                                                </div>
+                                                <div id="tuto-text" class="col" style="margin-top: 0px;margin-right: 5px; font-family: 'Amiri','serif';font-size: 2em;">
+                                                    <p class="middle" style="text-align: center;">
+                                                        ,حدد القطعة التي تريد تحريكها بضغطة، ثم اضغط على الخانات التي تود تحريكها اليها وانهي دورك بضعطتين على اخر خانة
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="carousel-item" style="margin: 0 auto;">
+                                            <div class="row" >
+                                                <div id="tuto-gif" class="col">
+                                                    <img  src="{% static 'assets/media/tutorial/dhamet-tuto3.gif' %}"  
+                                                          width="200px" 
+                                                          height="200px"/>
+                                                </div>
+                                                <div id="tuto-text" class="col" style=" margin-top: 0px;margin-right: 10px; font-family: 'Amiri','serif';font-size: 2em;">
+                                                    <p class="middle" style="text-align: center;">
+                                                        اضغط مرتين على القطعة التي تود ان تسوفل   
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                                 <div class="d-flex justify-content-center">
                                     <div class=" d-flex px-12 pt-0 justify-content-between align-items-center" style="width : 360px;height : 70px; background-image:url({% static 'assets/media/design/player_banner_box_2.png' %});
                                                                                             background-repeat: no-repeat; background-position: center;
@@ -293,26 +431,7 @@
                                                 Tour : </span>
                                         </h3>
                                         <div class="card-toolbar">
-                                            <button type="button"
-                                                class="btn btn-sm btn-icon btn-color-primary btn-active-light-primary"
-                                                data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
-                                                <span class="svg-icon svg-icon-2">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px"
-                                                        viewBox="0 0 24 24">
-                                                        <g stroke="none" stroke-width="1" fill="none"
-                                                            fill-rule="evenodd">
-                                                            <rect x="5" y="5" width="5" height="5" rx="1"
-                                                                fill="#000000" />
-                                                            <rect x="14" y="5" width="5" height="5" rx="1"
-                                                                fill="#000000" opacity="0.3" />
-                                                            <rect x="5" y="14" width="5" height="5" rx="1"
-                                                                fill="#000000" opacity="0.3" />
-                                                            <rect x="14" y="14" width="5" height="5" rx="1"
-                                                                fill="#000000" opacity="0.3" />
-                                                        </g>
-                                                    </svg>
-                                                </span>
-                                            </button>
+                                            
 
                                         </div>
                                     </div>
@@ -1368,6 +1487,14 @@
         <script src="{% static 'assets/js/custom/modals/upgrade-plan.js' %}"></script>
         {{ game_code|json_script:"game_code" }}
         <script src="{% static 'frontend/main.js' %}"></script>
+        <script >
+            function showTutorials(){
+                document.getElementById("kt_carousel_1_carousel").style.display = 'block'
+            }
+            function hideTutorials(){
+                document.getElementById("kt_carousel_1_carousel").style.display = 'none'
+            }
+        </script>
 </body>
 
 </html>

@@ -44,6 +44,7 @@ class Naive(Agent):
 
     def move(self,state,soufflables=[]):
         move=None
+        souffle_move = ""
         state.get_pieces(self.player)
         for i in range(self.pieces_indices.shape[0]):
             x,y = tuple(self.pieces_indices[i])
@@ -55,7 +56,7 @@ class Naive(Agent):
                 break
         if not move:
             cprint(f"ALERT: {self.name} couldn't return a move!",color = "red")
-        return move
+        return move,souffle_move
 
 class Random(Agent):
     """
@@ -67,6 +68,7 @@ class Random(Agent):
         self.choices_limit = 5
     def move(self,state,soufflables=[]):
         move=None
+        souffle_move = ""
         dict_ = {}
         pieces = state.get_pieces(self.player)
         for i in range(pieces.shape[0]):
@@ -85,7 +87,7 @@ class Random(Agent):
             move = key +" "+ str(destination[0])+str(destination[1])
         if not move:
             cprint(f"ALERT: {self.name} couldn't return a move!",color = "red")
-        return move
+        return move,souffle_move
 class Random_plus(Agent):
     """
     This a random agent that chooses a random move from the first available moves.
@@ -98,6 +100,7 @@ class Random_plus(Agent):
         #TODO : The human-ish behavior of this IA could be improved by favoring horizontal and vertical moves over diagonal ones.
         move = None
         dict_ = {}
+        souffle_move=""
         scores = {}
         pieces = state.get_pieces(self.player)
         for i in range(pieces.shape[0]):
@@ -121,7 +124,7 @@ class Random_plus(Agent):
             move = key +" "+ str(destination[0])+str(destination[1])
         if not move:
             cprint(f"ALERT: {self.name} couldn't return a move!",color = "red")
-        return move
+        return move,souffle_move
 
 class Dummy(Agent):
     """
@@ -133,6 +136,7 @@ class Dummy(Agent):
         self.choices_limit = 40 # could be limited if needed.
     def move(self,state,soufflables=[]):
         move=None
+        souffle_move = ""
         dict_ = {}
         pieces=state.get_pieces(self.player)
         for i in range(pieces.shape[0]):
@@ -149,7 +153,7 @@ class Dummy(Agent):
             move  = max(dict_, key=dict_.get)
         if move =="_":
                 cprint(f"ALERT: {self.name} couldn't return a move!",color = "red")
-        return move
+        return move,souffle_move
 
 class MinMax(Agent):
     """
@@ -165,19 +169,23 @@ class MinMax(Agent):
         score = 0
         cur_depth = 1
         maxi_turn = 1
+        souffle_move=""
         if len(soufflables) : 
             souffle_move = soufflables[0]
             if  type(souffle_move)==str and souffle_move!="":
                 state.apply_souffle(souffle_move)
+        print("The AI is thinking :",end="")
         best_move,_ = self.minmax(state,score,cur_depth,self.depth,maxi_turn,soufflables)
+        print()
         # if best_move is None:
         #     cprint(f"ALERT: {self.name} couldn't return a move!",color="red")
-        return best_move
+        print(f"MinMax Agent chose the move: {state.format_move(best_move)} with the soufflé {state.format_move(souffle_move)}!")
+        return best_move , souffle_move
 
     # this is the strategy of the agent
     def minmax(self,state,score,cur_depth,target_depth,maxi_turn,soufflables):
+        print("-",end="")
         pieces = state.get_pieces(self.player) if maxi_turn else state.get_pieces(not self.player) # if maxi_turn we maximise for player, else we maximise for adversary
-        
         if cur_depth==target_depth: # base scenario for recursivity
             best_move = None
             best_score = None
@@ -208,7 +216,6 @@ class MinMax(Agent):
             for i in range(pieces.shape[0]):
                 x,y = tuple(pieces[i])
                 chains = state.get_chain_moves(x,y)
-                
                 if len(chains):
                     new_move = max(chains, key=chains.get)
                     new_score = chains[new_move]
@@ -219,8 +226,8 @@ class MinMax(Agent):
 
                     moved,soufflables = state.move_from_str(souffle_move,new_move)
                     ended,_ = state.check_end_condition()
-                    if not moved:
-                        print(f"MinMax Agent tried the move: {new_move} but couldn't perform it!")
+                    # if not moved:
+                    #     print(f"MinMax Agent tried the move: {new_move} but couldn't perform it!")
                     if not ended:
                         b1_move , b1_score = self.minmax(state,score_,cur_depth+1,target_depth,(maxi_turn+1)%2,soufflables)
                         if best_score is None or b1_score > best_score :
@@ -238,4 +245,5 @@ class MinMax(Agent):
                     state.set_board(temp_board)
                     state.set_player(player)
                     state.set_last_player(last_player)
+            print("_",end="")
             return best_move,best_score
