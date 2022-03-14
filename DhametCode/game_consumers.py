@@ -195,7 +195,7 @@ class GameConsumer(AsyncWebsocketConsumer):
                     pass
             # raise Exception(f"user {user.username} tried to make a non valid move!")
             # return Response({'Bad Request': 'Invalid data...'}, status=status.HTTP_400_BAD_REQUEST)
-            return {'Bad Request': 'Invalid data...','err_msg':f"user {user.username} tried to make a non valid move!", 'status':status.HTTP_400_BAD_REQUEST}
+            return {'Bad Request': 'Invalid data...','err_msg':f"user {user.username} tried to make a non valid move!. DATA : {data}" , 'status':status.HTTP_400_BAD_REQUEST}
         # return Response({'Bad Request': 'Invalid data...'}, status=status.HTTP_400_BAD_REQUEST)
         return {'Bad Request': 'Invalid data...','err_msg':f"user {user.username} tried to make a move in a non existing game!", 'status':status.HTTP_400_BAD_REQUEST}
         # raise Exception("You can't make a move in a non existing game!!")

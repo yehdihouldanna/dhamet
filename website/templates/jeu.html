@@ -32,12 +32,59 @@
                 .carousel.carousel-custom .carousel-indicators.carousel-indicators-dots li:after{
                     background-color: #009ef7;
                 }
+        .modal {
+                position: fixed;
+                z-index: 200;
+                width: 200px;
+                height: 200px;
+                top: 100px;
+                left: 200px;
+                right: 200px;
+                background: white;
+                margin: 0 auto;
+                box-shadow: 1px 1px 6px rgba(0, 0, 0, 0.4);
+                display: block;
+                }
+        .backdrop {
+                position: fixed;
+                width: 100%;
+                height: 100%;
+                top: 0;
+                left: 0;
+                background: rgba(0, 0, 0, 0.5);
+                z-index: 100;
+                } 
+        .btn-primary {
+                margin-top: 140px;
+                margin-left: 58px;
+                position: absolute;
+                }
+        h1 {
+                color: #521751;
+                margin: 0.5rem 0;
+                font-family: 'Amiri','serif';font-size: 1.2rem;
+                text-align: center;
+        }
+        .modal-body{
+                position: relative;
+                flex: 1 1 auto;
+                flex-grow: 1;
+                flex-shrink: 1;
+                flex-basis: auto;
+                margin-top: 20px;
+                padding: 1.75rem;
+                text-align: center;
+                font-family: 'Amiri','serif';font-size: 1em;
+        }
+
     </style>
 </head>
 
 <body id="kt_body"
     class="header-fixed header-tablet-and-mobile-fixed toolbar-enabled toolbar-fixed aside-enabled aside-fixed"
     direction: rtl>
+    <div class="modal-container">
+    </div>
     <div class="d-flex flex-column flex-root">
         <div class="page d-flex flex-row flex-column-fluid">
             <div id="kt_aside" class="aside pb-5 pt-5 pt-lg-0" data-kt-drawer="true" data-kt-drawer-name="aside"
@@ -393,6 +440,7 @@
                                             <div id='timer_player2' ></div>
                                     </div>
                                 </div>
+                                 
                                 <div id="dhamet_container" class="pt-2 pb-2">
                                 </div>
                                 <div class="d-flex justify-content-center">
@@ -448,25 +496,12 @@
                 </div>
                 <div class="footer py-8 d-flex flex-lg-column" id="kt_footer">
                     <div
-                        class="container-fluid d-flex flex-column flex-md-row align-items-center justify-content-between">
+                        class="container-fluid d-flex flex-column flex-md-row align-items-center justify-content-between" style="margin: 0 auto">
                         <div class="text-dark order-2 order-md-1">
                             <span class="text-muted fw-bold me-1">2021©</span>
-                            <a href="https://keenthemes.com" target="_blank"
+                            <a href="https://www.smartmssa.com/" target="_blank"
                                 class="text-gray-800 text-hover-primary">Smart Solution</a>
                         </div>
-                        <ul class="menu menu-gray-600 menu-hover-primary fw-bold order-1">
-                            <li class="menu-item">
-                                <a href="https://keenthemes.com" target="_blank" class="menu-link px-2">About</a>
-                            </li>
-                            <li class="menu-item">
-                                <a href="https://keenthemes.com/support" target="_blank"
-                                    class="menu-link px-2">Support</a>
-                            </li>
-                            <li class="menu-item">
-                                <a href="https://1.envato.market/EA4JP" target="_blank"
-                                    class="menu-link px-2">Purchase</a>
-                            </li>
-                        </ul>
                     </div>
                 </div>
             </div>
@@ -1489,11 +1524,21 @@
         <script src="{% static 'frontend/main.js' %}"></script>
         <script >
             function showTutorials(){
-                document.getElementById("kt_carousel_1_carousel").style.display = 'block'
+               document.getElementById("kt_carousel_1_carousel").style.display = 'block'
             }
             function hideTutorials(){
                 document.getElementById("kt_carousel_1_carousel").style.display = 'none'
             }
+
+            function closeModal() {
+                if (backdrop) {
+                    backdrop.remove();
+                }
+
+                if (modal) {
+                    modal.remove();
+                }
+                }
         </script>
 </body>
 

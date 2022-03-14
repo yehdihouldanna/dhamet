@@ -22,7 +22,8 @@ class Human(Player):
 
     def move(self,state,soufflables=[]):
         move_ = input(f"{self.name} Enter your move : ")
-        return move_
+        souffle = input(f"{self.name} Enter your soufflé : ")
+        return move_,souffle
 
 class Agent(Player):
     def __init__(self,name,player):
@@ -163,87 +164,84 @@ class MinMax(Agent):
         super().__init__(name,player)
         self.name = "Dummy " + name
         self.choices_limit = 5
-        self.depth = 3
-
+        self.depth = 3 # for better performance take a pair depth
+                       # for testing reasons we need this to stay this way. for the long term run .
     def move(self,state,soufflables=[]):
         score = 0
-        cur_depth = 1
+        cur_depth = 0
         maxi_turn = 1
-        souffle_move=""
-        if len(soufflables) : 
-            souffle_move = soufflables[0]
-            if  type(souffle_move)==str and souffle_move!="":
-                state.apply_souffle(souffle_move)
-        print("The AI is thinking :",end="")
-        best_move,_ = self.minmax(state,score,cur_depth,self.depth,maxi_turn,soufflables)
+        print("The AI is thinking :")
+        # best_move,_,souffle_move = self.minmax(state,cur_depth,self.depth,maxi_turn,soufflables)
+        best_move,souffle_move = self.minimax_wrapper(state,soufflables, self.depth, False)
         print()
         # if best_move is None:
         #     cprint(f"ALERT: {self.name} couldn't return a move!",color="red")
-        print(f"MinMax Agent chose the move: {state.format_move(best_move)} with the soufflé {state.format_move(souffle_move)}!")
+        if best_move is None or souffle_move is None:
+            cprint(f"MinMax Agent chose the move: {state.format_move(best_move)} with the soufflé {state.format_move(souffle_move)}!",color="red",attrs=["bold"])
+        else:
+            print(f"MinMax Agent chose the move: {state.format_move(best_move)} with the soufflé {state.format_move(souffle_move)}!")
         return best_move , souffle_move
 
-    # this is the strategy of the agent
-    def minmax(self,state,score,cur_depth,target_depth,maxi_turn,soufflables):
-        print("-",end="")
-        pieces = state.get_pieces(self.player) if maxi_turn else state.get_pieces(not self.player) # if maxi_turn we maximise for player, else we maximise for adversary
-        if cur_depth==target_depth: # base scenario for recursivity
-            best_move = None
-            best_score = None
-            for i in range(pieces.shape[0]):
-                x,y = tuple(pieces[i])
-                chains = state.get_chain_moves(x,y)
-                if len(chains):
-                    new_move = max(chains, key=chains.get)
-                    new_score = chains[new_move]
-                    if  best_score is None or new_score > best_score:
-                        best_score = new_score
-                        best_move = new_move
+    def minimax(self,state,soufflables, depth,alpha,beta, maximizing_player):
+        """Returns the best evaluation based on minimax algorithm improved with pruning"""
+        pieces =  state.get_pieces(self.player) if not maximizing_player else state.get_pieces(not self.player)
+        attributes = state.get_attributes()
+        ended,_ = state.check_end_condition()
+        if depth == 0 or ended:
+            return state.compute_game_score()
+        if maximizing_player :
+            max_eval = - 60
+            for souffle in soufflables +  [""]:
+                state.apply_souffle(souffle)  # applying souffle before searching for the moves
+                moves,score = state.get_best_chain_moves(pieces) # getting all the possible best_moves
+                for move in moves :
+                    moved,soufflables_ = state.move_from_str(None,move)
+                    eval = self.minimax(state,soufflables_,depth-1,alpha,beta,False)
+                    max_eval = max(max_eval,eval)
+                    alpha = max(alpha,eval)
+                    state.set_attributes(attributes)
+                    if beta <= alpha :
+                        break
+            return max_eval
+        else:
+            min_eval = + 60
+            for souffle in soufflables +  [""]:
+                state.apply_souffle(souffle)  # applying souffle before searching for the moves
+                moves,score = state.get_best_chain_moves(pieces) # getting all the possible best_moves
+                for move in moves :
+                    moved,soufflables_ = state.move_from_str(None,move)
+                    eval = self.minimax(state,soufflables_,depth-1,alpha,beta,True)
+                    min_eval = min(min_eval, eval)  
+                    beta = min(beta,eval)
+                    state.set_attributes(attributes)  
+                    if beta <=alpha :
+                        break
+            return min_eval
 
-            #TODO : Causes the game to end before it's time, due to limited moves draw condition.
-            if best_move is None:
-                return "",score
-            elif maxi_turn:
-                return best_move, score + best_score
-            else:
-                return best_move, score - best_score
+    def minimax_wrapper(self,state,soufflables, depth, maximizing_player):
+        pieces =  state.get_pieces(self.player) if not maximizing_player else state.get_pieces(not self.player)
+        best_move = None
+        best_souffle = None
+        best_move_score = None
+        # alpha and beta for pruning.
+        alpha_inf = -60
+        beta_inf = 60
+        attributes = state.get_attributes()
+        for souffle in soufflables + [""]:
+            state.apply_souffle(souffle)
+            moves,score = state.get_best_chain_moves(pieces)
+            for move in moves :
+                moved,soufflables_ = state.move_from_str(None,move)
+                eval_ = self.minimax(state,soufflables_, depth, alpha_inf,beta_inf, maximizing_player)
+                if maximizing_player and (best_move_score is None or best_move_score < eval_):
+                    best_move = move
+                    best_souffle = souffle
+                    best_move_score = eval_
+                elif not maximizing_player and (best_move_score is None or best_move_score > eval_):
+                    best_move = move
+                    best_souffle = souffle
+                    best_move_score = eval_
+                state.set_attributes(attributes)
+        return best_move , best_souffle
+        
 
-        else: # recursive call scenario
-            temp_board = np.copy(state.board)
-            player = state.player
-            last_player = state.last_player
-            best_move = None
-            best_score = None
-            for i in range(pieces.shape[0]):
-                x,y = tuple(pieces[i])
-                chains = state.get_chain_moves(x,y)
-                if len(chains):
-                    new_move = max(chains, key=chains.get)
-                    new_score = chains[new_move]
-                    score_ = (score + new_score) if maxi_turn else (score - new_score)
-                    souffle_move = ""
-                    if len(soufflables):
-                        souffle_move = soufflables[0]
-
-                    moved,soufflables = state.move_from_str(souffle_move,new_move)
-                    ended,_ = state.check_end_condition()
-                    # if not moved:
-                    #     print(f"MinMax Agent tried the move: {new_move} but couldn't perform it!")
-                    if not ended:
-                        b1_move , b1_score = self.minmax(state,score_,cur_depth+1,target_depth,(maxi_turn+1)%2,soufflables)
-                        if best_score is None or b1_score > best_score :
-                            best_score = b1_score
-                            best_move = new_move
-                    else:
-                        if maxi_turn:
-                            best_move  = new_move
-                            best_score = score_
-                            break
-                        elif best_score is None or score_>best_score:
-                            best_move=new_move
-                            best_score = score_
-
-                    state.set_board(temp_board)
-                    state.set_player(player)
-                    state.set_last_player(last_player)
-            print("_",end="")
-            return best_move,best_score

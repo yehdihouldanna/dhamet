@@ -31,7 +31,7 @@ def get_initial_state_json():
 
 class Game(models.Model):
     init_txt="wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwbbbb_wwwwbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
-    default_time = 5*60 # 10min in (s)
+    default_time = 20*60 # 10min in (s)
     id = models.AutoField(primary_key=True)
     created = models.DateTimeField(auto_now_add=True)
     completed = models.DateTimeField(blank = True , null = True)
@@ -145,8 +145,6 @@ class Game(models.Model):
                         'length' : self.length, 
                         })
         else:
-            if type(souffle_move)==str and souffle_move!="":
-                game_instance.apply_souffle(souffle_move)
             moved,soufflables = game_instance.move_from_str(souffle_move,move)
             if moved:
                 game_instance.player = not game_instance.player

@@ -6,6 +6,7 @@
 //@ts-check
 import '/static/css/Board.css';
 import Cell from './Cell';
+import MyModal from './MyModal';
 import React, { Component} from 'react';
 import {CSSTransition} from 'react-transition-group';
 class Board extends Component {
@@ -524,14 +525,67 @@ class Board extends Component {
                 if(data.type==="timer")
                 {
                     // * server returned a valid time :
-                    // console.log("Recevied data from timer socket ", data);
+                    // console.log("Received data from timer socket ", data);
                     let game_state = me.state;
                     game_state.creator_time = data.creator_time;
                     game_state.opponent_time = data.opponent_time;
                     if (data.winner !== null && data.winner !== "") {
                         // TODO : change this to a better thing.
                         me.state.winner = data.winner
-                        alert(data.winner + " Won on time !");
+                       // alert(data.winner + " Won on time !");
+                     let backdrop = document.createElement('div');
+                       backdrop.classList.add('backdrop');
+                       backdrop.addEventListener('click', () => {
+                            if (backdrop) {
+                              backdrop.remove();
+                            }
+                          
+                            if (modal) {
+                              modal.remove();
+                            }
+                       });
+                       document.body.appendChild(backdrop);
+                       backdrop.addEventListener('click', () => {
+                                  if (backdrop) {
+                                    backdrop.remove();
+                                  }
+                                
+                                  if (modal) {
+                                    modal.remove();
+                                  }
+                       });
+
+                        let modal = document.createElement('div');
+                        modal.classList.add('modal');
+                       let modalActionsContainer = document.createElement('div');
+                       modalActionsContainer.classList.add('modal-actions');
+                       modal.appendChild(modalActionsContainer);
+
+                       let modalHeading = document.createElement('h1');
+                       modalHeading.classList.add("modal-title")
+                       modalHeading.textContent = 'انتهت اللعبة';
+                       modal.appendChild(modalHeading);
+
+
+                       let modalContent = document.createElement('div');
+                       modalContent.classList.add('modal-body')
+
+                       let label = document.createElement('label');
+                       label.innerText = data.winner + " فاز في الوقت المحدد!";
+                       modalContent.appendChild(label);
+                       modal.appendChild(modalContent)
+
+                       let cancelButton = document.createElement('button');
+                        cancelButton.setAttribute('type', 'button');
+                        cancelButton.classList.add('btn','btn-primary');
+                        cancelButton.textContent = 'اغلاق';
+                        cancelButton.addEventListener('click', () => modal.remove());
+                        modalActionsContainer.appendChild(cancelButton);
+                        
+                        
+
+                        document.body.appendChild(modal);
+                       
                     }
                     me.setState(game_state);
                 }
@@ -545,8 +599,7 @@ class Board extends Component {
               game_state.previous_board_txt = game_state.board_txt;
               game_state.board_txt = data.state;
               game_state.soufflables = data.soufflables;
-              
-
+              game_state.souffle_move = data.souffle_move;
               if (game_state.soufflables.length) { game_state.can_souffle = true; }
               if (game_state.last_move != data.last_move) {
                   game_state.board_historics.push(game_state.board_txt)
@@ -566,7 +619,60 @@ class Board extends Component {
 
               if (data.winner !== null && data.winner !== "") {
                   // TODO : change this to a better thing.
-                  alert(data.winner + " Won the game!");
+                //  alert(data.winner + " Won the game!");
+
+                let backdrop = document.createElement('div');
+                backdrop.classList.add('backdrop');
+                backdrop.addEventListener('click', () => {
+                     if (backdrop) {
+                       backdrop.remove();
+                     }
+                   
+                     if (modal) {
+                       modal.remove();
+                     }
+                });
+                document.body.appendChild(backdrop);
+                backdrop.addEventListener('click', () => {
+                           if (backdrop) {
+                             backdrop.remove();
+                           }
+                         
+                           if (modal) {
+                             modal.remove();
+                           }
+                });
+
+                let modal = document.createElement('div');
+                 modal.classList.add('modal');
+                let modalActionsContainer = document.createElement('div');
+                modalActionsContainer.classList.add('modal-actions');
+                modal.appendChild(modalActionsContainer);
+
+                let modalHeading = document.createElement('h1');
+                modalHeading.classList.add("modal-title")
+                modalHeading.textContent = 'انتهت اللعبة';
+                modal.appendChild(modalHeading);
+
+
+                let modalContent = document.createElement('div');
+                modalContent.classList.add('modal-body')
+
+                let label = document.createElement('label');
+                label.innerText = data.winner + " لقد فزت باللعبة";
+                modalContent.appendChild(label);
+                modal.appendChild(modalContent)
+
+                let cancelButton = document.createElement('button');
+                 cancelButton.setAttribute('type', 'button');
+                 cancelButton.classList.add('btn','btn-primary');
+                 cancelButton.textContent = 'اغلاق';
+                 cancelButton.addEventListener('click', () => modal.remove());
+                 modalActionsContainer.appendChild(cancelButton);
+                 
+                 
+
+                 document.body.appendChild(modal);
                   me.state.winner = data.winner
               }
 
@@ -628,6 +734,7 @@ class Board extends Component {
                                   'id': me.state.Code,
                                   'state': me.state.board_txt,
                                   'last_move': "",
+                                  
                                   'souffle_move': "",
                                   'soufflables' : me.state.soufflables,
                                   'current_turn': me.state.player,
@@ -651,17 +758,21 @@ class Board extends Component {
         //**? Timer Socket : **
         //?-----------------------------------
     }
+  
   componentDidMount() {
     document.getElementById("timer_player1").classList.add('tiles');
     document.getElementById("timer_player1").classList.add('color-full');
     document.getElementById("timer_player2").classList.add('tiles');
     document.getElementById("timer_player2").classList.add('color-full');
+
+   
+
     let me = this;
     this.TimerInterval = setInterval(function () {
         //TODO Improve the timer synchronisation for the case of 2 players :
         if (me.state.username === me.state.creator && me.state.opponent!=="" && me.state.winner==="" && me.state.creator_time>-1 && me.state.opponent_time>-1)
         {
-                console.log("sent a request to check for time update");
+                // console.log("sent a request to check for time update");
                 me.format_time();
                 me.state.Client.send(
                     JSON.stringify({
@@ -709,6 +820,8 @@ class Board extends Component {
               let ex_css_class="";
               if (this.state.last_move.includes(key))
               {ex_css_class = " highlight_last_move";}
+              else if(this.state.souffle_move.includes(key))
+              {ex_css_class = " highlight_souffle"}
               Cells.push(
                 <Cell
                   key={key}
@@ -742,6 +855,8 @@ class Board extends Component {
                 let ex_css_class="";
                 if (this.state.last_move.includes(key))
                 {ex_css_class = " highlight_last_move";}
+                else if(this.state.souffle_move.includes(key))
+                {ex_css_class = " highlight_souffle"}
                 Cells.push(
                     <Cell
                     key={key}

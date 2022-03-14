@@ -60,5 +60,20 @@
 
 - Soufflé forcé pas besoin de caluler.
 
+- A bug with the modal box, when in half screen mode
+
 - Un soufflé maximum force le jeu suivante.
 
+D4 E5
+- F6 D4
+C3 E5
+- A5 C3
+D2 B4
+- C5 C3 A5
+E5 C5
+- B6 D4 D2
+E1 C3
+- A5 B4
+- ---------
+A3 C5 A5
+- C6 C5 C3

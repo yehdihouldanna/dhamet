@@ -6,8 +6,10 @@
 import numpy as np
 from termcolor import cprint
 from .Players import *
+# from Players import *
 import time
 import os
+from copy import deepcopy
 
 class State():
     """
@@ -49,7 +51,37 @@ class State():
 
         self.forced_souffle = forced_souffle
 
-    def get_pieces(self,player):
+    def deep_copy(self):
+        return deepcopy(self)
+    def reset_state(self,state_copy):
+        self = deepcopy(state_copy)
+
+    def get_pieces(self,player,start_i=None,start_j=None,spiral_center=True):
+        """ returns the pieces in a spiral way starting from the attention location at start_x and start_y"""
+        if spiral_center or (start_i is not None and start_j is not None):
+            pieces = []
+            if start_i is None or start_j is None:
+                start_i = self.n//2
+                start_j = self.n//2
+            valid_index =  lambda i,j : -start_i<=i and i<=self.n-start_i and -start_j<=j and j<self.n-start_j
+            i = 0
+            j = 0
+            di = 0
+            dj = -1
+            k=0
+            while(k<self.n**2):
+                if valid_index(i,j):
+                    k+=1
+                    if self.board[start_i+i,start_j+j]<=-1 and player:
+                        pieces.append([start_i+i,start_j+j])
+                    elif self.board[start_i+i,start_j+j]>=1 and not player:
+                        pieces.append([start_i+i,start_j+j])
+
+                if i == j or (i < 0 and i == -j) or (i > 0 and i == 1-j):
+                    di, dj = -dj, di
+                i, j = i+di, j+dj
+            return np.asarray(pieces)
+        
         return np.argwhere(self.board<=-1) if player else np.argwhere(self.board>=1)
 
     def check_end_condition(self):
@@ -81,7 +113,7 @@ class State():
             pieces_indices = np.argwhere(self.board>=1)
         for i in range(pieces_indices.shape[0]):
             x,y = tuple(pieces_indices[i])
-            moves= self.available_moves(x,y) # //TODO : Very bad place to call this function, find a better way to check for the end
+            moves= self.available_moves(x,y)
             if len(moves):
                 return True
         return False
@@ -128,9 +160,12 @@ class State():
     def format_move(self,move):
         new_text = ""
         alph = "ABCDEFGHI"
-        if len(move):
+        if type(move)==str and len(move):
             new_text = " ".join([alph[int(x[1])]+str(int(x[0])+1) for x in move.split(" ")])
         return new_text
+
+    def set_last_move(self,last_move):
+        self.last_move = last_move
 
     def move(self,piece,destination):
         """moves a piece, given its position coordinates and it's destination coordinates"""
@@ -184,7 +219,8 @@ class State():
         moved = False
         last_moved = None
         last_score = None
-        
+        if type(souffle_move)==str and souffle_move!="" :
+            self.apply_souffle(souffle_move)
         for k in range(len(moves)-1):
             source = moves[k]
             destination = moves[k+1]
@@ -194,58 +230,75 @@ class State():
             last_moved = (xd,yd)
             if not moved:
                 break
-
         if moved and self.souffle:
-            self.update_soufflables(moves,previous_board)
+            last_move_score = len(moves)-2+self.last_move_nature       
+            self.update_soufflables(moves,previous_board,last_move_score)
+        if not moved:
+            self.board = previous_board # in case the souffle move messed up the current board
         return moved , self.soufflables
 
-    def update_soufflables(self,moves_in,previous_board):
+    def update_soufflables(self,moves_in,previous_board,last_move_score):
         aux = np.copy(self.board)  
         self.board = np.copy(previous_board) # you need the previous board for the soufflables elsewise it will be applied based on current board.
         self.soufflables = []
         pieces = self.get_pieces(self.player)
         max_score = 0
         current_score = 0
-        soufflables_dict = {}
         for piece in pieces:
             if self.forced_souffle:
                 chained_moves = self.get_chain_moves(piece[0],piece[1])
                 if len(chained_moves):
                     current_score = max(chained_moves.values())
-                    if self.last_move_nature < current_score:
-                        try :
-                            soufflables_dict[current_score] += [k[:2] for k,v in chained_moves.items() if v == current_score]
-                        except :
-                            soufflables_dict[current_score] = [k[:2] for k,v in chained_moves.items() if v == current_score]
-                        if max_score < current_score :
-                            max_score = current_score
+                    if (last_move_score < current_score) and (max_score<=current_score):
+                        max_score = current_score
+                        if max_score == current_score:
+                            self.soufflables += [k[:2] for k,v in chained_moves.items() if (v == current_score and k[:2] not in self.soufflables)]
+                        else:
+                            self.soufflables  = [k[:2] for k,v in chained_moves.items() if (v == current_score and k[:2] not in self.soufflables)]
             else :
                 moves = self.available_moves(piece[0],piece[1],lazy = True)
                 if len(moves):
                     self.soufflables.append(str(piece[0])+str(piece[1]))
 
-        if self.forced_souffle :
-            if self.last_move_nature < max_score:
-                    self.soufflables = soufflables_dict[max_score]
-
         from_ = moves_in[0]
-        to_= moves_in[1]
+        to_= moves_in[-1]
         if from_ in self.soufflables:
             self.soufflables.append(to_)
             self.soufflables.remove(from_)
-        cprint(f"the possible soufflables are : {[self.format_move(x) for x in self.soufflables]}", color = "green",attrs=["bold"])
+        self.soufflables = list(set(self.soufflables))
+        # if len(self.soufflables):
+        #     cprint(f"the possible soufflables are : {[self.format_move(x) for x in self.soufflables]}", color = "green",attrs=["bold"])
         self.board = np.copy(aux)
 
     def apply_souffle(self,piece_str):
+        if piece_str=="":
+            return True
         if ((self.player and self.board[int(piece_str[0]),int(piece_str[1])]>=1) or (not self.player and self.board[int(piece_str[0]),int(piece_str[1])]<=-1)):
-
             self.board[int(piece_str[0]),int(piece_str[1])]=0
-            can_souffle = False
+            self.can_souffle = False
             return True
         return False
 
+    def get_best_chain_moves(self,pieces):
+        """Loops over all the pices to get the best moves and the respective max score"""
+        max_score = 0
+        best_moves = []
+        for x,y in pieces :
+            chains = self.get_chain_moves(x,y)
+            if len(chains):
+                piece_score = max(chains.values())
+                moves = [key for key,value in chains.items() if value == piece_score] # returns a set
+                if max_score < piece_score:
+                    if len(moves):
+                        best_moves = moves
+                        max_score = piece_score
+                elif max_score == piece_score:
+                    best_moves = best_moves+moves
+        return best_moves,max_score
+
+
     def get_chain_moves(self,x,y):
-        # TODO : optimize this function to return only the optimal chained move and reduce the overhead
+        # TODO : optimize this function to return only the optimal chained move and reduce the overhead (apply some algorithm pruning principles )
         """This function returns all possible moves including the chained ones.
         """
         chains = {}
@@ -258,32 +311,30 @@ class State():
         return chains
 
     def helper_chain_moves(self,x,y,move_str,chains,first_lvl=False):
-        if len(move_str)>=3*self.lim_takes+2: # just an overhead reducer could be made false in __init__
-            return
-        else:
-            temp_board = np.copy(self.board)
-            current_player = self.player
-            last_player = self.last_player
-            possible_moves = self.available_moves(x,y)
-            for (x_,y_) in possible_moves.keys():
-                score = possible_moves[(x_,y_)]
-                if score :
-                    move = move_str + " " +str(x_)+str(y_)
-                    chains[move] = chains[move_str] + 1
-                    self.move((x,y),(x_,y_))
-                    self.helper_chain_moves(x_,y_,move,chains,False)
-                    self.set_board(temp_board)
-                    self.set_player(current_player)
-                    self.set_last_player(last_player)
-                elif first_lvl and not score:
-                    move = move_str + " " +str(x_)+str(y_)
-                    chains[move] = 0
+        # if len(move_str)>=3*self.lim_takes+2: # just an overhead reducer could be made false in __init__
+        #     return
+        # else:
+        attributes = self.get_attributes()
+        possible_moves = self.available_moves(x,y)
+        for (x_,y_) in possible_moves.keys():
+            score = possible_moves[(x_,y_)]
+            if score :
+                move = move_str + " " +str(x_)+str(y_)
+                chains[move] = chains[move_str] + 1
+                self.move((x,y),(x_,y_))
+                self.helper_chain_moves(x_,y_,move,chains,False)
+                self.set_attributes(attributes)
+            elif first_lvl and not score:
+                move = move_str + " " +str(x_)+str(y_)
+                chains[move] = 0
 
+        
     def available_moves(self,x,y,lazy=False):
         """
-        This function return all the available moves of the given piece, (one step only doesn't return chained moves).
+        This function return all the available moves of the given piece, note that it contains all the logic of how the game pieces moves and such
+        (it returns only one step and not like chained moves).
         params : x,y : piece coordinates on the board
-                lazy : is boolean , if true returns the list
+                lazy : is boolean , if true it will return after the first occurance of score changing move.
 
         returns : possible moves - dict containing tuples of coordinates of possible moves with their respective scores
         """
@@ -500,6 +551,70 @@ class State():
         else:
             print("Trying to set an Invalid Player! : type '0' for 'White' or '1' for 'Black'")
 
+    def set_attributes(self,n,length,player,pieces_count,
+                        white_score,black_score,game_score_,
+                        winner,souffle_allowed,can_souffle,soufflables,
+                        last_move_nature,last_player,lim_takes,
+                        board,forced_souffle):
+        self.n = n
+        self.length = length
+        self.player = player  
+        self.pieces = pieces_count
+        self.white_score = white_score 
+        self.black_score = black_score 
+        self.game_score = game_score_
+        # self.dhaimat_value = 3
+        self.winner = winner  
+        self.souffle = souffle_allowed 
+        self.can_souffle = can_souffle
+        self.soufflables = soufflables
+        self.last_move_nature = last_move_nature 
+        self.last_player = last_player
+        self.lim_takes = lim_takes
+        self.board = np.copy(board)
+        self.forced_souffle = forced_souffle
+    
+    def set_attributes(self,attributes):
+        self.n = attributes["n"]
+        self.length = attributes["length"]
+        self.player = attributes["player"]  
+        self.pieces = attributes["pieces_count"]
+        self.white_score = attributes["white_score"] 
+        self.black_score = attributes["black_score"] 
+        self.game_score = attributes["game_score_"]
+        # self.dhaimat_value = attributes["3"]
+        self.winner = attributes["winner"]  
+        self.souffle = attributes["souffle_allowed"] 
+        self.can_souffle = attributes["can_souffle"]
+        self.soufflables = attributes["soufflables"]
+        self.last_move_nature = attributes["last_move_nature"] 
+        self.last_player = attributes["last_player"]
+        self.lim_takes = attributes["lim_takes"]
+        self.board = np.copy(attributes["board"])
+        self.forced_souffle = attributes["forced_souffle"]
+
+    def get_attributes(self):
+        attributes = {
+            "n":self.n,
+            "length": self.length ,
+            "player" : self.player ,  
+            "pieces_count" :self.pieces ,
+            "white_score":self.white_score , 
+            "black_score":self.black_score , 
+            "game_score_":self.game_score ,
+            # self.dhaimat_value ,
+            "winner": self.winner ,  
+            "souffle_allowed" : self.souffle , 
+            "can_souffle":self.can_souffle ,
+            "soufflables" :self.soufflables ,
+            "last_move_nature" : self.last_move_nature , 
+            "last_player":self.last_player ,
+            "lim_takes":self.lim_takes ,
+            "board":np.copy(self.board) ,
+            "forced_souffle": self.forced_souffle ,
+        }
+        return attributes
+
     def set_last_player(self,last_player):
         self.last_player = last_player
 
@@ -513,17 +628,9 @@ class Play_Game():
         self.console = console
 
     def turn(self):
-        move_ = self.players[self.game.player].move(self.game)
-        moves = move_.split(" ")
-        moved = False
-        for k in range(len(moves)-1):
-            source = moves[k]
-            destination = moves[k+1]
-            xs,ys = [int(i) for i in source]
-            xd,yd = [int(i) for i in destination]
-            moved = self.game.move((xs,ys),(xd,yd))
-            if not moved:
-                break
+        move_str ,souffle_move = self.players[self.game.player].move(self.game,self.game.soufflables)
+        print(f"Player {self.players[self.game.player]} is playing move : {move_str},souffle : {souffle_move}")
+        moved,_= self.game.move_from_str(souffle_move,move_str)
         if moved:
             if self.console:
                 self.game.show_board()
@@ -534,8 +641,9 @@ class Play_Game():
                 print(end_msg)
             if self.filepath :
                 with open(self.filepath,mode="a") as f:
-                    f.write(move_+"\n")
+                    f.write(move_str+"\n")
             self.game.player = not self.game.player
+
 
 if __name__=="__main__":
     Player1 = Human("Yehdhih",0)
