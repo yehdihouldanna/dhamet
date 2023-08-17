@@ -1,17 +1,23 @@
 
-# |<<<<<<<<<<<<<<<<<                 Dhamet AI Project                 >>>>>>>>>>>>>>>> |
+# Dhamet (Traditional Mauritanian board game) AI Project
 
 ## Introduction
 
 This project is an implementation of Dhamet which is a traditionnal Mauritanian board game.
-it's in the same family of board games such as checkers and such but goes back way before theses variants.
+it's in the same family of board games such as checkers and such but goes back way before theses variants even existed,
+
+## Some of the main functionalities in the project : 
+- It contains all the basic rules of the game,
+- you can play against other players or against the AI,
+- It contains also bots that simulate human behavior ( when the players waits for a while before another player could join him)
+- ... It contains many other interesting functionalities.
 
 Some ressources that inspired the way this code is made are :
 [Nguyen, Dung & Wong, Stephen. (2002). Design patterns for games. ACM Sigcse Bulletin. 34. 126-130. 10.1145/563340.563387.](https://www.researchgate.net/publication/221537302_Design_patterns_for_games/citation/download)
 
 The rules are adapted by relying on this magazine: [Jeux et Stratégie, no 27, juin-juillet 1984, p. 46-48](http://fr.1001mags.com/parution/jeux-strategie/numero-27-jun-jui-1984)
 
-# Mathematical majoration of the number of the possible moves in the game
+## Mathematical majoration of the number of the possible moves in the game
 
 Given that the game has 81 quares with each squares having 5 possible states (corresponding to the type of the piece it contains ({regular,dhaima}x{white,black} or empty)),
 and each postition have two players to move,
@@ -22,7 +28,7 @@ then we can majorate the number of the possible moves with an upper bound as fol
 $$ NumberofMoves < 81^{5} \times 2 \times 5 \times 50 ≈ 1.7 \times 10^{12} $$
 So the number of moves in Dhamet 40 is less than <font color ="red"> $1.7 \times 10^{12}$ </font>which makes it -computationnaly speaking- much simpler than chess ($≈ 2\times10^{76}$)
 
-# The technologies used in this Project are 
+## The technologies used in this Project are 
 
 ![image](https://img.shields.io/badge/Python-FFD43B?style=for-the-badge&logo=python&logoColor=blue)
 ![image](https://img.shields.io/badge/Django-092E20?style=for-the-badge&logo=django&logoColor=green)
