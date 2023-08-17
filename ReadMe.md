@@ -10,6 +10,7 @@ it's in the same family of board games such as checkers and such but goes back w
 - It contains all the basic rules of the game,
 - you can play against other players or against the AI,
 - It contains also bots that simulate human behavior ( when the players waits for a while before another player could join him)
+- Multiple levels of difficulty of the AI and the bots,
 - ... It contains many other interesting functionalities.
 
 Some ressources that inspired the way this code is made are :
